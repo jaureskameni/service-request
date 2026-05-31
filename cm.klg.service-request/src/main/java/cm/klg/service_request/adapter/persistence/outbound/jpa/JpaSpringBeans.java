@@ -19,4 +19,11 @@ public class JpaSpringBeans {
       UserSpringRepository userSpringRepository, JpaMapper jpaMapper) {
     return new UserJpaRepository(userSpringRepository, jpaMapper);
   }
+
+  @Bean
+  public cm.klg.service_request.application.outbound.ServiceProviderRepository
+      serviceProviderRepository(
+          ServiceProviderSpringRepository serviceProviderSpringRepository, JpaMapper jpaMapper) {
+    return new ServiceProviderJpaRepository(serviceProviderSpringRepository, jpaMapper);
+  }
 }

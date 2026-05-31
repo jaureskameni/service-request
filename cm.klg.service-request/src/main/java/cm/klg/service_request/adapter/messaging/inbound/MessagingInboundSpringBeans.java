@@ -1,6 +1,7 @@
 package cm.klg.service_request.adapter.messaging.inbound;
 
 import cm.klg.common.base.transaction.UseCaseExecutor;
+import cm.klg.service_request.application.usecase.ApproveServiceProviderUseCase;
 import cm.klg.service_request.application.usecase.CreateNewUserUseCase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,5 +16,14 @@ public class MessagingInboundSpringBeans {
       UseCaseExecutor useCaseExecutor) {
     return new CreateUserInboundEventHandler(
         createNewUserUseCase, messagingInboundMapper, useCaseExecutor);
+  }
+
+  @Bean
+  public ApproveServiceProviderInboundEventHandler approveServiceProviderInboundEventHandler(
+      ApproveServiceProviderUseCase approveServiceProviderUseCase,
+      MessagingInboundMapper messagingInboundMapper,
+      UseCaseExecutor useCaseExecutor) {
+    return new ApproveServiceProviderInboundEventHandler(
+        approveServiceProviderUseCase, useCaseExecutor, messagingInboundMapper);
   }
 }

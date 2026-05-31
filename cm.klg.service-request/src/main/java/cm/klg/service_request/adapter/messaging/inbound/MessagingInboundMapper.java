@@ -1,12 +1,14 @@
 package cm.klg.service_request.adapter.messaging.inbound;
 
 import cm.klg.generated.uam.adapter.messaging.inbound.dto.UamUserCreatedEventDTO;
+import cm.klg.service_request.application.usecase.ApproveServiceProviderUseCase;
 import cm.klg.service_request.application.usecase.CreateNewUserUseCase;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
+import org.openapitools.model.ServiceProviderServiceProviderApprovedEventDTO;
 
 @Mapper(
     componentModel = "spring",
@@ -24,4 +26,11 @@ public interface MessagingInboundMapper {
   @Mapping(target = "createdAt", source = "createdAt")
   CreateNewUserUseCase.CreateNewUserCommand toCreateUserCommand(
       UamUserCreatedEventDTO userCreatedEventDTO);
+
+  @BeanMapping(ignoreByDefault = true)
+  @Mapping(target = "userId.value", source = "userId")
+  @Mapping(target = "serviceProviderId.value", source = "serviceProviderId")
+  @Mapping(target = "approvedAt.value", source = "approvedAt")
+  ApproveServiceProviderUseCase.ApproveServiceProviderCommand toApproveServiceProviderCommand(
+      ServiceProviderServiceProviderApprovedEventDTO providerApprovedEventDTO);
 }

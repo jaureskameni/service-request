@@ -9,11 +9,10 @@ import cm.klg.service_request.domain.user.Lastname;
 import cm.klg.service_request.domain.user.User;
 import cm.klg.service_request.domain.user.UserId;
 import cm.klg.service_request.domain.user.UserProfile;
-import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.Nullable;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 
 @Slf4j
 public record CreateNewUserUseCase(UserRepository userRepository) {

@@ -1,5 +1,7 @@
 package cm.klg.service_request.config;
 
+import static cm.klg.service_request.utils.Constants.REGEX_UUID_WITH_DELIMITER;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,8 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-
-import static cm.klg.service_request.utils.Constants.REGEX_UUID_WITH_DELIMITER;
 
 @Configuration
 @EnableWebSecurity

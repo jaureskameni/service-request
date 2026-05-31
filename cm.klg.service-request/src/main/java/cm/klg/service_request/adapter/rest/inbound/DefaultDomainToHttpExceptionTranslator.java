@@ -6,7 +6,6 @@ import cm.klg.common.base.exception.ResourceNotFoundException;
 import cm.klg.common.base.transaction.DomainToHttpExceptionTranslator;
 import cm.klg.service_request.domain.service_provider.ServiceProviderNotFoundException;
 import cm.klg.service_request.domain.user.UserNotFoundException;
-
 import java.util.Optional;
 
 public record DefaultDomainToHttpExceptionTranslator() implements DomainToHttpExceptionTranslator {

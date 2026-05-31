@@ -4,6 +4,7 @@ import cm.klg.common.base.config.TransactionBeansProvider;
 import cm.klg.common.base.transaction.DomainToHttpExceptionTranslator;
 import cm.klg.service_request.adapter.rest.inbound.DefaultDomainToHttpExceptionTranslator;
 import cm.klg.service_request.application.outbound.UserRepository;
+import cm.klg.service_request.application.usecase.ApproveServiceProviderUseCase;
 import cm.klg.service_request.application.usecase.CreateNewUserUseCase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,5 +26,13 @@ public class ServiceRequestBeans implements TransactionBeansProvider {
   @Bean
   public CreateNewUserUseCase createNewUserUseCase(UserRepository userRepository) {
     return new CreateNewUserUseCase(userRepository);
+  }
+
+  @Bean
+  public ApproveServiceProviderUseCase approveServiceProviderUseCase(
+      UserRepository userRepository,
+      cm.klg.service_request.application.outbound.ServiceProviderRepository
+          serviceProviderRepository) {
+    return new ApproveServiceProviderUseCase(userRepository, serviceProviderRepository);
   }
 }
