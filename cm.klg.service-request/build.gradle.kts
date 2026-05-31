@@ -92,22 +92,22 @@ val mainOpenApiGenerate by tasks.registering(GenerateTask::class) {
 val mainDomainEventsOpenApiGenerate by tasks.registering(GenerateTask::class) {
     applySpringBootOpenApi(this)
     inputSpec.set("$rootDir/specs/openapi/outbound/domain-event.yml")
+    outputDir.set("${layout.buildDirectory.get()}/generated/sources/openapi/domain-event")
     templateDir.set("$rootDir/specs/openapi/templates/spring-boot")
     modelPackage.set("cm.klg.generated.service.request.adapter.messaging.outbound.dto")
 
     val genDir = "${outputDir.get()}/src/main/java/cm/klg/generated/service/request/adapter/messaging/outbound"
     deleteBeforeGenerate(this, genDir)
-    onlyIfStale(this, genDir)
 }
 
 val uamDomainEventsOpenApiGenerate by tasks.registering(GenerateTask::class) {
     applySpringBootOpenApi(this)
     inputSpec.set("$rootDir/specs/openapi/inbound/uam-domain-event.yml")
     templateDir.set("$rootDir/specs/openapi/templates/spring-boot")
-    modelPackage.set("cm.klg.generated.service.request.adapter.messaging.inbound.dto")
+    modelPackage.set("cm.klg.generated.uam.adapter.messaging.inbound.dto")
     modelNamePrefix.set("Uam")
 
-    val genDir = "${outputDir.get()}/src/main/java/cm/klg/generated/service/request/adapter/messaging/inbound"
+    val genDir = "${outputDir.get()}/src/main/java/cm/klg/generated/uam/adapter/messaging/inbound"
     deleteBeforeGenerate(this, genDir)
     onlyIfStale(this, genDir)
 }
@@ -116,10 +116,9 @@ val serviceProviderDomainEventsOpenApiGenerate by tasks.registering(GenerateTask
     applySpringBootOpenApi(this)
     inputSpec.set("$rootDir/specs/openapi/inbound/service-provider-domain-event.yml")
     templateDir.set("$rootDir/specs/openapi/templates/spring-boot")
-    modelPackage.set("cm.klg.generated.service.request.adapter.messaging.inbound.dto")
-    modelNamePrefix.set("Uam")
+    modelNamePrefix.set("ServiceProvider")
 
-    val genDir = "${outputDir.get()}/src/main/java/cm/klg/generated/service/request/adapter/messaging/inbound"
+    val genDir = "${outputDir.get()}/src/main/java/cm/klg/generated/service_provider/adapter/messaging/inbound"
     deleteBeforeGenerate(this, genDir)
     onlyIfStale(this, genDir)
 }
