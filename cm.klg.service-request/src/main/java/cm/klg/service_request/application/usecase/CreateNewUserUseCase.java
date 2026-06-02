@@ -1,11 +1,11 @@
 package cm.klg.service_request.application.usecase;
 
 import cm.klg.common.base.domain.CreatedAt;
-import cm.klg.common.base.domain.PhoneNumber;
 import cm.klg.service_request.application.outbound.UserRepository;
 import cm.klg.service_request.domain.user.EmailAddress;
 import cm.klg.service_request.domain.user.Firstname;
 import cm.klg.service_request.domain.user.Lastname;
+import cm.klg.service_request.domain.user.PhoneNumber;
 import cm.klg.service_request.domain.user.User;
 import cm.klg.service_request.domain.user.UserId;
 import cm.klg.service_request.domain.user.UserProfile;

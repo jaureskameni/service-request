@@ -1,11 +1,12 @@
 package cm.klg.service_request.adapter.persistence.outbound.jpa;
 
 import cm.klg.common.base.domain.CreatedAt;
-import cm.klg.common.base.domain.PhoneNumber;
+import cm.klg.common.base.entity.PhoneNumberJpa;
 import cm.klg.service_request.domain.service_provider.ServiceProvider;
 import cm.klg.service_request.domain.user.EmailAddress;
 import cm.klg.service_request.domain.user.Firstname;
 import cm.klg.service_request.domain.user.Lastname;
+import cm.klg.service_request.domain.user.PhoneNumber;
 import cm.klg.service_request.domain.user.User;
 import cm.klg.service_request.domain.user.UserId;
 import cm.klg.service_request.domain.user.UserProfile;
@@ -53,4 +54,11 @@ public interface JpaMapper {
   @Mapping(target = "status", source = "status")
   @Mapping(target = "approvedAt", source = "approvedAt.value")
   ServiceProviderJpa toJpa(ServiceProvider serviceProvider);
+
+  default PhoneNumberJpa toJpa(PhoneNumber phoneNumber) {
+    if (phoneNumber == null) {
+      return null;
+    }
+    return new PhoneNumberJpa(phoneNumber.countryCode(), phoneNumber.number());
+  }
 }

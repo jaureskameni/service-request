@@ -1,7 +1,6 @@
 package cm.klg.service_request.domain.user;
 
 import cm.klg.common.base.domain.CreatedAt;
-import cm.klg.common.base.domain.PhoneNumber;
 import lombok.Getter;
 import org.jspecify.annotations.Nullable;
 
