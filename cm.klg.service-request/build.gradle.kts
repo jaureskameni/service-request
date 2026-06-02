@@ -17,10 +17,10 @@ val commonBuildDir = "$rootDir/../submodule/cm.klg.common.build"
 
 ext["nullawayAnnotatedPackages"] = "cm.klg.service_request"
 ext["nullawayExcludedClasses"] =
-        listOf(
-                "cm.klg.service_request.ServiceRequestApplication",
-                "cm.klg.service_request.config",
-        )
+    listOf(
+        "cm.klg.service_request.ServiceRequestApplication",
+        "cm.klg.service_request.config",
+    )
 
 apply(from = "$commonBuildDir/gradle/common.microservice.gradle.kts")
 apply(from = "$commonBuildDir/gradle/java.toolchain.gradle.kts")
@@ -86,49 +86,45 @@ val mainOpenApiGenerate by tasks.registering(GenerateTask::class) {
 
     val genDir = "${outputDir.get()}/src/main/java/cm/klg/generated/service/request/adapter/rest/inbound"
     deleteBeforeGenerate(this, genDir)
-    onlyIfStale(this, genDir)
 }
 
 val mainDomainEventsOpenApiGenerate by tasks.registering(GenerateTask::class) {
     applySpringBootOpenApi(this)
     inputSpec.set("$rootDir/specs/openapi/outbound/domain-event.yml")
+    outputDir.set("${layout.buildDirectory.get()}/generated/sources/openapi/domain-event")
     templateDir.set("$rootDir/specs/openapi/templates/spring-boot")
     modelPackage.set("cm.klg.generated.service.request.adapter.messaging.outbound.dto")
 
     val genDir = "${outputDir.get()}/src/main/java/cm/klg/generated/service/request/adapter/messaging/outbound"
     deleteBeforeGenerate(this, genDir)
-    onlyIfStale(this, genDir)
 }
 
 val uamDomainEventsOpenApiGenerate by tasks.registering(GenerateTask::class) {
     applySpringBootOpenApi(this)
     inputSpec.set("$rootDir/specs/openapi/inbound/uam-domain-event.yml")
     templateDir.set("$rootDir/specs/openapi/templates/spring-boot")
-    modelPackage.set("cm.klg.generated.service.request.adapter.messaging.inbound.dto")
+    modelPackage.set("cm.klg.generated.uam.adapter.messaging.inbound.dto")
     modelNamePrefix.set("Uam")
 
-    val genDir = "${outputDir.get()}/src/main/java/cm/klg/generated/service/request/adapter/messaging/inbound"
+    val genDir = "${outputDir.get()}/src/main/java/cm/klg/generated/uam/adapter/messaging/inbound"
     deleteBeforeGenerate(this, genDir)
-    onlyIfStale(this, genDir)
 }
 
 val serviceProviderDomainEventsOpenApiGenerate by tasks.registering(GenerateTask::class) {
     applySpringBootOpenApi(this)
     inputSpec.set("$rootDir/specs/openapi/inbound/service-provider-domain-event.yml")
     templateDir.set("$rootDir/specs/openapi/templates/spring-boot")
-    modelPackage.set("cm.klg.generated.service.request.adapter.messaging.inbound.dto")
-    modelNamePrefix.set("Uam")
+    modelNamePrefix.set("ServiceProvider")
 
-    val genDir = "${outputDir.get()}/src/main/java/cm/klg/generated/service/request/adapter/messaging/inbound"
+    val genDir = "${outputDir.get()}/src/main/java/cm/klg/generated/service_provider/adapter/messaging/inbound"
     deleteBeforeGenerate(this, genDir)
-    onlyIfStale(this, genDir)
 }
 
 tasks.compileJava {
     dependsOn(
-            mainOpenApiGenerate,
-            mainDomainEventsOpenApiGenerate,
-            uamDomainEventsOpenApiGenerate,
+        mainOpenApiGenerate,
+        mainDomainEventsOpenApiGenerate,
+        uamDomainEventsOpenApiGenerate,
         serviceProviderDomainEventsOpenApiGenerate,
     )
 }

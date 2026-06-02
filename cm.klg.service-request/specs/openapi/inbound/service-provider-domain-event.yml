@@ -5,15 +5,15 @@ info:
   description: "Service provider domain event"
   version: "2026-W17"
 servers:
-  - url: "https"
-  - url: "http"
+- url: "https"
+- url: "http"
 paths: {}
 components:
   schemas:
     DomainEventType:
       type: "string"
       enum:
-        - "SERVICE_PROVIDER_APPROVED"
+      - "SERVICE_PROVIDER_APPROVED"
     ServiceProviderApprovedEventDTO:
       type: "object"
       properties:
