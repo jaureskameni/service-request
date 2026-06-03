@@ -3,6 +3,10 @@ package cm.klg.service_request.adapter.persistence.outbound.jpa;
 import cm.klg.common.base.domain.CreatedAt;
 import cm.klg.common.base.entity.PhoneNumberJpa;
 import cm.klg.service_request.domain.service_provider.ServiceProvider;
+import cm.klg.service_request.domain.service_request.ServiceRequest;
+import cm.klg.service_request.domain.service_request.ServiceRequestDescription;
+import cm.klg.service_request.domain.service_request.ServiceRequestLocation;
+import cm.klg.service_request.domain.service_request.ServiceRequestTitle;
 import cm.klg.service_request.domain.user.EmailAddress;
 import cm.klg.service_request.domain.user.Firstname;
 import cm.klg.service_request.domain.user.Lastname;
@@ -10,6 +14,8 @@ import cm.klg.service_request.domain.user.PhoneNumber;
 import cm.klg.service_request.domain.user.User;
 import cm.klg.service_request.domain.user.UserId;
 import cm.klg.service_request.domain.user.UserProfile;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -60,5 +66,29 @@ public interface JpaMapper {
       return null;
     }
     return new PhoneNumberJpa(phoneNumber.countryCode(), phoneNumber.number());
+  }
+
+  @BeanMapping(ignoreByDefault = true)
+  @Mapping(target = "id", source = "id.value")
+  @Mapping(target = "userId", source = "userId.value")
+  @Mapping(target = "serviceTypeId", source = "serviceTypeId.value")
+  @Mapping(target = "providerId", source = "serviceProviderId.value")
+  @Mapping(target = "title", source = "title")
+  @Mapping(target = "description", source = "description")
+  @Mapping(target = "location", source = "location")
+  @Mapping(target = "status", source = "status")
+  @Mapping(target = "createdAt", source = "createdAt.value")
+  ServiceRequestJpa toJpa(@NonNull ServiceRequest serviceRequest);
+
+  default @Nullable String toJpaValue(@Nullable ServiceRequestTitle title) {
+    return title == null ? null : title.value();
+  }
+
+  default @Nullable String toJpaValue(@Nullable ServiceRequestDescription description) {
+    return description == null ? null : description.value();
+  }
+
+  default @Nullable String toJpaValue(@Nullable ServiceRequestLocation location) {
+    return location == null ? null : location.value();
   }
 }

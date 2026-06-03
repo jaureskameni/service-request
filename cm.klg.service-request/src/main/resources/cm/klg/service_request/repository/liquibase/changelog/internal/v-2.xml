@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+	<changeSet id="SR-2:1" author="kameni.nguematcha">
+		<createTable tableName="t_service_request">
+			<column name="c_id" type="varchar(36)">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="pk_service_request" />
+			</column>
+			<column name="c_user_id" type="varchar(36)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_provider_id" type="varchar(36)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_service_type_id" type="varchar(36)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_title" type="varchar(255)" />
+			<column name="c_description" type="text" />
+			<column name="c_location" type="varchar(255)" />
+			<column name="c_status" type="varchar(15)" />
+			<column name="c_created_at" type="timestamp" />
+		</createTable>
+
+		<addForeignKeyConstraint
+			baseTableName="t_service_request" baseColumnNames="c_user_id"
+			constraintName="fk_service_request_user" referencedTableName="t_user"
+			referencedColumnNames="c_id" onDelete="RESTRICT" onUpdate="CASCADE" />
+
+		<addForeignKeyConstraint
+			baseTableName="t_service_request" baseColumnNames="c_provider_id"
+			constraintName="fk_service_request_provider"
+			referencedTableName="t_service_provider" referencedColumnNames="c_id"
+			onDelete="RESTRICT" onUpdate="CASCADE" />
+	</changeSet>
+</databaseChangeLog>
