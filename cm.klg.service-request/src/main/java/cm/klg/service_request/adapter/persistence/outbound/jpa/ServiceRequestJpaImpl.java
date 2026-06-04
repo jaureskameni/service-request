@@ -1,9 +1,16 @@
 package cm.klg.service_request.adapter.persistence.outbound.jpa;
 
 import cm.klg.service_request.application.outbound.ServiceRequestRepository;
+import cm.klg.service_request.application.views.ServiceRequestViews;
 import cm.klg.service_request.domain.service_request.ServiceRequest;
+import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
+import cm.klg.service_request.domain.user.UserId;
+import cm.klg.service_request.utils.PageData;
+import cm.klg.service_request.utils.PaginationFetchRequest;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
 public class ServiceRequestJpaImpl implements ServiceRequestRepository {
@@ -13,5 +20,27 @@ public class ServiceRequestJpaImpl implements ServiceRequestRepository {
   @Override
   public void insert(@NonNull ServiceRequest serviceRequest) {
     springRepository.save(jpaMapper.toJpa(serviceRequest));
+  }
+
+  @Override
+  public PageData<ServiceRequestViews.ServiceRequestView1> loadAllMyRequestsAsView1(
+      @NonNull UserId userId, PaginationFetchRequest pagination) {
+    Pageable pageable = PageRequest.of(pagination.pageIndex(), pagination.limit());
+    var serviceRequestPage =
+        springRepository.findAllMyRequestByUserIdAsView1(userId.value(), pageable);
+    return new PageData<>(serviceRequestPage.getTotalElements(), serviceRequestPage.getContent());
+  }
+
+  @Override
+  public PageData<ServiceRequestViews.ServiceRequestView1> loadAllMyRequestByStatusAsView1(
+      @NonNull UserId userId,
+      @NonNull ServiceRequestStatus status,
+      PaginationFetchRequest pagination) {
+
+    Pageable pageable = PageRequest.of(pagination.pageIndex(), pagination.limit());
+    var serviceRequestPage =
+        springRepository.findAllMyRequestByUserIdAndStatusAsView1(
+            userId.value(), status.name(), pageable);
+    return new PageData<>(serviceRequestPage.getTotalElements(), serviceRequestPage.getContent());
   }
 }

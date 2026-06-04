@@ -31,7 +31,7 @@ spring:
       definition: "user, serviceProvider"
     stream:
       bindings:
-        service-provider-int-0:
+        serviceProvider-in-0:
           group: "${spring.application.name}"
           destination: "serviceProvider"
         user-in-0:
@@ -55,7 +55,7 @@ jk-dev:
 logging:
   level:
     root: "INFO"
-    cm.klg.service_provider: "DEBUG"
+    cm.klg.service_request: "DEBUG"
     org.springframework.web: "INFO"
     org.springframework.security: "INFO"
     org.hibernate: "INFO"
