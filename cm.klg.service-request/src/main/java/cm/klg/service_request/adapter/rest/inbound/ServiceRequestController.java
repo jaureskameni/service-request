@@ -7,12 +7,14 @@ import cm.klg.common.base.adapter.inbound.rest.WithAuthenticationSupport;
 import cm.klg.common.base.transaction.UseCaseExecutor;
 import cm.klg.generated.service.request.adapter.rest.inbound.api.ServiceRequestApi;
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.CreationResponseDTO;
+import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestDTO;
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestPaginateDTO;
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestRegisterDTO;
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestStatusDTO;
 import cm.klg.service_request.application.usecase.CreateNewServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
 import cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase;
+import cm.klg.service_request.application.usecase.GetServiceRequestByIdUseCase;
 import cm.klg.service_request.domain.service_request.ServiceRequestId;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,18 @@ public class ServiceRequestController implements ServiceRequestApi, WithAuthenti
   private final CreateNewServiceRequestUseCase createNewServiceRequestUseCase;
   private final GetAllMyServiceRequestsUseCase getAllMyServiceRequestsUseCase;
   private final GetAllServiceRequestsByProviderUseCase getAllServiceRequestsByProviderUseCase;
+  private final GetServiceRequestByIdUseCase getServiceRequestByIdUseCase;
+
+  public ResponseEntity<ServiceRequestDTO> getServiceRequestById(UUID serviceRequestId) {
+    var result =
+        useCaseExecutor.executeQuery(
+            () ->
+                getServiceRequestByIdUseCase.execute(
+                    new GetServiceRequestByIdUseCase.Command(
+                        new ServiceRequestId(serviceRequestId))));
+
+    return ResponseEntity.ok(restMapper.toServiceRequestDTO(result));
+  }
 
   @Override
   public ResponseEntity<CreationResponseDTO> createNewServiceRequest(

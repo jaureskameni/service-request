@@ -93,7 +93,7 @@ public interface RestMapper {
             pageData.serviceRequestView1s().stream().map(this::toServiceRequestDTO).toList());
   }
 
-  private ServiceRequestDTO toServiceRequestDTO(
+  default ServiceRequestDTO toServiceRequestDTO(
       ServiceRequestViews.ServiceRequestView1 serviceRequestView1) {
 
     return new ServiceRequestDTO()

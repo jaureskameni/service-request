@@ -5,7 +5,6 @@ import static cm.klg.service_request.utils.Constants.REGEX_UUID_WITH_DELIMITER;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -21,49 +20,23 @@ public class SecurityConfig {
   private final KeycloakJwtConverter keycloakJwtConverter;
 
   @Bean
-  @Order(0)
-  public SecurityFilterChain publicEndpoints(HttpSecurity http) {
-    return http.securityMatcher("/service-catalog")
-        .csrf(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-        .build();
-  }
-
-  @Bean
-  @Order(1)
   public SecurityFilterChain protectedEndpoints(HttpSecurity http) {
     return http.csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
             auth ->
-                auth.requestMatchers(HttpMethod.POST, "/service-provider")
-                    .authenticated()
-                    .requestMatchers(HttpMethod.GET, "/service-provider/search")
-                    .authenticated()
-                    .requestMatchers(HttpMethod.PUT, "/service-provider/add-service")
-                    .authenticated()
-                    .requestMatchers(HttpMethod.GET, "/service-provider")
-                    .hasAnyAuthority(Scopes.SERVICE_PROVIDER_READ_ALL)
-                    .requestMatchers(
-                        HttpMethod.PUT,
-                        "/service-provider/{serviceProviderId:%s}/approve"
-                            .formatted(REGEX_UUID_WITH_DELIMITER))
-                    .hasAnyAuthority(Scopes.SERVICE_PROVIDER_APPROVE)
-                    .requestMatchers(
-                        HttpMethod.PUT,
-                        "/service-provider/{serviceProviderId:%s}/reject"
-                            .formatted(REGEX_UUID_WITH_DELIMITER))
-                    .hasAnyAuthority(Scopes.SERVICE_PROVIDER_REJECT)
-                    .requestMatchers(
-                        HttpMethod.GET,
-                        "/service-provider/{serviceProviderId:%s}"
-                            .formatted(REGEX_UUID_WITH_DELIMITER))
+                auth.requestMatchers(HttpMethod.POST, "/service-request")
                     .authenticated()
                     .requestMatchers(
                         HttpMethod.GET,
-                        "/service-provider/{serviceProviderId:%s}/service-request"
+                        "/service-request/{serviceRequestId:%s}"
                             .formatted(REGEX_UUID_WITH_DELIMITER))
                     .authenticated()
-                    .requestMatchers(HttpMethod.POST, "/service-request")
+                    .requestMatchers(HttpMethod.GET, "/my/service-request")
+                    .authenticated()
+                    .requestMatchers(
+                        HttpMethod.GET,
+                        "/service-request/{serviceProviderId:%s}/service-request"
+                            .formatted(REGEX_UUID_WITH_DELIMITER))
                     .authenticated()
                     .anyRequest()
                     .denyAll())

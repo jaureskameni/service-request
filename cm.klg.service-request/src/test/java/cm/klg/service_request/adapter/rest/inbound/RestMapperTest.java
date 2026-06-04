@@ -165,6 +165,39 @@ class RestMapperTest {
   }
 
   @Test
+  void shouldMapServiceRequestDtoFromView() {
+    UUID id = UUID.randomUUID();
+    UUID userId = UUID.randomUUID();
+    UUID providerId = UUID.randomUUID();
+    UUID serviceTypeId = UUID.randomUUID();
+    LocalDateTime createdAt = LocalDateTime.of(2026, 6, 4, 12, 0);
+    var view =
+        new FakeServiceRequestView1(
+            id,
+            userId,
+            providerId,
+            serviceTypeId,
+            "title",
+            "description",
+            "location",
+            ServiceRequestStatus.ACCEPTED.name(),
+            createdAt);
+
+    var resultUnderTest = mapper.toServiceRequestDTO(view);
+
+    assertThat(resultUnderTest)
+        .satisfies(
+            dto -> {
+              assertThat(dto.getId()).isEqualTo(id);
+              assertThat(dto.getUserId()).isEqualTo(userId);
+              assertThat(dto.getProviderId()).isEqualTo(providerId);
+              assertThat(dto.getServiceTypeId()).isEqualTo(serviceTypeId);
+              assertThat(dto.getTitle()).isEqualTo("title");
+              assertThat(dto.getStatus()).isEqualTo(ServiceRequestStatusDTO.ACCEPTED);
+            });
+  }
+
+  @Test
   void shouldMapServiceRequestPaginateDto() {
     UUID id = UUID.randomUUID();
     UUID userId = UUID.randomUUID();

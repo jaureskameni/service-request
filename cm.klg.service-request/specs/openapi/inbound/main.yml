@@ -30,6 +30,31 @@ paths:
           description: "SERVICE_PROVIDER_404_002"
         "409":
           description: "SERVICE-PROVIDER_409_001| SERVICE-PROVIDER_409_002"
+  /service-request/{serviceRequestId}:
+    get:
+      tags:
+      - "ServiceRequest"
+      summary: "Get Service Request By Id"
+      description: "Get Service Request By Id"
+      operationId: "getServiceRequestById"
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: "serviceRequestId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+          format: "uuid"
+      responses:
+        "200":
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceRequest"
+        "404":
+          description: "SERVICE_REQUEST_404_003"
   /my/service-request:
     get:
       tags:
@@ -65,7 +90,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ServiceRequestPaginate"
-  /service-provider/{serviceProviderId}/service-request:
+  /service-request/{serviceProviderId}/service-request:
     get:
       tags:
       - "ServiceRequest"
