@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum ServiceRequestErrorCode implements ErrorCode {
   // ERROR-404
   SERVICE_REQUEST_404_001("SERVICE_REQUEST_404_001", "User Not Found"),
-  SERVICE_REQUEST_404_002("SERVICE_REQUEST_404_002", "Service Provider Not Found");
+  SERVICE_REQUEST_404_002("SERVICE_REQUEST_404_002", "Service Provider Not Found"),
+  SERVICE_REQUEST_404_003("SERVICE_REQUEST_404_003", "Service Request Not Found");
 
   private final String value;
   @Getter private final String description;

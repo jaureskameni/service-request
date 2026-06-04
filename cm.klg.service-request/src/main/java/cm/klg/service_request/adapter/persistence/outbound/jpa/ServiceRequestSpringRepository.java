@@ -1,6 +1,7 @@
 package cm.klg.service_request.adapter.persistence.outbound.jpa;
 
 import cm.klg.service_request.application.views.ServiceRequestViews;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -99,4 +100,22 @@ public interface ServiceRequestSpringRepository extends JpaRepository<ServiceReq
           "SELECT COUNT(DISTINCT s) FROM ServiceRequestJpa s WHERE" + " s.providerId = :providerId")
   Page<ServiceRequestViews.ServiceRequestView1> findAllRequestByProviderIdAsView1(
       @Param("providerId") UUID providerId, Pageable pageable);
+
+  @Query(
+      value =
+          """
+          SELECT
+              s.id                        AS id,
+              s.userId                    AS userId,
+              s.providerId                AS serviceProviderId,
+              s.serviceTypeId             AS serviceTypeId,
+              s.title                     AS title,
+              s.description               AS description,
+              s.location                  AS location,
+              s.status                    AS status,
+              s.createdAt                 AS createdAt
+          FROM ServiceRequestJpa s
+          WHERE s.id = :id\
+          """)
+  Optional<ServiceRequestViews.ServiceRequestView1> findByIdAsView1(@Param("id") UUID id);
 }

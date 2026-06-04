@@ -3,6 +3,7 @@ package cm.klg.service_request.adapter.rest.inbound;
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 
 import cm.klg.common.base.transaction.UseCaseExecutor;
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.CreationResponseDTO;
@@ -12,6 +13,8 @@ import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestR
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestStatusDTO;
 import cm.klg.service_request.application.usecase.CreateNewServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
+import cm.klg.service_request.application.usecase.GetServiceRequestByIdUseCase;
+import cm.klg.service_request.application.views.ServiceRequestViews.ServiceRequestView1;
 import cm.klg.service_request.domain.service_request.ServiceRequestId;
 import java.util.List;
 import java.util.UUID;
@@ -31,7 +34,35 @@ class ServiceRequestControllerTest {
   @Mock private CreateNewServiceRequestUseCase createNewServiceRequestUseCase;
   @Mock private GetAllMyServiceRequestsUseCase getAllMyServiceRequestsUseCase;
 
+  @Mock private GetServiceRequestByIdUseCase getServiceRequestByIdUseCase;
+
   @InjectMocks private ServiceRequestController objectUnderTest;
+
+  @Test
+  void getServiceRequestByIdTest() {
+    // Given
+    UUID serviceRequestId = UUID.randomUUID();
+    var result = mock(ServiceRequestView1.class);
+    var dto = new ServiceRequestDTO().id(serviceRequestId);
+
+    BDDMockito.given(useCaseExecutor.executeQuery(any())).willReturn(result);
+    BDDMockito.given(restMapper.toServiceRequestDTO(result)).willReturn(dto);
+
+    // When
+    var resultUnderTest =
+        // spotless:off
+                given()
+                        .standaloneSetup(objectUnderTest)
+                        .when()
+                        .get("/service-request/{serviceRequestId}", serviceRequestId)
+                        .then()
+                        .statusCode(HttpStatus.OK.value())
+                        .extract()
+                        .as(ServiceRequestDTO.class);
+        // spotless:on
+    // Then
+    assertThat(resultUnderTest.getId()).isEqualTo(serviceRequestId);
+  }
 
   @Test
   void createNewServiceRequestTest() {
@@ -125,7 +156,7 @@ class ServiceRequestControllerTest {
                     .queryParam("page", "0")
                     .queryParam("limit", "10")
             .when()
-                    .get("/service-provider/{serviceProviderId}/service-request", providerId)
+                    .get("/service-request/{serviceProviderId}/service-request", providerId)
             .then()
                     .statusCode(HttpStatus.OK.value())
                     .extract()

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import cm.klg.service_request.application.views.ServiceRequestViews.ServiceRequestView1;
 import cm.klg.service_request.domain.service_request.ServiceRequest;
+import cm.klg.service_request.domain.service_request.ServiceRequestId;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
 import cm.klg.service_request.domain.user.UserId;
 import cm.klg.service_request.utils.PageData;
@@ -120,5 +121,17 @@ class ServiceRequestJpaRepositoryTest {
             eq(providerId.value()),
             eq(ServiceRequestStatus.ACCEPTED.name()),
             argThat(page -> page.getPageNumber() == 0 && page.getPageSize() == 10));
+  }
+
+  @Test
+  void shouldLoadByIdAsView1() {
+    ServiceRequestId id = new ServiceRequestId(UUID.randomUUID());
+    when(springRepository.findByIdAsView1(id.value()))
+        .thenReturn(java.util.Optional.of(serviceRequestView1));
+
+    var result = repository.loadByIdAsView1(id);
+
+    assertThat(result).isEqualTo(serviceRequestView1);
+    verify(springRepository).findByIdAsView1(id.value());
   }
 }
