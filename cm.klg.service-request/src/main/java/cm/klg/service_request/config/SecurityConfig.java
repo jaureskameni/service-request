@@ -20,7 +20,7 @@ public class SecurityConfig {
   private final KeycloakJwtConverter keycloakJwtConverter;
 
   @Bean
-  public SecurityFilterChain protectedEndpoints(HttpSecurity http) {
+  public SecurityFilterChain protectedEndpoints(HttpSecurity http) throws Exception {
     return http.csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
             auth ->
@@ -30,6 +30,11 @@ public class SecurityConfig {
                         HttpMethod.GET,
                         "/service-request/{serviceRequestId:%s}"
                             .formatted(REGEX_UUID_WITH_DELIMITER))
+                    .authenticated()
+                    .requestMatchers(
+                        HttpMethod.PUT,
+                        "/service-provider/{serviceProviderId:%s}/service-request/{serviceRequestId:%s}/accept"
+                            .formatted(REGEX_UUID_WITH_DELIMITER, REGEX_UUID_WITH_DELIMITER))
                     .authenticated()
                     .requestMatchers(HttpMethod.GET, "/my/service-request")
                     .authenticated()

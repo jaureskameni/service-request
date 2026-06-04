@@ -4,12 +4,14 @@ import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestD
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestPaginateDTO;
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestRegisterDTO;
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestStatusDTO;
+import cm.klg.service_request.application.usecase.AcceptServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.CreateNewServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
 import cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase;
 import cm.klg.service_request.application.views.ServiceRequestViews;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_request.ServiceRequestDescription;
+import cm.klg.service_request.domain.service_request.ServiceRequestId;
 import cm.klg.service_request.domain.service_request.ServiceRequestLocation;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
 import cm.klg.service_request.domain.service_request.ServiceRequestTitle;
@@ -106,5 +108,11 @@ public interface RestMapper {
         .description(serviceRequestView1.getDescription())
         .location(serviceRequestView1.getLocation())
         .createdAt(serviceRequestView1.getCreatedAt());
+  }
+
+  default AcceptServiceRequestUseCase.Command toAcceptServiceRequestCommand(
+      UUID serviceRequestId, UUID userId) {
+    return new AcceptServiceRequestUseCase.Command(
+        UserId.from(userId), ServiceRequestId.from(serviceRequestId));
   }
 }

@@ -54,7 +54,30 @@ paths:
               schema:
                 $ref: "#/components/schemas/ServiceRequest"
         "404":
-          description: "SERVICE_REQUEST_404_003"
+          description: "SERVICE_REQUEST_404_001"
+  /service-request/{serviceRequestId}/accept:
+    put:
+      tags:
+      - "ServiceRequest"
+      summary: "Accept Service Request"
+      description: "Accept Service Request"
+      operationId: "acceptServiceRequest"
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: "serviceRequestId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+          format: "uuid"
+      responses:
+        "204":
+          description: "Successful operation"
+        "403":
+          description: "SERVICE_REQUEST_403_001"
+        "404":
+          description: "SERVICE_REQUEST_404_002"
   /my/service-request:
     get:
       tags:

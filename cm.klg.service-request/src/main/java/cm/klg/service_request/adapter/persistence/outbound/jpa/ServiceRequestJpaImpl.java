@@ -10,6 +10,7 @@ import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
 import cm.klg.service_request.domain.user.UserId;
 import cm.klg.service_request.utils.PageData;
 import cm.klg.service_request.utils.PaginationFetchRequest;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +24,16 @@ public class ServiceRequestJpaImpl implements ServiceRequestRepository {
   @Override
   public void insert(@NonNull ServiceRequest serviceRequest) {
     springRepository.save(jpaMapper.toJpa(serviceRequest));
+  }
+
+  @Override
+  public void update(@NonNull ServiceRequest serviceRequest) {
+    getById(serviceRequest.getId())
+        .ifPresent(
+            serviceRequestJpa -> {
+              jpaMapper.toJpa(serviceRequestJpa, serviceRequest);
+              springRepository.save(serviceRequestJpa);
+            });
   }
 
   @Override
@@ -69,9 +80,21 @@ public class ServiceRequestJpaImpl implements ServiceRequestRepository {
   }
 
   @Override
-  public ServiceRequestViews.ServiceRequestView1 loadByIdAsView1(@NonNull ServiceRequestId id) {
+  public ServiceRequestViews.ServiceRequestView1 loadByIdAsView1(@NonNull ServiceRequestId id)
+      throws ServiceRequestNotFoundException {
     return springRepository
         .findByIdAsView1(id.value())
         .orElseThrow(ServiceRequestNotFoundException::new);
+  }
+
+  @Override
+  public ServiceRequest load(@NonNull ServiceRequestId id) throws ServiceRequestNotFoundException {
+    return this.getById(id)
+        .map(jpaMapper::toDomain)
+        .orElseThrow(ServiceRequestNotFoundException::new);
+  }
+
+  private Optional<ServiceRequestJpa> getById(ServiceRequestId id) {
+    return springRepository.findById(id.value());
   }
 }

@@ -91,7 +91,6 @@ val mainOpenApiGenerate by tasks.registering(GenerateTask::class) {
 val mainDomainEventsOpenApiGenerate by tasks.registering(GenerateTask::class) {
     applySpringBootOpenApi(this)
     inputSpec.set("$rootDir/specs/openapi/outbound/domain-event.yml")
-    outputDir.set("${layout.buildDirectory.get()}/generated/sources/openapi/domain-event")
     templateDir.set("$rootDir/specs/openapi/templates/spring-boot")
     modelPackage.set("cm.klg.generated.service.request.adapter.messaging.outbound.dto")
 

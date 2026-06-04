@@ -31,7 +31,10 @@ spring:
       definition: "user, serviceProvider"
     stream:
       bindings:
-        serviceProvider-in-0:
+        service-request-out-0:
+          group: "${spring.application.name}"
+          destination: "serviceRequest"
+        service-provider-in-0:
           group: "${spring.application.name}"
           destination: "serviceProvider"
         user-in-0:
@@ -49,7 +52,7 @@ jk-dev:
       batchSize: "${SCHEDULER_EVENT_NOTIFICATION_BATCH_SIZE:1000}"
       frequency: "${SCHEDULER_EVENT_NOTIFICATION_FREQUENCY:5000}"
     outbox:
-      enabled: "${DOMAIN_EVENTS_MESSAGING_PUBLISHER_ENABLED:false}"
+      enabled: "${DOMAIN_EVENTS_MESSAGING_PUBLISHER_ENABLED:true}"
       batchSize: "${SCHEDULER_EVENT_NOTIFICATION_BATCH_SIZE:1000}"
       frequency: "${SCHEDULER_EVENT_NOTIFICATION_FREQUENCY:5000}"
 logging:

@@ -4,6 +4,7 @@ import cm.klg.service_request.application.views.ServiceRequestViews.ServiceReque
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_request.ServiceRequest;
 import cm.klg.service_request.domain.service_request.ServiceRequestId;
+import cm.klg.service_request.domain.service_request.ServiceRequestNotFoundException;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
 import cm.klg.service_request.domain.user.UserId;
 import cm.klg.service_request.utils.PageData;
@@ -11,6 +12,8 @@ import cm.klg.service_request.utils.PaginationFetchRequest;
 
 public interface ServiceRequestRepository {
   void insert(ServiceRequest serviceRequest);
+
+  void update(ServiceRequest serviceRequest);
 
   PageData<ServiceRequestView1> loadAllMyRequestsAsView1(
       UserId userId, PaginationFetchRequest pagination);
@@ -24,5 +27,7 @@ public interface ServiceRequestRepository {
   PageData<ServiceRequestView1> loadAllRequestByProviderAndStatusAsView1(
       ServiceProviderId providerId, ServiceRequestStatus status, PaginationFetchRequest pagination);
 
-  ServiceRequestView1 loadByIdAsView1(ServiceRequestId id);
+  ServiceRequestView1 loadByIdAsView1(ServiceRequestId id) throws ServiceRequestNotFoundException;
+
+  ServiceRequest load(ServiceRequestId id) throws ServiceRequestNotFoundException;
 }
