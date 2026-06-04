@@ -39,4 +39,12 @@ class ServiceProviderJpaRepositoryTest {
 
     verify(serviceProviderSpringRepository).save(jpa);
   }
+
+  @Test
+  void shouldCheckServiceProviderExistenceById() {
+    ServiceProviderId providerId = ServiceProviderId.from(UUID.randomUUID());
+    when(serviceProviderSpringRepository.existsById(providerId.value())).thenReturn(true);
+
+    org.assertj.core.api.Assertions.assertThat(repository.existsById(providerId)).isTrue();
+  }
 }

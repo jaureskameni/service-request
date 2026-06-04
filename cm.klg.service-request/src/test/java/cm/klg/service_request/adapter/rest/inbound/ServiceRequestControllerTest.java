@@ -98,4 +98,42 @@ class ServiceRequestControllerTest {
     assertThat(result.getCount()).isEqualTo(1);
     assertThat(result.getServiceRequest()).hasSize(1);
   }
+
+  @Test
+  void getAllServiceRequestsByProviderTest() {
+    // Given
+    UUID providerId = UUID.randomUUID();
+    ServiceRequestStatusDTO statusDTO = ServiceRequestStatusDTO.ACCEPTED;
+    var serviceProviderDTO = new ServiceRequestDTO().id(UUID.randomUUID());
+    var useCaseResponse =
+        new cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase
+            .Response(List.of(), 1L);
+    var paginateDTO =
+        new ServiceRequestPaginateDTO().count(1L).serviceRequest(List.of(serviceProviderDTO));
+
+    BDDMockito.given(useCaseExecutor.executeQuery(any())).willReturn(useCaseResponse);
+    BDDMockito.given(restMapper.toServiceRequestPaginateDTO(useCaseResponse))
+        .willReturn(paginateDTO);
+
+    // When
+    var result =
+        // spotless:off
+            given()
+                    .standaloneSetup(objectUnderTest)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .queryParam("status", statusDTO)
+                    .queryParam("page", "0")
+                    .queryParam("limit", "10")
+            .when()
+                    .get("/service-provider/{serviceProviderId}/service-request", providerId)
+            .then()
+                    .statusCode(HttpStatus.OK.value())
+                    .extract()
+                    .as(ServiceRequestPaginateDTO.class);
+      // spotless:on
+
+    // Then
+    assertThat(result.getCount()).isEqualTo(1);
+    assertThat(result.getServiceRequest()).hasSize(1);
+  }
 }
