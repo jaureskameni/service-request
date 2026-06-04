@@ -50,6 +50,9 @@ public class ServiceRequestJpa extends AggregateRootEntity<UUID> {
   @Column(name = "c_created_at")
   private LocalDateTime createdAt;
 
+  @Column(name = "c_accepted_at")
+  private LocalDateTime acceptedAt;
+
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;

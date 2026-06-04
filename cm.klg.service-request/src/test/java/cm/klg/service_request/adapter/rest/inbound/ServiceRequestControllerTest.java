@@ -4,6 +4,7 @@ import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import cm.klg.common.base.transaction.UseCaseExecutor;
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.CreationResponseDTO;
@@ -11,8 +12,10 @@ import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestD
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestPaginateDTO;
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestRegisterDTO;
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestStatusDTO;
+import cm.klg.service_request.application.usecase.AcceptServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.CreateNewServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
+import cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase;
 import cm.klg.service_request.application.usecase.GetServiceRequestByIdUseCase;
 import cm.klg.service_request.application.views.ServiceRequestViews.ServiceRequestView1;
 import cm.klg.service_request.domain.service_request.ServiceRequestId;
@@ -33,8 +36,9 @@ class ServiceRequestControllerTest {
   @Mock private RestMapper restMapper;
   @Mock private CreateNewServiceRequestUseCase createNewServiceRequestUseCase;
   @Mock private GetAllMyServiceRequestsUseCase getAllMyServiceRequestsUseCase;
-
+  @Mock private GetAllServiceRequestsByProviderUseCase getAllServiceRequestsByProviderUseCase;
   @Mock private GetServiceRequestByIdUseCase getServiceRequestByIdUseCase;
+  @Mock private AcceptServiceRequestUseCase acceptServiceRequestUseCase;
 
   @InjectMocks private ServiceRequestController objectUnderTest;
 
@@ -62,6 +66,26 @@ class ServiceRequestControllerTest {
         // spotless:on
     // Then
     assertThat(resultUnderTest.getId()).isEqualTo(serviceRequestId);
+  }
+
+  @Test
+  void acceptServiceRequestTest() {
+    // Given
+    UUID serviceRequestId = UUID.randomUUID();
+
+    // When
+
+    // spotless:off
+                given()
+                        .standaloneSetup(objectUnderTest)
+                        .when()
+                        .put("/service-request/{serviceRequestId}/accept", serviceRequestId)
+                        .then()
+                        .statusCode(HttpStatus.NO_CONTENT.value());
+        // spotless:on
+
+    // Then
+    verify(useCaseExecutor).runCommand(any());
   }
 
   @Test
@@ -133,7 +157,6 @@ class ServiceRequestControllerTest {
   @Test
   void getAllServiceRequestsByProviderTest() {
     // Given
-    UUID providerId = UUID.randomUUID();
     ServiceRequestStatusDTO statusDTO = ServiceRequestStatusDTO.ACCEPTED;
     var serviceProviderDTO = new ServiceRequestDTO().id(UUID.randomUUID());
     var useCaseResponse =
@@ -156,7 +179,7 @@ class ServiceRequestControllerTest {
                     .queryParam("page", "0")
                     .queryParam("limit", "10")
             .when()
-                    .get("/service-request/{serviceProviderId}/service-request", providerId)
+                    .get("/my/provider/service-requests")
             .then()
                     .statusCode(HttpStatus.OK.value())
                     .extract()

@@ -11,6 +11,7 @@ import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestD
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestPaginateDTO;
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestRegisterDTO;
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestStatusDTO;
+import cm.klg.service_request.application.usecase.AcceptServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.CreateNewServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
 import cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase;
@@ -30,7 +31,9 @@ public class ServiceRequestController implements ServiceRequestApi, WithAuthenti
   private final GetAllMyServiceRequestsUseCase getAllMyServiceRequestsUseCase;
   private final GetAllServiceRequestsByProviderUseCase getAllServiceRequestsByProviderUseCase;
   private final GetServiceRequestByIdUseCase getServiceRequestByIdUseCase;
+  private final AcceptServiceRequestUseCase acceptServiceRequestUseCase;
 
+  @Override
   public ResponseEntity<ServiceRequestDTO> getServiceRequestById(UUID serviceRequestId) {
     var result =
         useCaseExecutor.executeQuery(
@@ -40,6 +43,15 @@ public class ServiceRequestController implements ServiceRequestApi, WithAuthenti
                         new ServiceRequestId(serviceRequestId))));
 
     return ResponseEntity.ok(restMapper.toServiceRequestDTO(result));
+  }
+
+  @Override
+  public ResponseEntity<Void> acceptServiceRequest(UUID serviceRequestId) {
+    useCaseExecutor.runCommand(
+        () ->
+            acceptServiceRequestUseCase.execute(
+                restMapper.toAcceptServiceRequestCommand(serviceRequestId, getCurrentUserId())));
+    return ResponseEntity.noContent().build();
   }
 
   @Override
@@ -67,14 +79,14 @@ public class ServiceRequestController implements ServiceRequestApi, WithAuthenti
   }
 
   @Override
-  public ResponseEntity<ServiceRequestPaginateDTO> getAllServiceRequestByProvider(
-      UUID serviceProviderId, Integer limit, ServiceRequestStatusDTO status, Integer page) {
+  public ResponseEntity<ServiceRequestPaginateDTO> getAllServiceRequestsForCurrentProvider(
+      Integer limit, ServiceRequestStatusDTO status, Integer page) {
     var result =
         useCaseExecutor.executeQuery(
             () ->
                 getAllServiceRequestsByProviderUseCase.execute(
                     restMapper.toGetAllServiceRequestsByProviderCommand(
-                        serviceProviderId, limit, status, page)));
+                        limit, status, page, getCurrentUserId())));
     return ResponseEntity.status(OK).body(restMapper.toServiceRequestPaginateDTO(result));
   }
 

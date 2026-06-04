@@ -13,35 +13,45 @@ components:
     DomainEventType:
       type: "string"
       enum:
-      - "SERVICE_PROVIDER_APPROVED"
-    ServiceProviderApprovedEventDTO:
+      - "SERVICE_REQUEST_ACCEPTED"
+    ServiceRequestAcceptedEventDTO:
       type: "object"
+      required:
+      - "id"
+      - "userId"
+      - "serviceTypeId"
+      - "serviceProviderId"
+      - "status"
+      - "createdAt"
       properties:
-        serviceProviderId:
+        id:
           type: "string"
           format: "uuid"
         userId:
           type: "string"
           format: "uuid"
-        lastname:
+        serviceTypeId:
           type: "string"
-        firstname:
+          format: "uuid"
+        serviceProviderId:
           type: "string"
-        email:
+          format: "uuid"
+        title:
           type: "string"
-        phoneNumber:
-          $ref: "#/components/schemas/PhoneNumberDTO"
-        approvedAt:
+        description:
+          type: "string"
+        acceptedAt:
           type: "string"
           format: "date-time"
-    PhoneNumberDTO:
-      type: "object"
-      properties:
-        countryCode:
+        createdAt:
           type: "string"
-          description: "the international code for the country"
-          example: "237 for Cameroon"
-        number:
-          type: "string"
-          description: "the phone number"
-          example: "653492410"
+          format: "date-time"
+        status:
+          $ref: "#/components/schemas/ServiceRequestStatus"
+    ServiceRequestStatus:
+      type: "string"
+      enum:
+      - "PENDING"
+      - "ACCEPTED"
+      - "REJECTED"
+      - "CANCELLED"

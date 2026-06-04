@@ -2,6 +2,7 @@ package cm.klg.service_request.domain.service_request;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import cm.klg.common.base.domain.CreatedAt;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.user.UserId;
 import java.util.UUID;
@@ -72,5 +73,59 @@ class ServiceRequestDomainTest {
               assertThat(serviceRequest.getDescription()).isNull();
               assertThat(serviceRequest.getLocation()).isNull();
             });
+  }
+
+  @Test
+  void shouldAcceptServiceRequestWhenProviderMatches() {
+    ServiceProviderId providerId = ServiceProviderId.generate();
+    ServiceRequest serviceRequest =
+        ServiceRequest.of(
+            new ServiceRequestParties(
+                UserId.from(UUID.randomUUID()), providerId, ServiceTypeId.from(UUID.randomUUID())),
+            new ServiceRequestDetails(null, null, null));
+
+    var event = serviceRequest.accept(providerId);
+
+    assertThat(serviceRequest.getStatus()).isEqualTo(ServiceRequestStatus.ACCEPTED);
+    assertThat(serviceRequest.getAcceptAt()).isNotNull();
+    assertThat(event).isNotNull();
+    assertThat(event.id()).isEqualTo(serviceRequest.getId());
+    assertThat(event.lifecycle().status()).isEqualTo(ServiceRequestStatus.ACCEPTED);
+  }
+
+  @Test
+  void shouldThrowExceptionWhenAcceptingWithWrongProvider() {
+    ServiceProviderId assignedProviderId = ServiceProviderId.generate();
+    ServiceProviderId wrongProviderId = ServiceProviderId.generate();
+    ServiceRequest serviceRequest =
+        ServiceRequest.of(
+            new ServiceRequestParties(
+                UserId.from(UUID.randomUUID()),
+                assignedProviderId,
+                ServiceTypeId.from(UUID.randomUUID())),
+            new ServiceRequestDetails(null, null, null));
+
+    org.junit.jupiter.api.Assertions.assertThrows(
+        RequestDoesNotBelongToProviderException.class,
+        () -> serviceRequest.accept(wrongProviderId));
+  }
+
+  @Test
+  void shouldReconstituteServiceRequest() {
+    ServiceRequestId id = ServiceRequestId.generate();
+    UserId userId = UserId.from(UUID.randomUUID());
+    ServiceProviderId providerId = ServiceProviderId.generate();
+    ServiceTypeId serviceTypeId = ServiceTypeId.from(UUID.randomUUID());
+    var createdAt = CreatedAt.from(java.time.LocalDateTime.now());
+
+    ServiceRequest serviceRequest =
+        ServiceRequest.reconstitute(
+            id,
+            new ServiceRequestParties(userId, providerId, serviceTypeId),
+            new ServiceRequestDetails(ServiceRequestTitle.from("title"), null, null),
+            new ServiceRequestLifecycle(ServiceRequestStatus.ACCEPTED, createdAt, createdAt));
+
+    assertThat(serviceRequest.getId()).isEqualTo(id);
+    assertThat(serviceRequest.getStatus()).isEqualTo(ServiceRequestStatus.ACCEPTED);
   }
 }

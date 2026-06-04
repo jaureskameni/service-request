@@ -25,6 +25,7 @@
 			<column name="c_location" type="varchar(255)" />
 			<column name="c_status" type="varchar(15)" />
 			<column name="c_created_at" type="timestamp" />
+			<column name="c_accepted_at" type="timestamp" />
 		</createTable>
 
 		<addForeignKeyConstraint
@@ -38,4 +39,28 @@
 			referencedTableName="t_service_provider" referencedColumnNames="c_id"
 			onDelete="RESTRICT" onUpdate="CASCADE" />
 	</changeSet>
+	<changeSet id="SR-7:1" author="kameni.nguematcha">
+		<createTable tableName="t_outbox_event">
+			<column autoIncrement="false" name="c_id" type="varchar(36)">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="pk_outbox_event" />
+			</column>
+			<column name="c_type" type="varchar(30)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_topic" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_key" type="varchar(36)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_data" type="TEXT">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_created_at" type="timestamp">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
 </databaseChangeLog>

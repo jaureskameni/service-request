@@ -124,6 +124,31 @@ class ServiceRequestJpaRepositoryTest {
   }
 
   @Test
+  void shouldLoadById() {
+    ServiceRequestId id = new ServiceRequestId(UUID.randomUUID());
+    ServiceRequestJpa jpa = new ServiceRequestJpa();
+    when(springRepository.findById(id.value())).thenReturn(java.util.Optional.of(jpa));
+    when(jpaMapper.toDomain(jpa)).thenReturn(serviceRequest);
+
+    var result = repository.load(id);
+
+    assertThat(result).isEqualTo(serviceRequest);
+  }
+
+  @Test
+  void shouldUpdateMappedServiceRequestWhenExists() {
+    ServiceRequestId id = ServiceRequestId.generate();
+    ServiceRequestJpa jpa = new ServiceRequestJpa();
+    when(serviceRequest.getId()).thenReturn(id);
+    when(springRepository.findById(id.value())).thenReturn(java.util.Optional.of(jpa));
+
+    repository.update(serviceRequest);
+
+    verify(jpaMapper).toJpa(jpa, serviceRequest);
+    verify(springRepository).save(jpa);
+  }
+
+  @Test
   void shouldLoadByIdAsView1() {
     ServiceRequestId id = new ServiceRequestId(UUID.randomUUID());
     when(springRepository.findByIdAsView1(id.value()))

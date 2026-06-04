@@ -110,12 +110,11 @@ class RestMapperTest {
 
   @Test
   void shouldMapGetAllServiceRequestsByProviderCommandWithDefaults() {
-    UUID providerId = UUID.randomUUID();
+    UUID userId = UUID.randomUUID();
 
-    var resultUnderTest =
-        mapper.toGetAllServiceRequestsByProviderCommand(providerId, null, null, null);
+    var resultUnderTest = mapper.toGetAllServiceRequestsByProviderCommand(null, null, null, userId);
 
-    assertThat(resultUnderTest.providerId().value()).isEqualTo(providerId);
+    assertThat(resultUnderTest.userId().value()).isEqualTo(userId);
     assertThat(resultUnderTest.status()).isNull();
     assertThat(resultUnderTest.limit()).isEqualTo(10);
     assertThat(resultUnderTest.page()).isZero();
@@ -123,13 +122,13 @@ class RestMapperTest {
 
   @Test
   void shouldMapGetAllServiceRequestsByProviderCommandWithStatus() {
-    UUID providerId = UUID.randomUUID();
+    UUID userId = UUID.randomUUID();
 
     var resultUnderTest =
         mapper.toGetAllServiceRequestsByProviderCommand(
-            providerId, 20, ServiceRequestStatusDTO.ACCEPTED, 2);
+            20, ServiceRequestStatusDTO.ACCEPTED, 2, userId);
 
-    assertThat(resultUnderTest.providerId().value()).isEqualTo(providerId);
+    assertThat(resultUnderTest.userId().value()).isEqualTo(userId);
     assertThat(resultUnderTest.status()).isEqualTo(ServiceRequestStatus.ACCEPTED);
     assertThat(resultUnderTest.limit()).isEqualTo(20);
     assertThat(resultUnderTest.page()).isEqualTo(2);

@@ -3,6 +3,8 @@ package cm.klg.service_request.adapter.persistence.outbound.jpa;
 import cm.klg.service_request.application.outbound.ServiceProviderRepository;
 import cm.klg.service_request.domain.service_provider.ServiceProvider;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
+import cm.klg.service_request.domain.service_provider.ServiceProviderNotFoundException;
+import cm.klg.service_request.domain.user.UserId;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Repository;
@@ -21,5 +23,14 @@ public class ServiceProviderJpaRepository implements ServiceProviderRepository {
   @Override
   public boolean existsById(@NonNull ServiceProviderId serviceProviderId) {
     return springRepository.existsById(serviceProviderId.value());
+  }
+
+  @Override
+  public ServiceProvider loadByUserId(@NonNull UserId userId)
+      throws ServiceProviderNotFoundException {
+    return springRepository
+        .findByUserId(userId.value())
+        .map(jpaMapper::toDomain)
+        .orElseThrow(ServiceProviderNotFoundException::new);
   }
 }
