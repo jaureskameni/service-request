@@ -10,6 +10,7 @@ import cm.klg.service_request.application.usecase.ApproveServiceProviderUseCase;
 import cm.klg.service_request.application.usecase.CreateNewServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.CreateNewUserUseCase;
 import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
+import cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
@@ -43,6 +44,12 @@ public class ServiceRequestBeans implements TransactionBeansProvider {
   public GetAllMyServiceRequestsUseCase getAllMyServiceRequestsUseCase(
       ServiceRequestRepository serviceRequestRepository) {
     return new GetAllMyServiceRequestsUseCase(serviceRequestRepository);
+  }
+
+  @Bean
+  public GetAllServiceRequestsByProviderUseCase getAllServiceRequestsByProviderUseCase(
+      ServiceRequestRepository serviceRequestRepository) {
+    return new GetAllServiceRequestsByProviderUseCase(serviceRequestRepository);
   }
 
   @Bean
