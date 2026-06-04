@@ -65,6 +65,47 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ServiceRequestPaginate"
+  /service-provider/{serviceProviderId}/service-request:
+    get:
+      tags:
+      - "ServiceRequest"
+      summary: "Get All Service Requests for a Provider"
+      description: "Get All Service Requests for a Provider"
+      operationId: "getAllServiceRequestByProvider"
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: "serviceProviderId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+          format: "uuid"
+      - name: "status"
+        in: "query"
+        required: false
+        schema:
+          $ref: "#/components/schemas/ServiceRequestStatus"
+      - name: "page"
+        in: "query"
+        required: false
+        schema:
+          type: "integer"
+          minimum: "0"
+      - name: "limit"
+        in: "query"
+        required: true
+        description: "represents the number of service Request to fetch per page."
+        schema:
+          type: "integer"
+          minimum: "10"
+      responses:
+        "200":
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceRequestPaginate"
 components:
   schemas:
     ServiceRequestRegister:

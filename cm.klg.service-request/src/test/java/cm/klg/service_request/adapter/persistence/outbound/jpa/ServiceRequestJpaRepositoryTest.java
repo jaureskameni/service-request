@@ -80,4 +80,45 @@ class ServiceRequestJpaRepositoryTest {
             eq(ServiceRequestStatus.PENDING.name()),
             argThat(page -> page.getPageNumber() == 0 && page.getPageSize() == 10));
   }
+
+  @Test
+  void shouldLoadAllRequestsByProviderWithPageable() {
+    var providerId =
+        cm.klg.service_request.domain.service_provider.ServiceProviderId.from(UUID.randomUUID());
+    var pageable = PageRequest.of(2, 20);
+    when(springRepository.findAllRequestByProviderIdAsView1(providerId.value(), pageable))
+        .thenReturn(new PageImpl<>(List.of(serviceRequestView1), pageable, 41));
+
+    PageData<ServiceRequestView1> result =
+        repository.loadAllRequestsByProviderAsView1(providerId, new PaginationFetchRequest(20, 2));
+
+    assertThat(result.total()).isEqualTo(41);
+    assertThat(result.elements()).containsExactly(serviceRequestView1);
+    verify(springRepository)
+        .findAllRequestByProviderIdAsView1(
+            eq(providerId.value()),
+            argThat(page -> page.getPageNumber() == 2 && page.getPageSize() == 20));
+  }
+
+  @Test
+  void shouldLoadAllRequestsByProviderAndStatusWithPageable() {
+    var providerId =
+        cm.klg.service_request.domain.service_provider.ServiceProviderId.from(UUID.randomUUID());
+    var pageable = PageRequest.of(0, 10);
+    when(springRepository.findAllRequestByProviderIdAndStatusAsView1(
+            providerId.value(), ServiceRequestStatus.ACCEPTED.name(), pageable))
+        .thenReturn(new PageImpl<>(List.of(serviceRequestView1), pageable, 1));
+
+    PageData<ServiceRequestView1> result =
+        repository.loadAllRequestByProviderAndStatusAsView1(
+            providerId, ServiceRequestStatus.ACCEPTED, new PaginationFetchRequest(10, 0));
+
+    assertThat(result.total()).isEqualTo(1);
+    assertThat(result.elements()).containsExactly(serviceRequestView1);
+    verify(springRepository)
+        .findAllRequestByProviderIdAndStatusAsView1(
+            eq(providerId.value()),
+            eq(ServiceRequestStatus.ACCEPTED.name()),
+            argThat(page -> page.getPageNumber() == 0 && page.getPageSize() == 10));
+  }
 }

@@ -54,4 +54,49 @@ public interface ServiceRequestSpringRepository extends JpaRepository<ServiceReq
           "SELECT COUNT(DISTINCT s) FROM ServiceRequestJpa s WHERE" + " s.userId = :userId")
   Page<ServiceRequestViews.ServiceRequestView1> findAllMyRequestByUserIdAsView1(
       @Param("userId") UUID userId, Pageable pageable);
+
+  @Query(
+      value =
+          """
+          SELECT
+              s.id                        AS id,
+              s.userId                    AS userId,
+              s.providerId                AS serviceProviderId,
+              s.serviceTypeId             AS serviceTypeId,
+              s.title                     AS title,
+              s.description               AS description,
+              s.location                  AS location,
+              s.status                    AS status,
+              s.createdAt                 AS createdAt
+          FROM ServiceRequestJpa s
+          WHERE s.providerId = :providerId AND s.status = :status
+          ORDER BY s.createdAt DESC\
+          """,
+      countQuery =
+          "SELECT COUNT(DISTINCT s) FROM ServiceRequestJpa s WHERE"
+              + " s.providerId = :providerId AND s.status = :status")
+  Page<ServiceRequestViews.ServiceRequestView1> findAllRequestByProviderIdAndStatusAsView1(
+      @Param("providerId") UUID providerId, @Param("status") String status, Pageable pageable);
+
+  @Query(
+      value =
+          """
+          SELECT
+              s.id                        AS id,
+              s.userId                    AS userId,
+              s.providerId                AS serviceProviderId,
+              s.serviceTypeId             AS serviceTypeId,
+              s.title                     AS title,
+              s.description               AS description,
+              s.location                  AS location,
+              s.status                    AS status,
+              s.createdAt                 AS createdAt
+          FROM ServiceRequestJpa s
+          WHERE s.providerId = :providerId
+          ORDER BY s.createdAt DESC\
+          """,
+      countQuery =
+          "SELECT COUNT(DISTINCT s) FROM ServiceRequestJpa s WHERE" + " s.providerId = :providerId")
+  Page<ServiceRequestViews.ServiceRequestView1> findAllRequestByProviderIdAsView1(
+      @Param("providerId") UUID providerId, Pageable pageable);
 }

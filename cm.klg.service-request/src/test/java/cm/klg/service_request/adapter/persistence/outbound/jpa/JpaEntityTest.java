@@ -48,4 +48,25 @@ class JpaEntityTest {
 
     assertThat(serviceProvider).isNotEqualTo(other).isNotEqualTo(null).isNotEqualTo(new Object());
   }
+
+  @Test
+  void serviceRequestsShouldBeEqualWhenTheyHaveSameId() {
+    UUID id = UUID.randomUUID();
+    ServiceRequestJpa first = new ServiceRequestJpa();
+    first.setId(id);
+    ServiceRequestJpa second = new ServiceRequestJpa();
+    second.setId(id);
+
+    assertThat(first).isEqualTo(second).hasSameHashCodeAs(second);
+  }
+
+  @Test
+  void serviceRequestsShouldNotBeEqualWhenClassOrIdDiffers() {
+    ServiceRequestJpa serviceRequest = new ServiceRequestJpa();
+    serviceRequest.setId(UUID.randomUUID());
+    ServiceRequestJpa other = new ServiceRequestJpa();
+    other.setId(UUID.randomUUID());
+
+    assertThat(serviceRequest).isNotEqualTo(other).isNotEqualTo(null).isNotEqualTo(new Object());
+  }
 }

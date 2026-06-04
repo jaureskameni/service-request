@@ -6,7 +6,9 @@ import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestR
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestStatusDTO;
 import cm.klg.service_request.application.usecase.CreateNewServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
+import cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase;
 import cm.klg.service_request.application.views.ServiceRequestViews;
+import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_request.ServiceRequestDescription;
 import cm.klg.service_request.domain.service_request.ServiceRequestLocation;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
@@ -63,8 +65,28 @@ public interface RestMapper {
         Optional.ofNullable(page).orElse(0));
   }
 
+  default GetAllServiceRequestsByProviderUseCase.Command toGetAllServiceRequestsByProviderCommand(
+      UUID serviceProviderId,
+      Integer limit,
+      @Nullable ServiceRequestStatusDTO status,
+      Integer page) {
+    return new GetAllServiceRequestsByProviderUseCase.Command(
+        new ServiceProviderId(serviceProviderId),
+        toServiceRequestStatus(status),
+        Optional.ofNullable(limit).orElse(10),
+        Optional.ofNullable(page).orElse(0));
+  }
+
   default ServiceRequestPaginateDTO toServiceRequestPaginateDTO(
       GetAllMyServiceRequestsUseCase.Response pageData) {
+    return new ServiceRequestPaginateDTO()
+        .count(pageData.count())
+        .serviceRequest(
+            pageData.serviceRequestView1s().stream().map(this::toServiceRequestDTO).toList());
+  }
+
+  default ServiceRequestPaginateDTO toServiceRequestPaginateDTO(
+      GetAllServiceRequestsByProviderUseCase.Response pageData) {
     return new ServiceRequestPaginateDTO()
         .count(pageData.count())
         .serviceRequest(

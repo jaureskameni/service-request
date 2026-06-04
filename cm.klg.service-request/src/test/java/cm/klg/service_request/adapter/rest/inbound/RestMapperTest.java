@@ -109,6 +109,62 @@ class RestMapperTest {
   }
 
   @Test
+  void shouldMapGetAllServiceRequestsByProviderCommandWithDefaults() {
+    UUID providerId = UUID.randomUUID();
+
+    var resultUnderTest =
+        mapper.toGetAllServiceRequestsByProviderCommand(providerId, null, null, null);
+
+    assertThat(resultUnderTest.providerId().value()).isEqualTo(providerId);
+    assertThat(resultUnderTest.status()).isNull();
+    assertThat(resultUnderTest.limit()).isEqualTo(10);
+    assertThat(resultUnderTest.page()).isZero();
+  }
+
+  @Test
+  void shouldMapGetAllServiceRequestsByProviderCommandWithStatus() {
+    UUID providerId = UUID.randomUUID();
+
+    var resultUnderTest =
+        mapper.toGetAllServiceRequestsByProviderCommand(
+            providerId, 20, ServiceRequestStatusDTO.ACCEPTED, 2);
+
+    assertThat(resultUnderTest.providerId().value()).isEqualTo(providerId);
+    assertThat(resultUnderTest.status()).isEqualTo(ServiceRequestStatus.ACCEPTED);
+    assertThat(resultUnderTest.limit()).isEqualTo(20);
+    assertThat(resultUnderTest.page()).isEqualTo(2);
+  }
+
+  @Test
+  void shouldMapServiceRequestPaginateDtoFromProviderResponse() {
+    UUID id = UUID.randomUUID();
+    UUID userId = UUID.randomUUID();
+    UUID providerId = UUID.randomUUID();
+    UUID serviceTypeId = UUID.randomUUID();
+    LocalDateTime createdAt = LocalDateTime.of(2026, 6, 4, 11, 0);
+    var response =
+        new cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase
+            .Response(
+            List.of(
+                new FakeServiceRequestView1(
+                    id,
+                    userId,
+                    providerId,
+                    serviceTypeId,
+                    "title",
+                    "description",
+                    "location",
+                    ServiceRequestStatus.PENDING.name(),
+                    createdAt)),
+            1);
+
+    var resultUnderTest = mapper.toServiceRequestPaginateDTO(response);
+
+    assertThat(resultUnderTest.getCount()).isEqualTo(1);
+    assertThat(resultUnderTest.getServiceRequest()).hasSize(1);
+  }
+
+  @Test
   void shouldMapServiceRequestPaginateDto() {
     UUID id = UUID.randomUUID();
     UUID userId = UUID.randomUUID();

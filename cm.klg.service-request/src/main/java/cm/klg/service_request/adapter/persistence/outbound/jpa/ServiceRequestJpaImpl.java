@@ -2,6 +2,7 @@ package cm.klg.service_request.adapter.persistence.outbound.jpa;
 
 import cm.klg.service_request.application.outbound.ServiceRequestRepository;
 import cm.klg.service_request.application.views.ServiceRequestViews;
+import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_request.ServiceRequest;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
 import cm.klg.service_request.domain.user.UserId;
@@ -41,6 +42,27 @@ public class ServiceRequestJpaImpl implements ServiceRequestRepository {
     var serviceRequestPage =
         springRepository.findAllMyRequestByUserIdAndStatusAsView1(
             userId.value(), status.name(), pageable);
+    return new PageData<>(serviceRequestPage.getTotalElements(), serviceRequestPage.getContent());
+  }
+
+  @Override
+  public PageData<ServiceRequestViews.ServiceRequestView1> loadAllRequestsByProviderAsView1(
+      @NonNull ServiceProviderId providerId, PaginationFetchRequest pagination) {
+    Pageable pageable = PageRequest.of(pagination.pageIndex(), pagination.limit());
+    var serviceRequestPage =
+        springRepository.findAllRequestByProviderIdAsView1(providerId.value(), pageable);
+    return new PageData<>(serviceRequestPage.getTotalElements(), serviceRequestPage.getContent());
+  }
+
+  @Override
+  public PageData<ServiceRequestViews.ServiceRequestView1> loadAllRequestByProviderAndStatusAsView1(
+      @NonNull ServiceProviderId providerId,
+      @NonNull ServiceRequestStatus status,
+      PaginationFetchRequest pagination) {
+    Pageable pageable = PageRequest.of(pagination.pageIndex(), pagination.limit());
+    var serviceRequestPage =
+        springRepository.findAllRequestByProviderIdAndStatusAsView1(
+            providerId.value(), status.name(), pageable);
     return new PageData<>(serviceRequestPage.getTotalElements(), serviceRequestPage.getContent());
   }
 }
