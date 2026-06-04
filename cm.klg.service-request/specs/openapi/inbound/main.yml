@@ -5,20 +5,20 @@ info:
   description: "API for managing service provider"
   version: "0.0.1-SNAPSHOT"
 paths:
-  /service-provider:
+  /service-request:
     post:
       tags:
-      - "ServiceProvider"
-      summary: "Become Service Provider"
-      description: "Become Service Provider"
-      operationId: "becomeServiceProvider"
+      - "ServiceRequest"
+      summary: "Create New Service Request"
+      description: "Create New Service Request"
+      operationId: "createNewServiceRequest"
       security:
       - bearerAuth: []
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ServiceProviderRegister"
+              $ref: "#/components/schemas/ServiceRequestRegister"
       responses:
         "201":
           description: "Successful operation"
@@ -27,7 +27,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/CreationResponse"
         "404":
-          description: "SERVICE_PROVIDER_404_001"
+          description: "SERVICE_PROVIDER_404_002"
         "409":
           description: "SERVICE-PROVIDER_409_001| SERVICE-PROVIDER_409_002"
     get:
@@ -226,28 +226,24 @@ paths:
                     $ref: "#/components/schemas/ServiceCatalogItem"
 components:
   schemas:
-    ServiceProviderRegister:
+    ServiceRequestRegister:
       required:
-      - "phoneNumber"
-      - "city"
-      - "district"
-      - "quarter"
-      - "serviceType"
+      - "providerId"
+      - "serviceTypeId"
       type: "object"
       properties:
-        city:
+        providerId:
           type: "string"
           format: "uuid"
-        district:
+        serviceTypeId:
           type: "string"
           format: "uuid"
-        quarter:
+        title:
           type: "string"
-          format: "uuid"
-        phoneNumber:
-          $ref: "#/components/schemas/PhoneNumber"
-        serviceType:
-          $ref: "#/components/schemas/ServiceType"
+        description:
+          type: "string"
+        location:
+          type: "string"
     ServiceProviderPaginate:
       type: "object"
       required:
