@@ -30,22 +30,21 @@ paths:
           description: "SERVICE_PROVIDER_404_002"
         "409":
           description: "SERVICE-PROVIDER_409_001| SERVICE-PROVIDER_409_002"
+  /my/service-request:
     get:
       tags:
-      - "ServiceProvider"
-      summary: "Get All Service Provider"
-      description: "Get All Service Provider"
-      operationId: "getAllServiceProvider"
+      - "ServiceRequest"
+      summary: "Get All My Service Requests"
+      description: "Get All My Service Requests"
+      operationId: "getAllMyServiceRequest"
       security:
       - bearerAuth: []
-      - oAuth:
-        - "service-provider:read:all"
       parameters:
       - name: "status"
         in: "query"
         required: false
         schema:
-          $ref: "#/components/schemas/ServiceProviderStatus"
+          $ref: "#/components/schemas/ServiceRequestStatus"
       - name: "page"
         in: "query"
         required: false
@@ -55,7 +54,7 @@ paths:
       - name: "limit"
         in: "query"
         required: true
-        description: "represents the number of service provider to fetch per page."
+        description: "represents the number of service Request to fetch per page."
         schema:
           type: "integer"
           minimum: "10"
@@ -65,165 +64,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ServiceProviderPaginate"
-  /service-provider/search:
-    get:
-      tags:
-      - "ServiceProvider"
-      summary: "Search providers with location priority"
-      description: "Search providers with location priority (Quarter > District >\
-        \ City)"
-      operationId: "searchServiceProviders"
-      parameters:
-      - name: "serviceTypeId"
-        in: "query"
-        required: true
-        schema:
-          type: "string"
-          format: "uuid"
-      - name: "cityId"
-        in: "query"
-        required: true
-        schema:
-          type: "string"
-          format: "uuid"
-      - name: "districtId"
-        in: "query"
-        required: false
-        schema:
-          type: "string"
-          format: "uuid"
-      - name: "quarterId"
-        in: "query"
-        required: false
-        schema:
-          type: "string"
-          format: "uuid"
-      - name: "page"
-        in: "query"
-        required: false
-        schema:
-          type: "integer"
-          minimum: "0"
-      - name: "limit"
-        in: "query"
-        required: true
-        schema:
-          type: "integer"
-          minimum: "10"
-      responses:
-        "200":
-          description: "Successful operation"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ServiceProviderPaginate"
-  /service-provider/{serviceProviderId}:
-    get:
-      tags:
-      - "ServiceProvider"
-      summary: "Get Service Provider By Id"
-      description: "Get Service Provider By Id"
-      operationId: "GetServiceProviderById"
-      security:
-      - bearerAuth: []
-      parameters:
-      - name: "serviceProviderId"
-        in: "path"
-        required: true
-        schema:
-          type: "string"
-          format: "uuid"
-      responses:
-        "200":
-          description: "Successful operation"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ServiceProvider"
-        "404":
-          description: "SERVICE_PROVIDER_404_002"
-  /service-provider/{serviceProviderId}/approve:
-    put:
-      tags:
-      - "ServiceProvider"
-      summary: "Approve Service Provider Request"
-      description: "Approve Service Provider Request"
-      operationId: "ApproveServiceProvider"
-      security:
-      - oAuth:
-        - "service-provider:approve"
-      parameters:
-      - name: "serviceProviderId"
-        in: "path"
-        required: true
-        schema:
-          type: "string"
-          format: "uuid"
-      responses:
-        "204":
-          description: "Successful operation"
-        "404":
-          description: "SERVICE_PROVIDER_404_002"
-  /service-provider/add-service:
-    put:
-      tags:
-      - "ServiceProvider"
-      summary: "Add new service to provide"
-      description: "Add new service to provide"
-      operationId: "addNewService"
-      security:
-      - bearerAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ServiceType"
-      responses:
-        "204":
-          description: "Successful operation"
-        "404":
-          description: "SERVICE_PROVIDER_404_002"
-  /service-provider/{serviceProviderId}/reject:
-    put:
-      tags:
-      - "ServiceProvider"
-      summary: "Reject Service Provider Request"
-      description: "Reject Service Provider Request"
-      operationId: "RejectServiceProvider"
-      security:
-      - oAuth:
-        - "service-provider:reject"
-      parameters:
-      - name: "serviceProviderId"
-        in: "path"
-        required: true
-        schema:
-          type: "string"
-          format: "uuid"
-      responses:
-        "204":
-          description: "Successful operation"
-        "404":
-          description: "SERVICE_PROVIDER_404_002"
-  /service-catalog:
-    get:
-      tags:
-      - "ServiceType"
-      summary: "Get the complete service catalog grouped by categories"
-      description: "Get the complete service catalog grouped by categories"
-      operationId: "getServiceCatalog"
-      responses:
-        "200":
-          description: "Successful operation"
-          content:
-            application/json:
-              schema:
-                type: "object"
-                additionalProperties:
-                  type: "array"
-                  items:
-                    $ref: "#/components/schemas/ServiceCatalogItem"
+                $ref: "#/components/schemas/ServiceRequestPaginate"
 components:
   schemas:
     ServiceRequestRegister:
@@ -244,28 +85,26 @@ components:
           type: "string"
         location:
           type: "string"
-    ServiceProviderPaginate:
+    ServiceRequestPaginate:
       type: "object"
       required:
-      - "serviceProvider"
+      - "serviceRequest"
       - "count"
       properties:
-        serviceProvider:
+        serviceRequest:
           type: "array"
           items:
-            $ref: "#/components/schemas/ServiceProvider"
+            $ref: "#/components/schemas/ServiceRequest"
         count:
           type: "integer"
           format: "int64"
-    ServiceProvider:
+    ServiceRequest:
       required:
       - "id"
       - "userId"
-      - "city"
-      - "district"
-      - "quarter"
-      - "serviceProviderStatus"
-      - "phoneNumber"
+      - "providerId"
+      - "serviceTypeId"
+      - "status"
       - "createdAt"
       type: "object"
       properties:
@@ -275,88 +114,30 @@ components:
         userId:
           type: "string"
           format: "uuid"
-        city:
+        providerId:
           type: "string"
           format: "uuid"
-        district:
+        serviceTypeId:
           type: "string"
           format: "uuid"
-        quarter:
+        title:
           type: "string"
-          format: "uuid"
+        description:
+          type: "string"
+        location:
+          type: "string"
         createdAt:
           type: "string"
           format: "date-time"
-        updatedAt:
-          type: "string"
-          format: "date-time"
-        phoneNumber:
-          $ref: "#/components/schemas/PhoneNumber"
-        serviceProviderStatus:
-          $ref: "#/components/schemas/ServiceProviderStatus"
-        userServices:
-          type: "array"
-          items:
-            $ref: "#/components/schemas/UserService"
-    UserService:
-      type: "object"
-      required:
-      - "serviceProviderId"
-      - "serviceTypeId"
-      - "createdAt"
-      properties:
-        serviceProviderId:
-          type: "string"
-          format: "uuid"
-        document:
-          type: "string"
-          format: "uuid"
-        createdAt:
-          type: "string"
-          format: "date-time"
-        serviceType:
-          $ref: "#/components/schemas/ServiceType"
-    PhoneNumber:
-      type: "object"
-      required:
-      - "countryCode"
-      - "number"
-      properties:
-        countryCode:
-          type: "string"
-        number:
-          type: "string"
-    ServiceType:
-      type: "object"
-      required:
-      - "id"
-      - "yearOfExperience"
-      - "document"
-      properties:
-        id:
-          type: "string"
-          format: "uuid"
-        yearOfExperience:
-          type: "integer"
-        document:
-          type: "string"
-          format: "uuid"
-    ServiceProviderStatus:
+        status:
+          $ref: "#/components/schemas/ServiceRequestStatus"
+    ServiceRequestStatus:
       type: "string"
       enum:
       - "PENDING"
-      - "APPROVED"
+      - "ACCEPTED"
       - "REJECTED"
-    ServiceCatalogItem:
-      type: "object"
-      properties:
-        id:
-          type: "string"
-          format: "uuid"
-        name:
-          type: "string"
-        category:
-          type: "string"
+      - "CANCELLED"
     CreationResponse:
       type: "object"
       required:

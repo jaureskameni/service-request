@@ -1,10 +1,18 @@
 package cm.klg.service_request.adapter.rest.inbound;
 
+import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestDTO;
+import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestPaginateDTO;
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestRegisterDTO;
+import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestStatusDTO;
 import cm.klg.service_request.application.usecase.CreateNewServiceRequestUseCase;
+import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
+import cm.klg.service_request.application.views.ServiceRequestViews;
 import cm.klg.service_request.domain.service_request.ServiceRequestDescription;
 import cm.klg.service_request.domain.service_request.ServiceRequestLocation;
+import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
 import cm.klg.service_request.domain.service_request.ServiceRequestTitle;
+import cm.klg.service_request.domain.user.UserId;
+import java.util.Optional;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
 import org.mapstruct.BeanMapping;
@@ -39,5 +47,42 @@ public interface RestMapper {
 
   default @Nullable ServiceRequestLocation toServiceRequestLocation(@Nullable String value) {
     return value == null ? null : ServiceRequestLocation.from(value);
+  }
+
+  default @Nullable ServiceRequestStatus toServiceRequestStatus(
+      @Nullable ServiceRequestStatusDTO status) {
+    return status == null ? null : ServiceRequestStatus.valueOf(status.name());
+  }
+
+  default GetAllMyServiceRequestsUseCase.Command toGetAllMyServiceRequestsCommand(
+      Integer limit, @Nullable ServiceRequestStatusDTO status, Integer page, UUID userId) {
+    return new GetAllMyServiceRequestsUseCase.Command(
+        new UserId(userId),
+        toServiceRequestStatus(status),
+        Optional.ofNullable(limit).orElse(10),
+        Optional.ofNullable(page).orElse(0));
+  }
+
+  default ServiceRequestPaginateDTO toServiceRequestPaginateDTO(
+      GetAllMyServiceRequestsUseCase.Response pageData) {
+    return new ServiceRequestPaginateDTO()
+        .count(pageData.count())
+        .serviceRequest(
+            pageData.serviceRequestView1s().stream().map(this::toServiceRequestDTO).toList());
+  }
+
+  private ServiceRequestDTO toServiceRequestDTO(
+      ServiceRequestViews.ServiceRequestView1 serviceRequestView1) {
+
+    return new ServiceRequestDTO()
+        .id(serviceRequestView1.getId())
+        .userId(serviceRequestView1.getUserId())
+        .providerId(serviceRequestView1.getServiceProviderId())
+        .serviceTypeId(serviceRequestView1.getServiceTypeId())
+        .status(ServiceRequestStatusDTO.valueOf(serviceRequestView1.getStatus()))
+        .title(serviceRequestView1.getTitle())
+        .description(serviceRequestView1.getDescription())
+        .location(serviceRequestView1.getLocation())
+        .createdAt(serviceRequestView1.getCreatedAt());
   }
 }
