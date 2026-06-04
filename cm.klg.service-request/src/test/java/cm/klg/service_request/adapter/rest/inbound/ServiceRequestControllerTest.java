@@ -157,7 +157,6 @@ class ServiceRequestControllerTest {
   @Test
   void getAllServiceRequestsByProviderTest() {
     // Given
-    UUID providerId = UUID.randomUUID();
     ServiceRequestStatusDTO statusDTO = ServiceRequestStatusDTO.ACCEPTED;
     var serviceProviderDTO = new ServiceRequestDTO().id(UUID.randomUUID());
     var useCaseResponse =
@@ -180,7 +179,7 @@ class ServiceRequestControllerTest {
                     .queryParam("page", "0")
                     .queryParam("limit", "10")
             .when()
-                    .get("/service-request/{serviceProviderId}/service-request", providerId)
+                    .get("/my/provider/service-requests")
             .then()
                     .statusCode(HttpStatus.OK.value())
                     .extract()

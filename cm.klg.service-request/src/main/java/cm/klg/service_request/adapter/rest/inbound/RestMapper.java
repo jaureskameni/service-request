@@ -9,7 +9,6 @@ import cm.klg.service_request.application.usecase.CreateNewServiceRequestUseCase
 import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
 import cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase;
 import cm.klg.service_request.application.views.ServiceRequestViews;
-import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_request.ServiceRequestDescription;
 import cm.klg.service_request.domain.service_request.ServiceRequestId;
 import cm.klg.service_request.domain.service_request.ServiceRequestLocation;
@@ -68,12 +67,9 @@ public interface RestMapper {
   }
 
   default GetAllServiceRequestsByProviderUseCase.Command toGetAllServiceRequestsByProviderCommand(
-      UUID serviceProviderId,
-      Integer limit,
-      @Nullable ServiceRequestStatusDTO status,
-      Integer page) {
+      Integer limit, @Nullable ServiceRequestStatusDTO status, Integer page, UUID userId) {
     return new GetAllServiceRequestsByProviderUseCase.Command(
-        new ServiceProviderId(serviceProviderId),
+        UserId.from(userId),
         toServiceRequestStatus(status),
         Optional.ofNullable(limit).orElse(10),
         Optional.ofNullable(page).orElse(0));

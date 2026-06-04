@@ -7,10 +7,10 @@ import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_provider.ServiceProviderStatus;
 import cm.klg.service_request.domain.service_request.ServiceRequest;
 import cm.klg.service_request.domain.service_request.ServiceRequestDescription;
-import cm.klg.service_request.domain.service_request.ServiceRequestId;
-import cm.klg.service_request.domain.service_request.ServiceRequestLocation;
 import cm.klg.service_request.domain.service_request.ServiceRequestDetails;
+import cm.klg.service_request.domain.service_request.ServiceRequestId;
 import cm.klg.service_request.domain.service_request.ServiceRequestLifecycle;
+import cm.klg.service_request.domain.service_request.ServiceRequestLocation;
 import cm.klg.service_request.domain.service_request.ServiceRequestParties;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
 import cm.klg.service_request.domain.service_request.ServiceRequestTitle;
@@ -132,7 +132,9 @@ public interface JpaMapper {
             ServiceTypeId.from(jpa.getServiceTypeId())),
         new ServiceRequestDetails(
             jpa.getTitle() == null ? null : ServiceRequestTitle.from(jpa.getTitle()),
-            jpa.getDescription() == null ? null : ServiceRequestDescription.from(jpa.getDescription()),
+            jpa.getDescription() == null
+                ? null
+                : ServiceRequestDescription.from(jpa.getDescription()),
             jpa.getLocation() == null ? null : ServiceRequestLocation.from(jpa.getLocation())),
         new ServiceRequestLifecycle(
             ServiceRequestStatus.valueOf(jpa.getStatus()),

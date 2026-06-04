@@ -79,14 +79,14 @@ public class ServiceRequestController implements ServiceRequestApi, WithAuthenti
   }
 
   @Override
-  public ResponseEntity<ServiceRequestPaginateDTO> getAllServiceRequestByProvider(
-      UUID serviceProviderId, Integer limit, ServiceRequestStatusDTO status, Integer page) {
+  public ResponseEntity<ServiceRequestPaginateDTO> getAllServiceRequestsForCurrentProvider(
+      Integer limit, ServiceRequestStatusDTO status, Integer page) {
     var result =
         useCaseExecutor.executeQuery(
             () ->
                 getAllServiceRequestsByProviderUseCase.execute(
                     restMapper.toGetAllServiceRequestsByProviderCommand(
-                        serviceProviderId, limit, status, page)));
+                        limit, status, page, getCurrentUserId())));
     return ResponseEntity.status(OK).body(restMapper.toServiceRequestPaginateDTO(result));
   }
 

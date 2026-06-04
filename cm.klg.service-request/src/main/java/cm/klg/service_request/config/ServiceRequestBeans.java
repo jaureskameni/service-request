@@ -51,8 +51,10 @@ public class ServiceRequestBeans implements TransactionBeansProvider {
 
   @Bean
   public GetAllServiceRequestsByProviderUseCase getAllServiceRequestsByProviderUseCase(
+      ServiceProviderRepository serviceProviderRepository,
       ServiceRequestRepository serviceRequestRepository) {
-    return new GetAllServiceRequestsByProviderUseCase(serviceRequestRepository);
+    return new GetAllServiceRequestsByProviderUseCase(
+        serviceProviderRepository, serviceRequestRepository);
   }
 
   @Bean
