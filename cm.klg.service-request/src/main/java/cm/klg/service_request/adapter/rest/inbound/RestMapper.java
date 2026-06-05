@@ -6,6 +6,7 @@ import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestR
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestRejectDTO;
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestStatusDTO;
 import cm.klg.service_request.application.usecase.AcceptServiceRequestUseCase;
+import cm.klg.service_request.application.usecase.CancelServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.CreateNewServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
 import cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase;
@@ -131,5 +132,11 @@ public interface RestMapper {
         UserId.from(userId),
         ServiceRequestId.from(serviceRequestId),
         ServiceRequestReason.from(serviceRequestRejectDTO.getReason()));
+  }
+
+  default CancelServiceRequestUseCase.Command toCancelServiceRequestCommand(
+      UUID serviceRequestId, UUID userId) {
+    return new CancelServiceRequestUseCase.Command(
+        UserId.from(userId), ServiceRequestId.from(serviceRequestId));
   }
 }

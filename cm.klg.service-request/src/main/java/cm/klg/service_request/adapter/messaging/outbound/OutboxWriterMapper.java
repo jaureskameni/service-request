@@ -1,9 +1,11 @@
 package cm.klg.service_request.adapter.messaging.outbound;
 
 import cm.klg.generated.service.request.adapter.messaging.outbound.dto.ServiceRequestAcceptedEventDTO;
+import cm.klg.generated.service.request.adapter.messaging.outbound.dto.ServiceRequestCancelledEventDTO;
 import cm.klg.generated.service.request.adapter.messaging.outbound.dto.ServiceRequestCreatedEventDTO;
 import cm.klg.generated.service.request.adapter.messaging.outbound.dto.ServiceRequestRejectedEventDTO;
 import cm.klg.service_request.domain.event.ServiceRequestAcceptedEvent;
+import cm.klg.service_request.domain.event.ServiceRequestCancelledEvent;
 import cm.klg.service_request.domain.event.ServiceRequestCreatedEvent;
 import cm.klg.service_request.domain.event.ServiceRequestRejectedEvent;
 import org.mapstruct.BeanMapping;
@@ -34,6 +36,14 @@ public interface OutboxWriterMapper {
   @Mapping(target = "reason", source = "reason.value")
   ServiceRequestRejectedEventDTO toServiceRequestRejectedEventDTO(
       ServiceRequestRejectedEvent event);
+
+  @BeanMapping(ignoreByDefault = true)
+  @Mapping(target = "id", source = "id.value")
+  @Mapping(target = "userId", source = "userId.value")
+  @Mapping(target = "providerId", source = "providerId.value")
+  @Mapping(target = "cancelledAt", source = "updatedAt.value")
+  ServiceRequestCancelledEventDTO toServiceRequestCancelledEventDTO(
+      ServiceRequestCancelledEvent event);
 
   @BeanMapping(ignoreByDefault = true)
   @Mapping(target = "id", source = "id.value")

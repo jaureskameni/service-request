@@ -5,6 +5,7 @@ import static cm.klg.service_request.adapter.messaging.outbound.EventTopics.DEST
 import cm.klg.generated.service.request.adapter.messaging.outbound.dto.DomainEventType;
 import cm.klg.service_request.application.outbound.DomainEventPublisher;
 import cm.klg.service_request.domain.event.ServiceRequestAcceptedEvent;
+import cm.klg.service_request.domain.event.ServiceRequestCancelledEvent;
 import cm.klg.service_request.domain.event.ServiceRequestCreatedEvent;
 import cm.klg.service_request.domain.event.ServiceRequestRejectedEvent;
 import com.emb.application.outbound.OutboxWriter;
@@ -44,5 +45,15 @@ public class OutboxWriterDomainEventPublisher implements DomainEventPublisher {
             DomainEventType.SERVICE_REQUEST_REJECTED.name(),
             event.id().value().toString(),
             outboxWriterMapper.toServiceRequestRejectedEventDTO(event)));
+  }
+
+  @Override
+  public void publishServiceRequestCancelledEvent(ServiceRequestCancelledEvent event) {
+    outboxWriter.publish(
+        new OutboxEventCommand(
+            DESTINATION_SERVICE_REQUEST_OUT,
+            DomainEventType.SERVICE_REQUEST_CANCELLED.name(),
+            event.id().value().toString(),
+            outboxWriterMapper.toServiceRequestCancelledEventDTO(event)));
   }
 }

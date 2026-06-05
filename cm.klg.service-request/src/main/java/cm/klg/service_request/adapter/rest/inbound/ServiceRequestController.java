@@ -13,6 +13,7 @@ import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestR
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestRejectDTO;
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestStatusDTO;
 import cm.klg.service_request.application.usecase.AcceptServiceRequestUseCase;
+import cm.klg.service_request.application.usecase.CancelServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.CreateNewServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
 import cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase;
@@ -35,6 +36,7 @@ public class ServiceRequestController implements ServiceRequestApi, WithAuthenti
   private final GetServiceRequestByIdUseCase getServiceRequestByIdUseCase;
   private final AcceptServiceRequestUseCase acceptServiceRequestUseCase;
   private final RejectServiceRequestUseCase rejectServiceRequestUseCase;
+  private final CancelServiceRequestUseCase cancelServiceRequestUseCase;
 
   @Override
   public ResponseEntity<ServiceRequestDTO> getServiceRequestById(UUID serviceRequestId) {
@@ -65,6 +67,15 @@ public class ServiceRequestController implements ServiceRequestApi, WithAuthenti
             rejectServiceRequestUseCase.execute(
                 restMapper.toRejectServiceRequestCommand(
                     serviceRequestId, getCurrentUserId(), serviceRequestRejectDTO)));
+    return ResponseEntity.noContent().build();
+  }
+
+  @Override
+  public ResponseEntity<Void> cancelServiceRequest(UUID serviceRequestId) {
+    useCaseExecutor.runCommand(
+        () ->
+            cancelServiceRequestUseCase.execute(
+                restMapper.toCancelServiceRequestCommand(serviceRequestId, getCurrentUserId())));
     return ResponseEntity.noContent().build();
   }
 

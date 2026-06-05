@@ -1,6 +1,7 @@
 package cm.klg.service_request.application.outbound;
 
 import cm.klg.service_request.domain.event.ServiceRequestAcceptedEvent;
+import cm.klg.service_request.domain.event.ServiceRequestCancelledEvent;
 import cm.klg.service_request.domain.event.ServiceRequestCreatedEvent;
 import cm.klg.service_request.domain.event.ServiceRequestRejectedEvent;
 
@@ -10,4 +11,6 @@ public interface DomainEventPublisher {
   void publishServiceRequestAcceptedEvent(ServiceRequestAcceptedEvent event);
 
   void publishServiceRequestRejectedEvent(ServiceRequestRejectedEvent event);
+
+  void publishServiceRequestCancelledEvent(ServiceRequestCancelledEvent event);
 }
