@@ -1,7 +1,9 @@
 package cm.klg.service_request.application.usecase;
 
+import cm.klg.service_request.application.outbound.DomainEventPublisher;
 import cm.klg.service_request.application.outbound.ServiceProviderRepository;
 import cm.klg.service_request.application.outbound.ServiceRequestRepository;
+import cm.klg.service_request.domain.event.ServiceRequestCreatedEvent;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_provider.ServiceProviderNotFoundException;
 import cm.klg.service_request.domain.service_request.ServiceRequest;
@@ -20,6 +22,7 @@ import org.jspecify.annotations.Nullable;
 public class CreateNewServiceRequestUseCase {
   private final ServiceProviderRepository serviceProviderRepository;
   private final ServiceRequestRepository serviceRequestRepository;
+  private final DomainEventPublisher domainEventPublisher;
 
   public ServiceRequestId execute(Command command) {
     ServiceProviderId serviceProviderId = command.serviceProviderId;
@@ -34,6 +37,10 @@ public class CreateNewServiceRequestUseCase {
                 command.description != null ? command.description : ServiceRequestDescription.NULL,
                 command.location != null ? command.location : ServiceRequestLocation.NULL));
     serviceRequestRepository.insert(serviceRequest);
+
+    ServiceRequestCreatedEvent event = serviceRequest.toServiceRequestCreatedEvent();
+    domainEventPublisher.publishServiceRequestCreatedEvent(event);
+
     return serviceRequest.getId();
   }
 

@@ -10,12 +10,14 @@ import cm.klg.generated.service.request.adapter.rest.inbound.dto.CreationRespons
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestDTO;
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestPaginateDTO;
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestRegisterDTO;
+import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestRejectDTO;
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestStatusDTO;
 import cm.klg.service_request.application.usecase.AcceptServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.CreateNewServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
 import cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase;
 import cm.klg.service_request.application.usecase.GetServiceRequestByIdUseCase;
+import cm.klg.service_request.application.usecase.RejectServiceRequestUseCase;
 import cm.klg.service_request.domain.service_request.ServiceRequestId;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,7 @@ public class ServiceRequestController implements ServiceRequestApi, WithAuthenti
   private final GetAllServiceRequestsByProviderUseCase getAllServiceRequestsByProviderUseCase;
   private final GetServiceRequestByIdUseCase getServiceRequestByIdUseCase;
   private final AcceptServiceRequestUseCase acceptServiceRequestUseCase;
+  private final RejectServiceRequestUseCase rejectServiceRequestUseCase;
 
   @Override
   public ResponseEntity<ServiceRequestDTO> getServiceRequestById(UUID serviceRequestId) {
@@ -51,6 +54,17 @@ public class ServiceRequestController implements ServiceRequestApi, WithAuthenti
         () ->
             acceptServiceRequestUseCase.execute(
                 restMapper.toAcceptServiceRequestCommand(serviceRequestId, getCurrentUserId())));
+    return ResponseEntity.noContent().build();
+  }
+
+  @Override
+  public ResponseEntity<Void> rejectServiceRequest(
+      UUID serviceRequestId, ServiceRequestRejectDTO serviceRequestRejectDTO) {
+    useCaseExecutor.runCommand(
+        () ->
+            rejectServiceRequestUseCase.execute(
+                restMapper.toRejectServiceRequestCommand(
+                    serviceRequestId, getCurrentUserId(), serviceRequestRejectDTO)));
     return ResponseEntity.noContent().build();
   }
 

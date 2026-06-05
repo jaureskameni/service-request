@@ -47,11 +47,14 @@ public class ServiceRequestJpa extends AggregateRootEntity<UUID> {
   @Column(name = "c_status")
   private String status;
 
+  @Column(name = "c_reason")
+  private String reason;
+
   @Column(name = "c_created_at")
   private LocalDateTime createdAt;
 
-  @Column(name = "c_accepted_at")
-  private LocalDateTime acceptedAt;
+  @Column(name = "c_updated_at")
+  private LocalDateTime updatedAt;
 
   @Override
   public boolean equals(Object o) {

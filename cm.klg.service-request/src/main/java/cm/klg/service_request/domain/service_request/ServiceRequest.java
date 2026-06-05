@@ -1,7 +1,10 @@
 package cm.klg.service_request.domain.service_request;
 
 import cm.klg.common.base.domain.CreatedAt;
+import cm.klg.service_request.domain.UpdatedAt;
 import cm.klg.service_request.domain.event.ServiceRequestAcceptedEvent;
+import cm.klg.service_request.domain.event.ServiceRequestCreatedEvent;
+import cm.klg.service_request.domain.event.ServiceRequestRejectedEvent;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.user.UserId;
 import java.time.LocalDateTime;
@@ -19,7 +22,8 @@ public class ServiceRequest {
   @Nullable private final ServiceRequestDescription description;
   @Nullable private final ServiceRequestLocation location;
   private ServiceRequestStatus status;
-  @Nullable private CreatedAt acceptAt;
+  @Nullable private ServiceRequestReason reason;
+  @Nullable private UpdatedAt updatedAt;
   private final CreatedAt createdAt;
 
   private ServiceRequest(
@@ -35,8 +39,9 @@ public class ServiceRequest {
     this.description = details.description();
     this.location = details.location();
     this.status = lifecycle.status();
-    this.acceptAt = lifecycle.acceptAt();
+    this.updatedAt = lifecycle.updatedAt();
     this.createdAt = lifecycle.createdAt();
+    this.reason = lifecycle.reason();
   }
 
   public static ServiceRequest of(ServiceRequestParties parties, ServiceRequestDetails details) {
@@ -45,7 +50,7 @@ public class ServiceRequest {
         parties,
         details,
         new ServiceRequestLifecycle(
-            ServiceRequestStatus.PENDING, null, new CreatedAt(LocalDateTime.now())));
+            ServiceRequestStatus.PENDING, null, new CreatedAt(LocalDateTime.now()), null));
   }
 
   public static ServiceRequest reconstitute(
@@ -61,7 +66,7 @@ public class ServiceRequest {
       throw new RequestDoesNotBelongToProviderException();
     }
     this.status = ServiceRequestStatus.ACCEPTED;
-    this.acceptAt = new CreatedAt(LocalDateTime.now());
+    this.updatedAt = UpdatedAt.from(LocalDateTime.now());
 
     return this.toServiceRequestAcceptedEvent();
   }
@@ -69,8 +74,39 @@ public class ServiceRequest {
   public ServiceRequestAcceptedEvent toServiceRequestAcceptedEvent() {
     return new ServiceRequestAcceptedEvent(
         this.id,
+        this.userId,
+        this.serviceProviderId,
+        this.status,
+        Objects.requireNonNull(this.updatedAt));
+  }
+
+  public ServiceRequestCreatedEvent toServiceRequestCreatedEvent() {
+    return new ServiceRequestCreatedEvent(
+        this.id,
         new ServiceRequestParties(this.userId, this.serviceProviderId, this.serviceTypeId),
         new ServiceRequestDetails(this.title, this.description, this.location),
-        new ServiceRequestLifecycle(this.status, this.acceptAt, this.createdAt));
+        new ServiceRequestLifecycle(this.status, this.updatedAt, this.createdAt, this.reason));
+  }
+
+  public ServiceRequestRejectedEvent reject(
+      ServiceProviderId providerId, ServiceRequestReason reason) {
+    if (!Objects.equals(this.serviceProviderId, providerId)) {
+      throw new RequestDoesNotBelongToProviderException();
+    }
+    this.status = ServiceRequestStatus.REJECTED;
+    this.reason = reason;
+    this.updatedAt = UpdatedAt.from(LocalDateTime.now());
+
+    return this.toServiceRequestRejectedEvent();
+  }
+
+  private ServiceRequestRejectedEvent toServiceRequestRejectedEvent() {
+    return new ServiceRequestRejectedEvent(
+        this.id,
+        this.userId,
+        this.serviceProviderId,
+        this.status,
+        Objects.requireNonNull(this.updatedAt),
+        this.reason);
   }
 }

@@ -22,6 +22,10 @@ public interface ServiceRequestViews {
 
     String getStatus();
 
+    @Nullable String getReason();
+
     LocalDateTime getCreatedAt();
+
+    @Nullable LocalDateTime getUpdatedAt();
   }
 }

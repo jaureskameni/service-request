@@ -23,7 +23,9 @@ public interface ServiceRequestSpringRepository extends JpaRepository<ServiceReq
               s.description               AS description,
               s.location                  AS location,
               s.status                    AS status,
-              s.createdAt                 AS createdAt
+              s.reason                    AS reason,
+              s.createdAt                 AS createdAt,
+              s.updatedAt                 AS updatedAt
           FROM ServiceRequestJpa s
           WHERE s.userId = :userId AND s.status = :status
           ORDER BY s.createdAt DESC\
@@ -46,7 +48,9 @@ public interface ServiceRequestSpringRepository extends JpaRepository<ServiceReq
               s.description               AS description,
               s.location                  AS location,
               s.status                    AS status,
-              s.createdAt                 AS createdAt
+              s.reason                    AS reason,
+              s.createdAt                 AS createdAt,
+              s.updatedAt                 AS updatedAt
           FROM ServiceRequestJpa s
           WHERE s.userId = :userId
           ORDER BY s.createdAt DESC\
@@ -68,7 +72,9 @@ public interface ServiceRequestSpringRepository extends JpaRepository<ServiceReq
               s.description               AS description,
               s.location                  AS location,
               s.status                    AS status,
-              s.createdAt                 AS createdAt
+              s.reason                    AS reason,
+              s.createdAt                 AS createdAt,
+              s.updatedAt                 AS updatedAt
           FROM ServiceRequestJpa s
           WHERE s.providerId = :providerId AND s.status = :status
           ORDER BY s.createdAt DESC\
@@ -91,7 +97,9 @@ public interface ServiceRequestSpringRepository extends JpaRepository<ServiceReq
               s.description               AS description,
               s.location                  AS location,
               s.status                    AS status,
-              s.createdAt                 AS createdAt
+              s.reason                    AS reason,
+              s.createdAt                 AS createdAt,
+              s.updatedAt                 AS updatedAt
           FROM ServiceRequestJpa s
           WHERE s.providerId = :providerId
           ORDER BY s.createdAt DESC\
@@ -113,7 +121,9 @@ public interface ServiceRequestSpringRepository extends JpaRepository<ServiceReq
               s.description               AS description,
               s.location                  AS location,
               s.status                    AS status,
-              s.createdAt                 AS createdAt
+              s.reason                    AS reason,
+              s.createdAt                 AS createdAt,
+              s.updatedAt                 AS updatedAt
           FROM ServiceRequestJpa s
           WHERE s.id = :id\
           """)
