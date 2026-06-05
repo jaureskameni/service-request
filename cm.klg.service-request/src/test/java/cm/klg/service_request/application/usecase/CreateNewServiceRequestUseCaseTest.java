@@ -2,6 +2,7 @@ package cm.klg.service_request.application.usecase;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -30,6 +31,9 @@ class CreateNewServiceRequestUseCaseTest {
 
   @Mock private ServiceProviderRepository serviceProviderRepository;
   @Mock private ServiceRequestRepository serviceRequestRepository;
+
+  @Mock
+  private cm.klg.service_request.application.outbound.DomainEventPublisher domainEventPublisher;
 
   @InjectMocks private CreateNewServiceRequestUseCase useCase;
 
@@ -67,6 +71,9 @@ class CreateNewServiceRequestUseCaseTest {
               assertThat(serviceRequest.getLocation().value()).isEqualTo("location");
               assertThat(serviceRequest.getStatus()).isEqualTo(ServiceRequestStatus.PENDING);
             });
+
+    // verify event published
+    verify(domainEventPublisher).publishServiceRequestCreatedEvent(any());
   }
 
   @Test
