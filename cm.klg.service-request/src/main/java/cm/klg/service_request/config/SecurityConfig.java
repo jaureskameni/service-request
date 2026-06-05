@@ -41,6 +41,11 @@ public class SecurityConfig {
                         "service-request/{serviceRequestId:%s}/reject"
                             .formatted(REGEX_UUID_WITH_DELIMITER))
                     .authenticated()
+                    .requestMatchers(
+                        HttpMethod.PUT,
+                        "service-request/{serviceRequestId:%s}/cancel"
+                            .formatted(REGEX_UUID_WITH_DELIMITER))
+                    .authenticated()
                     .requestMatchers(HttpMethod.GET, "/my/service-request")
                     .authenticated()
                     .requestMatchers(HttpMethod.GET, "/my/provider/service-requests")

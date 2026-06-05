@@ -7,6 +7,7 @@ public enum ServiceRequestErrorCode implements ErrorCode {
   // ERROR-403
   SERVICE_REQUEST_403_001(
       "SERVICE_REQUEST_403_001", "Request Does Not Belong To Provider Exception"),
+  SERVICE_REQUEST_403_002("SERVICE_REQUEST_403_002", "Request Does Not Belong To User Exception"),
 
   // ERROR-404
   SERVICE_REQUEST_404_001("SERVICE_REQUEST_404_001", "User Not Found"),

@@ -137,6 +137,41 @@ class ServiceRequestDomainTest {
   }
 
   @Test
+  void shouldCancelServiceRequestWhenUserMatches() {
+    UserId userId = UserId.from(UUID.randomUUID());
+    ServiceRequest serviceRequest =
+        ServiceRequest.of(
+            new ServiceRequestParties(
+                userId, ServiceProviderId.generate(), ServiceTypeId.from(UUID.randomUUID())),
+            new ServiceRequestDetails(null, null, null));
+
+    var event = serviceRequest.cancel(userId);
+
+    assertThat(serviceRequest.getStatus()).isEqualTo(ServiceRequestStatus.CANCELLED);
+    assertThat(serviceRequest.getUpdatedAt()).isNotNull();
+    assertThat(event).isNotNull();
+    assertThat(event.id()).isEqualTo(serviceRequest.getId());
+    assertThat(event.userId()).isEqualTo(userId);
+    assertThat(event.status()).isEqualTo(ServiceRequestStatus.CANCELLED);
+  }
+
+  @Test
+  void shouldThrowExceptionWhenCancellingWithWrongUser() {
+    UserId assignedUserId = UserId.from(UUID.randomUUID());
+    UserId wrongUserId = UserId.from(UUID.randomUUID());
+    ServiceRequest serviceRequest =
+        ServiceRequest.of(
+            new ServiceRequestParties(
+                assignedUserId,
+                ServiceProviderId.generate(),
+                ServiceTypeId.from(UUID.randomUUID())),
+            new ServiceRequestDetails(null, null, null));
+
+    org.junit.jupiter.api.Assertions.assertThrows(
+        RequestDoesNotBelongToUserException.class, () -> serviceRequest.cancel(wrongUserId));
+  }
+
+  @Test
   void shouldReconstituteServiceRequest() {
     ServiceRequestId id = ServiceRequestId.generate();
     UserId userId = UserId.from(UUID.randomUUID());

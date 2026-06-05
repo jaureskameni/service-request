@@ -106,6 +106,29 @@ paths:
           description: "SERVICE_REQUEST_403_001"
         "404":
           description: "SERVICE_REQUEST_404_002"
+  /service-request/{serviceRequestId}/cancel:
+    put:
+      tags:
+      - "ServiceRequest"
+      summary: "Cancel Service Request"
+      description: "Cancel Service Request"
+      operationId: "cancelServiceRequest"
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: "serviceRequestId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+          format: "uuid"
+      responses:
+        "204":
+          description: "Successful operation"
+        "403":
+          description: "SERVICE_REQUEST_403_001"
+        "404":
+          description: "SERVICE_REQUEST_404_002"
   /my/service-request:
     get:
       tags:

@@ -9,6 +9,7 @@ import cm.klg.service_request.application.outbound.ServiceRequestRepository;
 import cm.klg.service_request.application.outbound.UserRepository;
 import cm.klg.service_request.application.usecase.AcceptServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.ApproveServiceProviderUseCase;
+import cm.klg.service_request.application.usecase.CancelServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.CreateNewServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.CreateNewUserUseCase;
 import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
@@ -82,6 +83,13 @@ public class ServiceRequestBeans implements TransactionBeansProvider {
       DomainEventPublisher domainEventPublisher) {
     return new RejectServiceRequestUseCase(
         serviceProviderRepository, serviceRequestRepository, domainEventPublisher);
+  }
+
+  @Bean
+  public CancelServiceRequestUseCase cancelServiceRequestUseCase(
+      ServiceRequestRepository serviceRequestRepository,
+      DomainEventPublisher domainEventPublisher) {
+    return new CancelServiceRequestUseCase(serviceRequestRepository, domainEventPublisher);
   }
 
   @Bean

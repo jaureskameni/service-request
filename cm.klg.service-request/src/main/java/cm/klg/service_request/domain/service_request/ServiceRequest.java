@@ -3,6 +3,7 @@ package cm.klg.service_request.domain.service_request;
 import cm.klg.common.base.domain.CreatedAt;
 import cm.klg.service_request.domain.UpdatedAt;
 import cm.klg.service_request.domain.event.ServiceRequestAcceptedEvent;
+import cm.klg.service_request.domain.event.ServiceRequestCancelledEvent;
 import cm.klg.service_request.domain.event.ServiceRequestCreatedEvent;
 import cm.klg.service_request.domain.event.ServiceRequestRejectedEvent;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
@@ -108,5 +109,24 @@ public class ServiceRequest {
         this.status,
         Objects.requireNonNull(this.updatedAt),
         this.reason);
+  }
+
+  public ServiceRequestCancelledEvent cancel(UserId userId) {
+    if (!Objects.equals(this.userId, userId)) {
+      throw new RequestDoesNotBelongToUserException();
+    }
+    this.status = ServiceRequestStatus.CANCELLED;
+    this.updatedAt = UpdatedAt.from(LocalDateTime.now());
+
+    return this.toServiceRequestCancelledEvent();
+  }
+
+  private ServiceRequestCancelledEvent toServiceRequestCancelledEvent() {
+    return new ServiceRequestCancelledEvent(
+        this.id,
+        this.userId,
+        this.serviceProviderId,
+        this.status,
+        Objects.requireNonNull(this.updatedAt));
   }
 }

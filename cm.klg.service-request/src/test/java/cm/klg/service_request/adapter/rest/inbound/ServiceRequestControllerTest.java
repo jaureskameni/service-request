@@ -13,6 +13,7 @@ import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestP
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestRegisterDTO;
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestStatusDTO;
 import cm.klg.service_request.application.usecase.AcceptServiceRequestUseCase;
+import cm.klg.service_request.application.usecase.CancelServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.CreateNewServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
 import cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase;
@@ -41,6 +42,7 @@ class ServiceRequestControllerTest {
   @Mock private GetServiceRequestByIdUseCase getServiceRequestByIdUseCase;
   @Mock private AcceptServiceRequestUseCase acceptServiceRequestUseCase;
   @Mock private RejectServiceRequestUseCase rejectServiceRequestUseCase;
+  @Mock private CancelServiceRequestUseCase cancelServiceRequestUseCase;
 
   @InjectMocks private ServiceRequestController objectUnderTest;
 
@@ -107,6 +109,26 @@ class ServiceRequestControllerTest {
                         .body(rejectDTO)
                         .when()
                         .put("/service-request/{serviceRequestId}/reject", serviceRequestId)
+                        .then()
+                        .statusCode(HttpStatus.NO_CONTENT.value());
+        // spotless:on
+
+    // Then
+    verify(useCaseExecutor).runCommand(any());
+  }
+
+  @Test
+  void cancelServiceRequestTest() {
+    // Given
+    UUID serviceRequestId = UUID.randomUUID();
+
+    // When
+
+    // spotless:off
+                given()
+                        .standaloneSetup(objectUnderTest)
+                        .when()
+                        .put("/service-request/{serviceRequestId}/cancel", serviceRequestId)
                         .then()
                         .statusCode(HttpStatus.NO_CONTENT.value());
         // spotless:on
