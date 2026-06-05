@@ -78,6 +78,34 @@ paths:
           description: "SERVICE_REQUEST_403_001"
         "404":
           description: "SERVICE_REQUEST_404_002"
+  /service-request/{serviceRequestId}/reject:
+    put:
+      tags:
+      - "ServiceRequest"
+      summary: "Reject Service Request"
+      description: "Reject Service Request"
+      operationId: "rejectServiceRequest"
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: "serviceRequestId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+          format: "uuid"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ServiceRequestReject"
+      responses:
+        "204":
+          description: "Successful operation"
+        "403":
+          description: "SERVICE_REQUEST_403_001"
+        "404":
+          description: "SERVICE_REQUEST_404_002"
   /my/service-request:
     get:
       tags:
@@ -154,6 +182,11 @@ paths:
           description: "User is not a service provider"
 components:
   schemas:
+    ServiceRequestReject:
+      type: "object"
+      properties:
+        reason:
+          type: "string"
     ServiceRequestRegister:
       required:
       - "providerId"
@@ -216,6 +249,11 @@ components:
         createdAt:
           type: "string"
           format: "date-time"
+        updatedAt:
+          type: "string"
+          format: "date-time"
+        reason:
+          type: "string"
         status:
           $ref: "#/components/schemas/ServiceRequestStatus"
     ServiceRequestStatus:

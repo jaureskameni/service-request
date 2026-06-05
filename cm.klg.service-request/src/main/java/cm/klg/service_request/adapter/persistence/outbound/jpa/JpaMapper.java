@@ -2,6 +2,7 @@ package cm.klg.service_request.adapter.persistence.outbound.jpa;
 
 import cm.klg.common.base.domain.CreatedAt;
 import cm.klg.common.base.entity.PhoneNumberJpa;
+import cm.klg.service_request.domain.UpdatedAt;
 import cm.klg.service_request.domain.service_provider.ServiceProvider;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_provider.ServiceProviderStatus;
@@ -12,6 +13,7 @@ import cm.klg.service_request.domain.service_request.ServiceRequestId;
 import cm.klg.service_request.domain.service_request.ServiceRequestLifecycle;
 import cm.klg.service_request.domain.service_request.ServiceRequestLocation;
 import cm.klg.service_request.domain.service_request.ServiceRequestParties;
+import cm.klg.service_request.domain.service_request.ServiceRequestReason;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
 import cm.klg.service_request.domain.service_request.ServiceRequestTitle;
 import cm.klg.service_request.domain.service_request.ServiceTypeId;
@@ -86,8 +88,9 @@ public interface JpaMapper {
   @Mapping(target = "description", source = "description")
   @Mapping(target = "location", source = "location")
   @Mapping(target = "status", source = "status")
-  @Mapping(target = "acceptedAt", source = "acceptAt.value")
+  @Mapping(target = "updatedAt", source = "updatedAt.value")
   @Mapping(target = "createdAt", source = "createdAt.value")
+  @Mapping(target = "reason", source = "reason.value")
   ServiceRequestJpa toJpa(@NonNull ServiceRequest serviceRequest);
 
   @BeanMapping(ignoreByDefault = true)
@@ -99,8 +102,9 @@ public interface JpaMapper {
   @Mapping(target = "description", source = "description")
   @Mapping(target = "location", source = "location")
   @Mapping(target = "status", source = "status")
-  @Mapping(target = "acceptedAt", source = "acceptAt.value")
+  @Mapping(target = "updatedAt", source = "updatedAt.value")
   @Mapping(target = "createdAt", source = "createdAt.value")
+  @Mapping(target = "reason", source = "reason.value")
   void toJpa(@MappingTarget ServiceRequestJpa serviceRequestJpa, ServiceRequest serviceRequest);
 
   default @Nullable String toJpaValue(@Nullable ServiceRequestTitle title) {
@@ -113,6 +117,10 @@ public interface JpaMapper {
 
   default @Nullable String toJpaValue(@Nullable ServiceRequestLocation location) {
     return location == null ? null : location.value();
+  }
+
+  default @Nullable String toJpaValue(@Nullable ServiceRequestReason reason) {
+    return reason == null ? null : reason.value();
   }
 
   default ServiceProvider toDomain(ServiceProviderJpa jpa) {
@@ -138,7 +146,8 @@ public interface JpaMapper {
             jpa.getLocation() == null ? null : ServiceRequestLocation.from(jpa.getLocation())),
         new ServiceRequestLifecycle(
             ServiceRequestStatus.valueOf(jpa.getStatus()),
-            jpa.getAcceptedAt() == null ? null : CreatedAt.from(jpa.getAcceptedAt()),
-            CreatedAt.from(jpa.getCreatedAt())));
+            jpa.getUpdatedAt() == null ? null : UpdatedAt.from(jpa.getUpdatedAt()),
+            CreatedAt.from(jpa.getCreatedAt()),
+            jpa.getReason() == null ? null : ServiceRequestReason.from(jpa.getReason())));
   }
 }

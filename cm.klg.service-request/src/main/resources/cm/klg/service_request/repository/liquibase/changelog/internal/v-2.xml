@@ -24,8 +24,9 @@
 			<column name="c_description" type="text" />
 			<column name="c_location" type="varchar(255)" />
 			<column name="c_status" type="varchar(15)" />
+			<column name="c_reason" type="text" />
 			<column name="c_created_at" type="timestamp" />
-			<column name="c_accepted_at" type="timestamp" />
+			<column name="c_updated_at" type="timestamp" />
 		</createTable>
 
 		<addForeignKeyConstraint

@@ -87,10 +87,36 @@ class ServiceRequestDomainTest {
     var event = serviceRequest.accept(providerId);
 
     assertThat(serviceRequest.getStatus()).isEqualTo(ServiceRequestStatus.ACCEPTED);
-    assertThat(serviceRequest.getAcceptAt()).isNotNull();
+    assertThat(serviceRequest.getUpdatedAt()).isNotNull();
     assertThat(event).isNotNull();
     assertThat(event.id()).isEqualTo(serviceRequest.getId());
-    assertThat(event.lifecycle().status()).isEqualTo(ServiceRequestStatus.ACCEPTED);
+    assertThat(event.userId()).isEqualTo(serviceRequest.getUserId());
+    assertThat(event.providerId()).isEqualTo(serviceRequest.getServiceProviderId());
+    assertThat(event.status()).isEqualTo(ServiceRequestStatus.ACCEPTED);
+  }
+
+  @Test
+  void shouldRejectServiceRequestWhenProviderMatches() {
+    ServiceProviderId providerId = ServiceProviderId.generate();
+    ServiceRequest serviceRequest =
+        ServiceRequest.of(
+            new ServiceRequestParties(
+                UserId.from(UUID.randomUUID()), providerId, ServiceTypeId.from(UUID.randomUUID())),
+            new ServiceRequestDetails(null, null, null));
+
+    String reasonValue = "Not available";
+    ServiceRequestReason reason = ServiceRequestReason.from(reasonValue);
+    var event = serviceRequest.reject(providerId, reason);
+
+    assertThat(serviceRequest.getStatus()).isEqualTo(ServiceRequestStatus.REJECTED);
+    assertThat(serviceRequest.getReason()).isEqualTo(reason);
+    assertThat(serviceRequest.getUpdatedAt()).isNotNull();
+    assertThat(event).isNotNull();
+    assertThat(event.id()).isEqualTo(serviceRequest.getId());
+    assertThat(event.userId()).isEqualTo(serviceRequest.getUserId());
+    assertThat(event.providerId()).isEqualTo(serviceRequest.getServiceProviderId());
+    assertThat(event.status()).isEqualTo(ServiceRequestStatus.REJECTED);
+    assertThat(event.reason()).isEqualTo(reason);
   }
 
   @Test
@@ -117,15 +143,21 @@ class ServiceRequestDomainTest {
     ServiceProviderId providerId = ServiceProviderId.generate();
     ServiceTypeId serviceTypeId = ServiceTypeId.from(UUID.randomUUID());
     var createdAt = CreatedAt.from(java.time.LocalDateTime.now());
+    var updatedAt = cm.klg.service_request.domain.UpdatedAt.from(java.time.LocalDateTime.now());
 
     ServiceRequest serviceRequest =
         ServiceRequest.reconstitute(
             id,
             new ServiceRequestParties(userId, providerId, serviceTypeId),
             new ServiceRequestDetails(ServiceRequestTitle.from("title"), null, null),
-            new ServiceRequestLifecycle(ServiceRequestStatus.ACCEPTED, createdAt, createdAt));
+            new ServiceRequestLifecycle(
+                ServiceRequestStatus.ACCEPTED,
+                updatedAt,
+                createdAt,
+                ServiceRequestReason.from("some reason")));
 
     assertThat(serviceRequest.getId()).isEqualTo(id);
     assertThat(serviceRequest.getStatus()).isEqualTo(ServiceRequestStatus.ACCEPTED);
+    assertThat(serviceRequest.getReason().value()).isEqualTo("some reason");
   }
 }

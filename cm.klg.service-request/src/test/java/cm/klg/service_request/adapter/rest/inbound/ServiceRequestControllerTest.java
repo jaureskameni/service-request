@@ -17,6 +17,7 @@ import cm.klg.service_request.application.usecase.CreateNewServiceRequestUseCase
 import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
 import cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase;
 import cm.klg.service_request.application.usecase.GetServiceRequestByIdUseCase;
+import cm.klg.service_request.application.usecase.RejectServiceRequestUseCase;
 import cm.klg.service_request.application.views.ServiceRequestViews.ServiceRequestView1;
 import cm.klg.service_request.domain.service_request.ServiceRequestId;
 import java.util.List;
@@ -39,6 +40,7 @@ class ServiceRequestControllerTest {
   @Mock private GetAllServiceRequestsByProviderUseCase getAllServiceRequestsByProviderUseCase;
   @Mock private GetServiceRequestByIdUseCase getServiceRequestByIdUseCase;
   @Mock private AcceptServiceRequestUseCase acceptServiceRequestUseCase;
+  @Mock private RejectServiceRequestUseCase rejectServiceRequestUseCase;
 
   @InjectMocks private ServiceRequestController objectUnderTest;
 
@@ -80,6 +82,31 @@ class ServiceRequestControllerTest {
                         .standaloneSetup(objectUnderTest)
                         .when()
                         .put("/service-request/{serviceRequestId}/accept", serviceRequestId)
+                        .then()
+                        .statusCode(HttpStatus.NO_CONTENT.value());
+        // spotless:on
+
+    // Then
+    verify(useCaseExecutor).runCommand(any());
+  }
+
+  @Test
+  void rejectServiceRequestTest() {
+    // Given
+    UUID serviceRequestId = UUID.randomUUID();
+    var rejectDTO =
+        new cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestRejectDTO()
+            .reason("Not available");
+
+    // When
+
+    // spotless:off
+                given()
+                        .standaloneSetup(objectUnderTest)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(rejectDTO)
+                        .when()
+                        .put("/service-request/{serviceRequestId}/reject", serviceRequestId)
                         .then()
                         .statusCode(HttpStatus.NO_CONTENT.value());
         // spotless:on

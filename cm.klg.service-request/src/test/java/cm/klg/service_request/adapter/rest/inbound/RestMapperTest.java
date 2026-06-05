@@ -140,7 +140,9 @@ class RestMapperTest {
     UUID userId = UUID.randomUUID();
     UUID providerId = UUID.randomUUID();
     UUID serviceTypeId = UUID.randomUUID();
-    LocalDateTime createdAt = LocalDateTime.of(2026, 6, 4, 11, 0);
+    String reason = "reason";
+    LocalDateTime createdAt = LocalDateTime.of(2026, 6, 4, 10, 0);
+    LocalDateTime updatedAt = LocalDateTime.of(2026, 6, 4, 10, 0);
     var response =
         new cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase
             .Response(
@@ -154,7 +156,9 @@ class RestMapperTest {
                     "description",
                     "location",
                     ServiceRequestStatus.PENDING.name(),
-                    createdAt)),
+                    reason,
+                    createdAt,
+                    updatedAt)),
             1);
 
     var resultUnderTest = mapper.toServiceRequestPaginateDTO(response);
@@ -169,7 +173,9 @@ class RestMapperTest {
     UUID userId = UUID.randomUUID();
     UUID providerId = UUID.randomUUID();
     UUID serviceTypeId = UUID.randomUUID();
-    LocalDateTime createdAt = LocalDateTime.of(2026, 6, 4, 12, 0);
+    String reason = "reason";
+    LocalDateTime createdAt = LocalDateTime.of(2026, 6, 4, 10, 0);
+    LocalDateTime updatedAt = LocalDateTime.of(2026, 6, 4, 10, 0);
     var view =
         new FakeServiceRequestView1(
             id,
@@ -180,7 +186,9 @@ class RestMapperTest {
             "description",
             "location",
             ServiceRequestStatus.ACCEPTED.name(),
-            createdAt);
+            reason,
+            createdAt,
+            updatedAt);
 
     var resultUnderTest = mapper.toServiceRequestDTO(view);
 
@@ -202,7 +210,9 @@ class RestMapperTest {
     UUID userId = UUID.randomUUID();
     UUID providerId = UUID.randomUUID();
     UUID serviceTypeId = UUID.randomUUID();
+    String reason = "reason";
     LocalDateTime createdAt = LocalDateTime.of(2026, 6, 4, 10, 0);
+    LocalDateTime updatedAt = LocalDateTime.of(2026, 6, 4, 10, 0);
     var response =
         new GetAllMyServiceRequestsUseCase.Response(
             List.of(
@@ -215,7 +225,9 @@ class RestMapperTest {
                     "description",
                     "location",
                     ServiceRequestStatus.PENDING.name(),
-                    createdAt)),
+                    reason,
+                    createdAt,
+                    updatedAt)),
             1);
 
     var resultUnderTest = mapper.toServiceRequestPaginateDTO(response);
@@ -246,7 +258,9 @@ class RestMapperTest {
       @Nullable String description,
       @Nullable String location,
       String status,
-      LocalDateTime createdAt)
+      String reason,
+      LocalDateTime createdAt,
+      LocalDateTime updatedAt)
       implements ServiceRequestView1 {
 
     @Override
@@ -290,8 +304,18 @@ class RestMapperTest {
     }
 
     @Override
+    public String getReason() {
+      return reason;
+    }
+
+    @Override
     public LocalDateTime getCreatedAt() {
       return createdAt;
+    }
+
+    @Override
+    public LocalDateTime getUpdatedAt() {
+      return updatedAt;
     }
   }
 }

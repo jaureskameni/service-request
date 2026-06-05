@@ -14,6 +14,7 @@ import cm.klg.service_request.application.usecase.CreateNewUserUseCase;
 import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
 import cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase;
 import cm.klg.service_request.application.usecase.GetServiceRequestByIdUseCase;
+import cm.klg.service_request.application.usecase.RejectServiceRequestUseCase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
@@ -39,8 +40,10 @@ public class ServiceRequestBeans implements TransactionBeansProvider {
   @Bean
   public CreateNewServiceRequestUseCase createNewServiceRequestUseCase(
       ServiceProviderRepository serviceProviderRepository,
-      ServiceRequestRepository serviceRequestRepository) {
-    return new CreateNewServiceRequestUseCase(serviceProviderRepository, serviceRequestRepository);
+      ServiceRequestRepository serviceRequestRepository,
+      DomainEventPublisher domainEventPublisher) {
+    return new CreateNewServiceRequestUseCase(
+        serviceProviderRepository, serviceRequestRepository, domainEventPublisher);
   }
 
   @Bean
@@ -69,6 +72,15 @@ public class ServiceRequestBeans implements TransactionBeansProvider {
       ServiceRequestRepository serviceRequestRepository,
       DomainEventPublisher domainEventPublisher) {
     return new AcceptServiceRequestUseCase(
+        serviceProviderRepository, serviceRequestRepository, domainEventPublisher);
+  }
+
+  @Bean
+  public RejectServiceRequestUseCase rejectServiceRequestUseCase(
+      ServiceProviderRepository serviceProviderRepository,
+      ServiceRequestRepository serviceRequestRepository,
+      DomainEventPublisher domainEventPublisher) {
+    return new RejectServiceRequestUseCase(
         serviceProviderRepository, serviceRequestRepository, domainEventPublisher);
   }
 
