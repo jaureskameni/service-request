@@ -48,7 +48,9 @@ class UserDomainTest {
             EmailAddress.from("john.doe@example.com"),
             new PhoneNumber("+237", "699999999"));
 
-    User user = User.reconstitute(UserId.from(id), profile, true, CreatedAt.from(createdAt));
+    User user =
+        User.reconstitute(
+            UserId.from(id), IdentityId.from(id), profile, true, CreatedAt.from(createdAt));
 
     assertThat(user.getId().value()).isEqualTo(id);
     assertThat(user.getFirstname().value()).isEqualTo("John");

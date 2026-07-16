@@ -18,7 +18,7 @@ import cm.klg.service_request.domain.service_request.ServiceRequestLocation;
 import cm.klg.service_request.domain.service_request.ServiceRequestReason;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
 import cm.klg.service_request.domain.service_request.ServiceRequestTitle;
-import cm.klg.service_request.domain.user.UserId;
+import cm.klg.service_request.domain.user.IdentityId;
 import java.util.Optional;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
@@ -64,27 +64,25 @@ public interface RestMapper {
   default GetAllMyServiceRequestsUseCase.Command toGetAllMyServiceRequestsCommand(
       Integer limit, @Nullable ServiceRequestStatusDTO status, Integer page, UUID userId) {
     return new GetAllMyServiceRequestsUseCase.Command(
-        new UserId(userId),
-        Optional.ofNullable(status)
-            .map(
-                serviceRequestStatusDTO ->
-                    ServiceRequestStatus.valueOf(serviceRequestStatusDTO.name()))
-            .orElse(null),
-        Optional.ofNullable(limit).orElse(10),
-        Optional.ofNullable(page).orElse(0));
+        IdentityId.from(userId), toStatus(status), toLimit(limit), toPage(page));
   }
 
   default GetAllServiceRequestsByProviderUseCase.Command toGetAllServiceRequestsByProviderCommand(
       Integer limit, @Nullable ServiceRequestStatusDTO status, Integer page, UUID userId) {
     return new GetAllServiceRequestsByProviderUseCase.Command(
-        UserId.from(userId),
-        Optional.ofNullable(status)
-            .map(
-                serviceRequestStatusDTO ->
-                    ServiceRequestStatus.valueOf(serviceRequestStatusDTO.name()))
-            .orElse(null),
-        Optional.ofNullable(limit).orElse(10),
-        Optional.ofNullable(page).orElse(0));
+        IdentityId.from(userId), toStatus(status), toLimit(limit), toPage(page));
+  }
+
+  private static @Nullable ServiceRequestStatus toStatus(@Nullable ServiceRequestStatusDTO status) {
+    return status == null ? null : ServiceRequestStatus.valueOf(status.name());
+  }
+
+  private static int toLimit(Integer limit) {
+    return Optional.ofNullable(limit).orElse(10);
+  }
+
+  private static int toPage(Integer page) {
+    return Optional.ofNullable(page).orElse(0);
   }
 
   default ServiceRequestPaginateDTO toServiceRequestPaginateDTO(
@@ -123,13 +121,13 @@ public interface RestMapper {
   default AcceptServiceRequestUseCase.Command toAcceptServiceRequestCommand(
       UUID serviceRequestId, UUID userId) {
     return new AcceptServiceRequestUseCase.Command(
-        UserId.from(userId), ServiceRequestId.from(serviceRequestId));
+        IdentityId.from(userId), ServiceRequestId.from(serviceRequestId));
   }
 
   default RejectServiceRequestUseCase.Command toRejectServiceRequestCommand(
       UUID serviceRequestId, UUID userId, ServiceRequestRejectDTO serviceRequestRejectDTO) {
     return new RejectServiceRequestUseCase.Command(
-        UserId.from(userId),
+        IdentityId.from(userId),
         ServiceRequestId.from(serviceRequestId),
         ServiceRequestReason.from(serviceRequestRejectDTO.getReason()));
   }
@@ -137,6 +135,6 @@ public interface RestMapper {
   default CancelServiceRequestUseCase.Command toCancelServiceRequestCommand(
       UUID serviceRequestId, UUID userId) {
     return new CancelServiceRequestUseCase.Command(
-        UserId.from(userId), ServiceRequestId.from(serviceRequestId));
+        IdentityId.from(userId), ServiceRequestId.from(serviceRequestId));
   }
 }

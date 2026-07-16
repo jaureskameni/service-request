@@ -19,6 +19,7 @@ import cm.klg.service_request.domain.service_request.ServiceRequestTitle;
 import cm.klg.service_request.domain.service_request.ServiceTypeId;
 import cm.klg.service_request.domain.user.EmailAddress;
 import cm.klg.service_request.domain.user.Firstname;
+import cm.klg.service_request.domain.user.IdentityId;
 import cm.klg.service_request.domain.user.Lastname;
 import cm.klg.service_request.domain.user.PhoneNumber;
 import cm.klg.service_request.domain.user.User;
@@ -41,12 +42,15 @@ public interface JpaMapper {
 
   @BeanMapping(ignoreByDefault = true)
   @Mapping(target = "id", source = "id.value")
+  @Mapping(target = "identityId", source = "identityId.value")
   @Mapping(target = "lastname", source = "lastname.value")
   @Mapping(target = "firstname", source = "firstname.value")
   @Mapping(target = "emailAddress", source = "email.value")
-  @Mapping(target = "phoneNumber", source = "phoneNumber")
+  @Mapping(target = "phoneNumber.countryCode", source = "phoneNumber.countryCode")
+  @Mapping(target = "phoneNumber.number", source = "phoneNumber.number")
+  @Mapping(target = "serviceProvider", source = "serviceProvider")
   @Mapping(target = "createdAt", source = "createdAt.value")
-  UserJpa toJpa(User user);
+  UserJpa toUserJpa(User user);
 
   default User toDomain(UserJpa userJpa) {
     PhoneNumber phoneNumber =
@@ -59,7 +63,8 @@ public interface JpaMapper {
             EmailAddress.from(userJpa.getEmailAddress()),
             phoneNumber);
     return User.reconstitute(
-        new UserId(userJpa.getId()),
+        UserId.from(userJpa.getId()),
+        IdentityId.from(userJpa.getIdentityId()),
         userProfile,
         userJpa.isServiceProvider(),
         CreatedAt.from(userJpa.getCreatedAt()));
@@ -90,7 +95,7 @@ public interface JpaMapper {
   @Mapping(target = "status", source = "status")
   @Mapping(target = "updatedAt", source = "updatedAt.value")
   @Mapping(target = "createdAt", source = "createdAt.value")
-  @Mapping(target = "reason", source = "reason.value")
+  @Mapping(target = "reason", source = "reason")
   ServiceRequestJpa toJpa(@NonNull ServiceRequest serviceRequest);
 
   @BeanMapping(ignoreByDefault = true)
@@ -104,7 +109,7 @@ public interface JpaMapper {
   @Mapping(target = "status", source = "status")
   @Mapping(target = "updatedAt", source = "updatedAt.value")
   @Mapping(target = "createdAt", source = "createdAt.value")
-  @Mapping(target = "reason", source = "reason.value")
+  @Mapping(target = "reason", source = "reason")
   void toJpa(@MappingTarget ServiceRequestJpa serviceRequestJpa, ServiceRequest serviceRequest);
 
   default @Nullable String toJpaValue(@Nullable ServiceRequestTitle title) {
@@ -126,7 +131,7 @@ public interface JpaMapper {
   default ServiceProvider toDomain(ServiceProviderJpa jpa) {
     return ServiceProvider.reconstitute(
         ServiceProviderId.from(jpa.getId()),
-        UserId.from(jpa.getUserId()),
+        IdentityId.from(jpa.getUserId()),
         ServiceProviderStatus.valueOf(jpa.getStatus()),
         CreatedAt.from(jpa.getApprovedAt()));
   }
@@ -135,7 +140,7 @@ public interface JpaMapper {
     return ServiceRequest.reconstitute(
         ServiceRequestId.from(jpa.getId()),
         new ServiceRequestParties(
-            UserId.from(jpa.getUserId()),
+            IdentityId.from(jpa.getUserId()),
             ServiceProviderId.from(jpa.getProviderId()),
             ServiceTypeId.from(jpa.getServiceTypeId())),
         new ServiceRequestDetails(

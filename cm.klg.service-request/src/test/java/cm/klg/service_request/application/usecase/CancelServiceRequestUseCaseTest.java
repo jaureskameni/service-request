@@ -9,7 +9,7 @@ import cm.klg.service_request.application.outbound.ServiceRequestRepository;
 import cm.klg.service_request.domain.event.ServiceRequestCancelledEvent;
 import cm.klg.service_request.domain.service_request.ServiceRequest;
 import cm.klg.service_request.domain.service_request.ServiceRequestId;
-import cm.klg.service_request.domain.user.UserId;
+import cm.klg.service_request.domain.user.IdentityId;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +28,7 @@ class CancelServiceRequestUseCaseTest {
   @Test
   void shouldCancelServiceRequestWhenExistsAndUserMatches() {
     // Given
-    var userId = UserId.from(UUID.randomUUID());
+    var userId = IdentityId.from(UUID.randomUUID());
     var serviceRequest = mock(ServiceRequest.class);
     var event = mock(ServiceRequestCancelledEvent.class);
     ServiceRequestId requestId = ServiceRequestId.generate();

@@ -10,7 +10,7 @@ COPY --chown=spring:spring cm.klg.service-request/build/libs/*SNAPSHOT.jar app.j
 
 USER spring:spring
 
-EXPOSE 8084
+EXPOSE 8086
 
 ENTRYPOINT ["java", \
             "-XX:MaxRAMPercentage=75.0", \

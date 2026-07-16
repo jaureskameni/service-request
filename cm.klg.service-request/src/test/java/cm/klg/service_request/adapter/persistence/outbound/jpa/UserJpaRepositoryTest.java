@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import cm.klg.common.base.domain.CreatedAt;
 import cm.klg.service_request.domain.user.EmailAddress;
 import cm.klg.service_request.domain.user.Firstname;
+import cm.klg.service_request.domain.user.IdentityId;
 import cm.klg.service_request.domain.user.Lastname;
 import cm.klg.service_request.domain.user.PhoneNumber;
 import cm.klg.service_request.domain.user.User;
@@ -34,7 +35,7 @@ class UserJpaRepositoryTest {
   void shouldInsertMappedUser() {
     User user = user();
     UserJpa userJpa = new UserJpa();
-    when(jpaMapper.toJpa(user)).thenReturn(userJpa);
+    when(jpaMapper.toUserJpa(user)).thenReturn(userJpa);
 
     repository.insert(user);
 
@@ -42,11 +43,11 @@ class UserJpaRepositoryTest {
   }
 
   @Test
-  void shouldCheckUserExistenceById() {
-    UserId userId = UserId.from(UUID.randomUUID());
-    when(userSpringRepository.existsById(userId.value())).thenReturn(true);
+  void shouldCheckUserExistenceByIdentityId() {
+    IdentityId userId = IdentityId.from(UUID.randomUUID());
+    when(userSpringRepository.existsByIdentityId(userId.value())).thenReturn(true);
 
-    assertThat(repository.existsById(userId)).isTrue();
+    assertThat(repository.existsByUserId(userId)).isTrue();
   }
 
   @Test
@@ -57,7 +58,7 @@ class UserJpaRepositoryTest {
     when(userSpringRepository.findById(userId.value())).thenReturn(Optional.of(userJpa));
     when(jpaMapper.toDomain(userJpa)).thenReturn(user);
 
-    assertThat(repository.findById(userId)).contains(user);
+    assertThat(repository.loadById(userId)).contains(user);
   }
 
   @Test
@@ -65,7 +66,7 @@ class UserJpaRepositoryTest {
     UserId userId = UserId.from(UUID.randomUUID());
     when(userSpringRepository.findById(userId.value())).thenReturn(Optional.empty());
 
-    assertThat(repository.findById(userId)).isEmpty();
+    assertThat(repository.loadById(userId)).isEmpty();
   }
 
   @Test
@@ -90,6 +91,7 @@ class UserJpaRepositoryTest {
   private static User user() {
     return User.reconstitute(
         UserId.from(UUID.randomUUID()),
+        IdentityId.from(UUID.randomUUID()),
         new UserProfile(
             Firstname.from("John"),
             Lastname.from("Doe"),

@@ -12,7 +12,7 @@ import cm.klg.service_request.domain.service_provider.ServiceProvider;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_request.ServiceRequest;
 import cm.klg.service_request.domain.service_request.ServiceRequestId;
-import cm.klg.service_request.domain.user.UserId;
+import cm.klg.service_request.domain.user.IdentityId;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +32,7 @@ class AcceptServiceRequestUseCaseTest {
   @Test
   void shouldAcceptServiceRequestWhenExistsAndProviderMatches() {
     // Given
-    var userId = UserId.from(UUID.randomUUID());
+    var userId = IdentityId.from(UUID.randomUUID());
     var providerId = ServiceProviderId.generate();
     var provider = mock(ServiceProvider.class);
     var serviceRequest = mock(ServiceRequest.class);

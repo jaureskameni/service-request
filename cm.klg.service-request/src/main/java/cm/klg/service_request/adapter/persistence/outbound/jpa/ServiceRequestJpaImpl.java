@@ -7,7 +7,7 @@ import cm.klg.service_request.domain.service_request.ServiceRequest;
 import cm.klg.service_request.domain.service_request.ServiceRequestId;
 import cm.klg.service_request.domain.service_request.ServiceRequestNotFoundException;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
-import cm.klg.service_request.domain.user.UserId;
+import cm.klg.service_request.domain.user.IdentityId;
 import cm.klg.service_request.utils.PageData;
 import cm.klg.service_request.utils.PaginationFetchRequest;
 import java.util.Optional;
@@ -38,7 +38,7 @@ public class ServiceRequestJpaImpl implements ServiceRequestRepository {
 
   @Override
   public PageData<ServiceRequestViews.ServiceRequestView1> loadAllMyRequestsAsView1(
-      @NonNull UserId userId, PaginationFetchRequest pagination) {
+      IdentityId userId, PaginationFetchRequest pagination) {
     Pageable pageable = PageRequest.of(pagination.pageIndex(), pagination.limit());
     var serviceRequestPage =
         springRepository.findAllMyRequestByUserIdAsView1(userId.value(), pageable);
@@ -47,9 +47,7 @@ public class ServiceRequestJpaImpl implements ServiceRequestRepository {
 
   @Override
   public PageData<ServiceRequestViews.ServiceRequestView1> loadAllMyRequestByStatusAsView1(
-      @NonNull UserId userId,
-      @NonNull ServiceRequestStatus status,
-      PaginationFetchRequest pagination) {
+      IdentityId userId, @NonNull ServiceRequestStatus status, PaginationFetchRequest pagination) {
 
     Pageable pageable = PageRequest.of(pagination.pageIndex(), pagination.limit());
     var serviceRequestPage =

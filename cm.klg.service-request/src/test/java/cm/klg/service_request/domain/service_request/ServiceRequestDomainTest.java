@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import cm.klg.common.base.domain.CreatedAt;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
-import cm.klg.service_request.domain.user.UserId;
+import cm.klg.service_request.domain.user.IdentityId;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +26,7 @@ class ServiceRequestDomainTest {
 
   @Test
   void shouldCreateServiceRequestWithProvidedOptionalFields() {
-    UserId userId = UserId.from(UUID.randomUUID());
+    IdentityId userId = IdentityId.from(UUID.randomUUID());
     ServiceProviderId providerId = new ServiceProviderId(UUID.randomUUID());
     ServiceTypeId serviceTypeId = ServiceTypeId.from(UUID.randomUUID());
     ServiceRequestTitle title = ServiceRequestTitle.from("title");
@@ -58,7 +58,7 @@ class ServiceRequestDomainTest {
     ServiceRequest resultUnderTest =
         ServiceRequest.of(
             new ServiceRequestParties(
-                UserId.from(UUID.randomUUID()),
+                IdentityId.from(UUID.randomUUID()),
                 new ServiceProviderId(UUID.randomUUID()),
                 ServiceTypeId.from(UUID.randomUUID())),
             new ServiceRequestDetails(
@@ -81,7 +81,9 @@ class ServiceRequestDomainTest {
     ServiceRequest serviceRequest =
         ServiceRequest.of(
             new ServiceRequestParties(
-                UserId.from(UUID.randomUUID()), providerId, ServiceTypeId.from(UUID.randomUUID())),
+                IdentityId.from(UUID.randomUUID()),
+                providerId,
+                ServiceTypeId.from(UUID.randomUUID())),
             new ServiceRequestDetails(null, null, null));
 
     var event = serviceRequest.accept(providerId);
@@ -101,7 +103,9 @@ class ServiceRequestDomainTest {
     ServiceRequest serviceRequest =
         ServiceRequest.of(
             new ServiceRequestParties(
-                UserId.from(UUID.randomUUID()), providerId, ServiceTypeId.from(UUID.randomUUID())),
+                IdentityId.from(UUID.randomUUID()),
+                providerId,
+                ServiceTypeId.from(UUID.randomUUID())),
             new ServiceRequestDetails(null, null, null));
 
     String reasonValue = "Not available";
@@ -126,7 +130,7 @@ class ServiceRequestDomainTest {
     ServiceRequest serviceRequest =
         ServiceRequest.of(
             new ServiceRequestParties(
-                UserId.from(UUID.randomUUID()),
+                IdentityId.from(UUID.randomUUID()),
                 assignedProviderId,
                 ServiceTypeId.from(UUID.randomUUID())),
             new ServiceRequestDetails(null, null, null));
@@ -138,7 +142,7 @@ class ServiceRequestDomainTest {
 
   @Test
   void shouldCancelServiceRequestWhenUserMatches() {
-    UserId userId = UserId.from(UUID.randomUUID());
+    IdentityId userId = IdentityId.from(UUID.randomUUID());
     ServiceRequest serviceRequest =
         ServiceRequest.of(
             new ServiceRequestParties(
@@ -157,8 +161,8 @@ class ServiceRequestDomainTest {
 
   @Test
   void shouldThrowExceptionWhenCancellingWithWrongUser() {
-    UserId assignedUserId = UserId.from(UUID.randomUUID());
-    UserId wrongUserId = UserId.from(UUID.randomUUID());
+    IdentityId assignedUserId = IdentityId.from(UUID.randomUUID());
+    IdentityId wrongUserId = IdentityId.from(UUID.randomUUID());
     ServiceRequest serviceRequest =
         ServiceRequest.of(
             new ServiceRequestParties(
@@ -174,7 +178,7 @@ class ServiceRequestDomainTest {
   @Test
   void shouldReconstituteServiceRequest() {
     ServiceRequestId id = ServiceRequestId.generate();
-    UserId userId = UserId.from(UUID.randomUUID());
+    IdentityId userId = IdentityId.from(UUID.randomUUID());
     ServiceProviderId providerId = ServiceProviderId.generate();
     ServiceTypeId serviceTypeId = ServiceTypeId.from(UUID.randomUUID());
     var createdAt = CreatedAt.from(java.time.LocalDateTime.now());

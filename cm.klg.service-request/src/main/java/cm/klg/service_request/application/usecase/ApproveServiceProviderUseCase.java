@@ -6,16 +6,19 @@ import cm.klg.service_request.application.outbound.UserRepository;
 import cm.klg.service_request.domain.service_provider.ServiceProvider;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_provider.ServiceProviderStatus;
-import cm.klg.service_request.domain.user.UserId;
+import cm.klg.service_request.domain.user.IdentityId;
 import cm.klg.service_request.domain.user.UserNotFoundException;
+import lombok.RequiredArgsConstructor;
 
-public record ApproveServiceProviderUseCase(
-    UserRepository userRepository, ServiceProviderRepository serviceProviderRepository) {
+@RequiredArgsConstructor
+public class ApproveServiceProviderUseCase {
+  private final UserRepository userRepository;
+  private final ServiceProviderRepository serviceProviderRepository;
 
   public void execute(ApproveServiceProviderCommand command) {
 
-    UserId userId = command.userId;
-    if (!userRepository.existsById(userId)) {
+    IdentityId userId = command.userId;
+    if (!userRepository.existsByUserId(userId)) {
       throw new UserNotFoundException();
     }
 
@@ -30,5 +33,5 @@ public record ApproveServiceProviderUseCase(
   }
 
   public record ApproveServiceProviderCommand(
-      UserId userId, ServiceProviderId serviceProviderId, CreatedAt approvedAt) {}
+      IdentityId userId, ServiceProviderId serviceProviderId, CreatedAt approvedAt) {}
 }

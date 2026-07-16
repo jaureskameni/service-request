@@ -14,7 +14,7 @@ import cm.klg.service_request.domain.service_request.ServiceRequestLocation;
 import cm.klg.service_request.domain.service_request.ServiceRequestParties;
 import cm.klg.service_request.domain.service_request.ServiceRequestTitle;
 import cm.klg.service_request.domain.service_request.ServiceTypeId;
-import cm.klg.service_request.domain.user.UserId;
+import cm.klg.service_request.domain.user.IdentityId;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 
@@ -45,7 +45,7 @@ public class CreateNewServiceRequestUseCase {
   }
 
   public record Command(
-      UserId userId,
+      IdentityId userId,
       ServiceProviderId serviceProviderId,
       ServiceTypeId serviceTypeId,
       @Nullable ServiceRequestTitle title,
