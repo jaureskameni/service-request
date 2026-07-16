@@ -33,17 +33,17 @@ public class SecurityConfig {
                     .authenticated()
                     .requestMatchers(
                         HttpMethod.PUT,
-                        "service-request/{serviceRequestId:%s}/accept"
+                        "/service-request/{serviceRequestId:%s}/accept"
                             .formatted(REGEX_UUID_WITH_DELIMITER))
                     .authenticated()
                     .requestMatchers(
                         HttpMethod.PUT,
-                        "service-request/{serviceRequestId:%s}/reject"
+                        "/service-request/{serviceRequestId:%s}/reject"
                             .formatted(REGEX_UUID_WITH_DELIMITER))
                     .authenticated()
                     .requestMatchers(
                         HttpMethod.PUT,
-                        "service-request/{serviceRequestId:%s}/cancel"
+                        "/service-request/{serviceRequestId:%s}/cancel"
                             .formatted(REGEX_UUID_WITH_DELIMITER))
                     .authenticated()
                     .requestMatchers(HttpMethod.GET, "/my/service-request")
