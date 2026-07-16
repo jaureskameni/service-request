@@ -6,7 +6,7 @@ import cm.klg.service_request.application.outbound.ServiceRequestRepository;
 import cm.klg.service_request.domain.service_provider.ServiceProvider;
 import cm.klg.service_request.domain.service_request.ServiceRequest;
 import cm.klg.service_request.domain.service_request.ServiceRequestId;
-import cm.klg.service_request.domain.user.UserId;
+import cm.klg.service_request.domain.user.IdentityId;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -27,5 +27,5 @@ public class AcceptServiceRequestUseCase {
     domainEventPublisher.publishServiceRequestAcceptedEvent(event);
   }
 
-  public record Command(UserId userId, ServiceRequestId serviceRequestId) {}
+  public record Command(IdentityId userId, ServiceRequestId serviceRequestId) {}
 }

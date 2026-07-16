@@ -78,6 +78,8 @@ paths:
           description: "SERVICE_REQUEST_403_001"
         "404":
           description: "SERVICE_REQUEST_404_002"
+        "409":
+          description: "SERVICE_REQUEST_409_001"
   /service-request/{serviceRequestId}/reject:
     put:
       tags:
@@ -106,6 +108,8 @@ paths:
           description: "SERVICE_REQUEST_403_001"
         "404":
           description: "SERVICE_REQUEST_404_002"
+        "409":
+          description: "SERVICE_REQUEST_409_001"
   /service-request/{serviceRequestId}/cancel:
     put:
       tags:
@@ -129,6 +133,8 @@ paths:
           description: "SERVICE_REQUEST_403_001"
         "404":
           description: "SERVICE_REQUEST_404_002"
+        "409":
+          description: "SERVICE_REQUEST_409_001"
   /my/service-request:
     get:
       tags:

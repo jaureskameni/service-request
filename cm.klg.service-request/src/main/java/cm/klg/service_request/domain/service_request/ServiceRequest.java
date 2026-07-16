@@ -7,7 +7,7 @@ import cm.klg.service_request.domain.event.ServiceRequestCancelledEvent;
 import cm.klg.service_request.domain.event.ServiceRequestCreatedEvent;
 import cm.klg.service_request.domain.event.ServiceRequestRejectedEvent;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
-import cm.klg.service_request.domain.user.UserId;
+import cm.klg.service_request.domain.user.IdentityId;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.Getter;
@@ -16,7 +16,7 @@ import org.jspecify.annotations.Nullable;
 @Getter
 public class ServiceRequest {
   private final ServiceRequestId id;
-  private final UserId userId;
+  private final IdentityId userId;
   private final ServiceProviderId serviceProviderId;
   private final ServiceTypeId serviceTypeId;
   @Nullable private final ServiceRequestTitle title;
@@ -63,6 +63,9 @@ public class ServiceRequest {
   }
 
   public ServiceRequestAcceptedEvent accept(ServiceProviderId providerId) {
+    if (this.status != ServiceRequestStatus.PENDING) {
+      throw new InvalidServiceRequestStatusException();
+    }
     if (!Objects.equals(this.serviceProviderId, providerId)) {
       throw new RequestDoesNotBelongToProviderException();
     }
@@ -91,6 +94,9 @@ public class ServiceRequest {
 
   public ServiceRequestRejectedEvent reject(
       ServiceProviderId providerId, ServiceRequestReason reason) {
+    if (this.status != ServiceRequestStatus.PENDING) {
+      throw new InvalidServiceRequestStatusException();
+    }
     if (!Objects.equals(this.serviceProviderId, providerId)) {
       throw new RequestDoesNotBelongToProviderException();
     }
@@ -111,7 +117,10 @@ public class ServiceRequest {
         this.reason);
   }
 
-  public ServiceRequestCancelledEvent cancel(UserId userId) {
+  public ServiceRequestCancelledEvent cancel(IdentityId userId) {
+    if (this.status != ServiceRequestStatus.PENDING) {
+      throw new InvalidServiceRequestStatusException();
+    }
     if (!Objects.equals(this.userId, userId)) {
       throw new RequestDoesNotBelongToUserException();
     }

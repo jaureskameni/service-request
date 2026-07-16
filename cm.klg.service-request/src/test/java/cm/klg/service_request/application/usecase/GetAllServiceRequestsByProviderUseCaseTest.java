@@ -14,7 +14,7 @@ import cm.klg.service_request.application.views.ServiceRequestViews.ServiceReque
 import cm.klg.service_request.domain.service_provider.ServiceProvider;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
-import cm.klg.service_request.domain.user.UserId;
+import cm.klg.service_request.domain.user.IdentityId;
 import cm.klg.service_request.utils.PageData;
 import java.util.List;
 import java.util.UUID;
@@ -36,7 +36,7 @@ class GetAllServiceRequestsByProviderUseCaseTest {
   @Test
   void shouldLoadAllRequestsWhenStatusIsAbsent() {
     ServiceProviderId providerId = ServiceProviderId.from(UUID.randomUUID());
-    var userId = UserId.from(UUID.randomUUID());
+    var userId = IdentityId.from(UUID.randomUUID());
     ServiceProvider serviceProvider = mock(ServiceProvider.class);
     var command = new GetAllServiceRequestsByProviderUseCase.Command(userId, null, 20, 2);
 
@@ -60,7 +60,7 @@ class GetAllServiceRequestsByProviderUseCaseTest {
 
   @Test
   void shouldLoadRequestsByStatusWhenStatusIsProvided() {
-    UserId userId = UserId.from(UUID.randomUUID());
+    IdentityId userId = IdentityId.from(UUID.randomUUID());
     var providerId = ServiceProviderId.from(UUID.randomUUID());
     var command =
         new GetAllServiceRequestsByProviderUseCase.Command(

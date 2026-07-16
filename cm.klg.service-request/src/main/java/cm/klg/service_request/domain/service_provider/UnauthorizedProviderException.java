@@ -1,7 +1,11 @@
 package cm.klg.service_request.domain.service_provider;
 
-public class UnauthorizedProviderException extends RuntimeException {
+import static cm.klg.service_request.domain.exception.ServiceRequestErrorCode.SERVICE_REQUEST_403_003;
+
+import cm.klg.common.base.exception.DomainException;
+
+public class UnauthorizedProviderException extends DomainException {
   public UnauthorizedProviderException() {
-    super("Provider is not authorized for this service request");
+    super(SERVICE_REQUEST_403_003);
   }
 }

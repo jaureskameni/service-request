@@ -17,6 +17,7 @@ import cm.klg.service_request.domain.service_request.ServiceRequestTitle;
 import cm.klg.service_request.domain.service_request.ServiceTypeId;
 import cm.klg.service_request.domain.user.EmailAddress;
 import cm.klg.service_request.domain.user.Firstname;
+import cm.klg.service_request.domain.user.IdentityId;
 import cm.klg.service_request.domain.user.Lastname;
 import cm.klg.service_request.domain.user.PhoneNumber;
 import cm.klg.service_request.domain.user.User;
@@ -37,6 +38,7 @@ class JpaMapperTest {
     User user =
         User.reconstitute(
             UserId.from(id),
+            IdentityId.from(id),
             new UserProfile(
                 Firstname.from("John"),
                 Lastname.from("Doe"),
@@ -45,7 +47,7 @@ class JpaMapperTest {
             true,
             CreatedAt.from(createdAt));
 
-    var resultUnderTest = mapper.toJpa(user);
+    var resultUnderTest = mapper.toUserJpa(user);
 
     assertThat(resultUnderTest)
         .satisfies(
@@ -97,7 +99,7 @@ class JpaMapperTest {
     ServiceProvider serviceProvider =
         ServiceProvider.reconstitute(
             new ServiceProviderId(id),
-            new UserId(userId),
+            IdentityId.from(userId),
             ServiceProviderStatus.APPROVED,
             CreatedAt.from(approvedAt));
 
@@ -126,7 +128,7 @@ class JpaMapperTest {
     ServiceRequest serviceRequest =
         ServiceRequest.of(
             new ServiceRequestParties(
-                UserId.from(userId),
+                IdentityId.from(userId),
                 new ServiceProviderId(providerId),
                 ServiceTypeId.from(serviceTypeId)),
             new ServiceRequestDetails(
@@ -156,7 +158,7 @@ class JpaMapperTest {
     ServiceRequest serviceRequest =
         ServiceRequest.of(
             new ServiceRequestParties(
-                UserId.from(UUID.randomUUID()),
+                IdentityId.from(UUID.randomUUID()),
                 new ServiceProviderId(UUID.randomUUID()),
                 ServiceTypeId.from(UUID.randomUUID())),
             new ServiceRequestDetails(

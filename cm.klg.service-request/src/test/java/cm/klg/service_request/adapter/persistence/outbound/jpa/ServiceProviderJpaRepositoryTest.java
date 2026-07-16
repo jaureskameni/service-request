@@ -7,7 +7,7 @@ import cm.klg.common.base.domain.CreatedAt;
 import cm.klg.service_request.domain.service_provider.ServiceProvider;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_provider.ServiceProviderStatus;
-import cm.klg.service_request.domain.user.UserId;
+import cm.klg.service_request.domain.user.IdentityId;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ class ServiceProviderJpaRepositoryTest {
     ServiceProvider serviceProvider =
         ServiceProvider.reconstitute(
             new ServiceProviderId(UUID.randomUUID()),
-            new UserId(UUID.randomUUID()),
+            IdentityId.from(UUID.randomUUID()),
             ServiceProviderStatus.APPROVED,
             CreatedAt.from(LocalDateTime.now()));
     ServiceProviderJpa jpa = new ServiceProviderJpa();

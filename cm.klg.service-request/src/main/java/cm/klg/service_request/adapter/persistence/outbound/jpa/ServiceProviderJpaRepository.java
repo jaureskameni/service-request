@@ -4,7 +4,7 @@ import cm.klg.service_request.application.outbound.ServiceProviderRepository;
 import cm.klg.service_request.domain.service_provider.ServiceProvider;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_provider.ServiceProviderNotFoundException;
-import cm.klg.service_request.domain.user.UserId;
+import cm.klg.service_request.domain.user.IdentityId;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Repository;
@@ -26,7 +26,7 @@ public class ServiceProviderJpaRepository implements ServiceProviderRepository {
   }
 
   @Override
-  public ServiceProvider loadByUserId(@NonNull UserId userId)
+  public ServiceProvider loadByUserId(@NonNull IdentityId userId)
       throws ServiceProviderNotFoundException {
     return springRepository
         .findByUserId(userId.value())

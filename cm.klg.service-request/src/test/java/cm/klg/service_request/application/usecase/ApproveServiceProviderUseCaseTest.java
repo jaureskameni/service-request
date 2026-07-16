@@ -12,7 +12,7 @@ import cm.klg.service_request.application.outbound.UserRepository;
 import cm.klg.service_request.domain.service_provider.ServiceProvider;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_provider.ServiceProviderStatus;
-import cm.klg.service_request.domain.user.UserId;
+import cm.klg.service_request.domain.user.IdentityId;
 import cm.klg.service_request.domain.user.UserNotFoundException;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -33,13 +33,13 @@ class ApproveServiceProviderUseCaseTest {
 
   @Test
   void shouldApproveServiceProviderWhenUserExists() {
-    UserId userId = new UserId(UUID.randomUUID());
+    IdentityId userId = IdentityId.from(UUID.randomUUID());
     ServiceProviderId serviceProviderId = new ServiceProviderId(UUID.randomUUID());
     CreatedAt approvedAt = CreatedAt.from(LocalDateTime.now());
     var command =
         new ApproveServiceProviderUseCase.ApproveServiceProviderCommand(
             userId, serviceProviderId, approvedAt);
-    when(userRepository.existsById(userId)).thenReturn(true);
+    when(userRepository.existsByUserId(userId)).thenReturn(true);
 
     useCase.execute(command);
 
@@ -57,11 +57,11 @@ class ApproveServiceProviderUseCaseTest {
 
   @Test
   void shouldThrowWhenUserDoesNotExist() {
-    UserId userId = new UserId(UUID.randomUUID());
+    IdentityId userId = IdentityId.from(UUID.randomUUID());
     var command =
         new ApproveServiceProviderUseCase.ApproveServiceProviderCommand(
             userId, new ServiceProviderId(UUID.randomUUID()), CreatedAt.from(LocalDateTime.now()));
-    when(userRepository.existsById(userId)).thenReturn(false);
+    when(userRepository.existsByUserId(userId)).thenReturn(false);
 
     assertThatThrownBy(() -> useCase.execute(command)).isInstanceOf(UserNotFoundException.class);
     verifyNoInteractions(serviceProviderRepository);

@@ -8,6 +8,10 @@ import cm.klg.service_request.domain.event.ServiceRequestAcceptedEvent;
 import cm.klg.service_request.domain.event.ServiceRequestCancelledEvent;
 import cm.klg.service_request.domain.event.ServiceRequestCreatedEvent;
 import cm.klg.service_request.domain.event.ServiceRequestRejectedEvent;
+import cm.klg.service_request.domain.service_request.ServiceRequestDescription;
+import cm.klg.service_request.domain.service_request.ServiceRequestLocation;
+import cm.klg.service_request.domain.service_request.ServiceRequestTitle;
+import org.jspecify.annotations.Nullable;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -50,10 +54,22 @@ public interface OutboxWriterMapper {
   @Mapping(target = "providerId", source = "parties.serviceProviderId.value")
   @Mapping(target = "userId", source = "parties.userId.value")
   @Mapping(target = "serviceTypeId", source = "parties.serviceTypeId.value")
-  @Mapping(target = "description", source = "details.description.value")
-  @Mapping(target = "title", source = "details.title.value")
-  @Mapping(target = "location", source = "details.location.value")
+  @Mapping(target = "description", source = "details.description")
+  @Mapping(target = "title", source = "details.title")
+  @Mapping(target = "location", source = "details.location")
   @Mapping(target = "status", source = "lifecycle.status")
   @Mapping(target = "createdAt", source = "lifecycle.createdAt.value")
   ServiceRequestCreatedEventDTO toServiceRequestCreatedEventDTO(ServiceRequestCreatedEvent event);
+
+  default @Nullable String map(@Nullable ServiceRequestTitle title) {
+    return title == null ? null : title.value();
+  }
+
+  default @Nullable String map(@Nullable ServiceRequestDescription description) {
+    return description == null ? null : description.value();
+  }
+
+  default @Nullable String map(@Nullable ServiceRequestLocation location) {
+    return location == null ? null : location.value();
+  }
 }
