@@ -41,6 +41,7 @@ class GetAllServiceRequestsByProviderUseCaseTest {
     var command = new GetAllServiceRequestsByProviderUseCase.Command(userId, null, 20, 2);
 
     when(serviceProviderRepository.loadByUserId(userId)).thenReturn(serviceProvider);
+    when(serviceProviderRepository.isApprovedByUserId(userId)).thenReturn(true);
     when(serviceProvider.getId()).thenReturn(providerId);
     when(serviceRequestRepository.loadAllRequestsByProviderAsView1(
             eq(providerId),
@@ -68,6 +69,7 @@ class GetAllServiceRequestsByProviderUseCaseTest {
     ServiceProvider serviceProvider = mock(ServiceProvider.class);
 
     when(serviceProviderRepository.loadByUserId(userId)).thenReturn(serviceProvider);
+    when(serviceProviderRepository.isApprovedByUserId(userId)).thenReturn(true);
     when(serviceProvider.getId()).thenReturn(providerId);
     when(serviceRequestRepository.loadAllRequestByProviderAndStatusAsView1(
             eq(providerId),

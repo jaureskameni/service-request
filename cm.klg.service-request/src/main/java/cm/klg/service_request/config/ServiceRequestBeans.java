@@ -12,9 +12,11 @@ import cm.klg.service_request.application.usecase.ApproveServiceProviderUseCase;
 import cm.klg.service_request.application.usecase.CancelServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.CreateNewServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.CreateNewUserUseCase;
+import cm.klg.service_request.application.usecase.CreateServiceProviderUseCase;
 import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
 import cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase;
 import cm.klg.service_request.application.usecase.GetServiceRequestByIdUseCase;
+import cm.klg.service_request.application.usecase.RejectServiceProviderUseCase;
 import cm.klg.service_request.application.usecase.RejectServiceRequestUseCase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,6 +38,18 @@ public class ServiceRequestBeans implements TransactionBeansProvider {
   @Bean
   public CreateNewUserUseCase createNewUserUseCase(UserRepository userRepository) {
     return new CreateNewUserUseCase(userRepository);
+  }
+
+  @Bean
+  public CreateServiceProviderUseCase createServiceProviderUseCase(
+      ServiceProviderRepository serviceProviderRepository) {
+    return new CreateServiceProviderUseCase(serviceProviderRepository);
+  }
+
+  @Bean
+  public RejectServiceProviderUseCase rejectServiceProviderUseCase(
+      ServiceProviderRepository serviceProviderRepository) {
+    return new RejectServiceProviderUseCase(serviceProviderRepository);
   }
 
   @Bean

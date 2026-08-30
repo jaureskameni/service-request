@@ -51,6 +51,7 @@ class CreateNewServiceRequestUseCaseTest {
             ServiceRequestDescription.from("description"),
             ServiceRequestLocation.from("location"));
     when(serviceProviderRepository.existsById(providerId)).thenReturn(true);
+    when(serviceProviderRepository.isApprovedById(providerId)).thenReturn(true);
 
     var result = useCase.execute(command);
 
@@ -85,6 +86,7 @@ class CreateNewServiceRequestUseCaseTest {
         new CreateNewServiceRequestUseCase.Command(
             userId, providerId, serviceTypeId, null, null, null);
     when(serviceProviderRepository.existsById(providerId)).thenReturn(true);
+    when(serviceProviderRepository.isApprovedById(providerId)).thenReturn(true);
 
     useCase.execute(command);
 

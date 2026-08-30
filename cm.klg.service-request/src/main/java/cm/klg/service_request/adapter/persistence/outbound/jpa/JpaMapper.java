@@ -77,6 +77,14 @@ public interface JpaMapper {
   @Mapping(target = "approvedAt", source = "approvedAt.value")
   ServiceProviderJpa toJpa(ServiceProvider serviceProvider);
 
+  @BeanMapping(ignoreByDefault = true)
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "userId", source = "userId.value")
+  @Mapping(target = "status", source = "status")
+  @Mapping(target = "approvedAt", source = "approvedAt.value")
+  void fromServiceProvider(
+      @MappingTarget ServiceProviderJpa serviceProviderJpa, ServiceProvider serviceProvider);
+
   default PhoneNumberJpa toJpa(PhoneNumber phoneNumber) {
     if (phoneNumber == null) {
       return null;

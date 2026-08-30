@@ -35,7 +35,7 @@ class CreateNewUserUseCaseTest {
     createNewUserUseCase.execute(command);
 
     ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-    verify(userRepository).insert(userCaptor.capture());
+    verify(userRepository).insertIfAbsent(userCaptor.capture());
 
     assertThat(userCaptor.getValue())
         .satisfies(
@@ -65,7 +65,7 @@ class CreateNewUserUseCaseTest {
     createNewUserUseCase.execute(command);
 
     ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-    verify(userRepository).insert(userCaptor.capture());
+    verify(userRepository).insertIfAbsent(userCaptor.capture());
 
     assertThat(userCaptor.getValue().getFirstname()).isNull();
     assertThat(userCaptor.getValue().getEmail()).isNotNull();
