@@ -6,6 +6,7 @@ import cm.klg.service_request.application.outbound.ServiceRequestRepository;
 import cm.klg.service_request.domain.event.ServiceRequestCreatedEvent;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_provider.ServiceProviderNotFoundException;
+import cm.klg.service_request.domain.service_provider.UnauthorizedProviderException;
 import cm.klg.service_request.domain.service_request.ServiceRequest;
 import cm.klg.service_request.domain.service_request.ServiceRequestDescription;
 import cm.klg.service_request.domain.service_request.ServiceRequestDetails;
@@ -28,6 +29,9 @@ public class CreateNewServiceRequestUseCase {
     ServiceProviderId serviceProviderId = command.serviceProviderId;
     if (!serviceProviderRepository.existsById(serviceProviderId)) {
       throw new ServiceProviderNotFoundException();
+    }
+    if (!serviceProviderRepository.isApprovedById(serviceProviderId)) {
+      throw new UnauthorizedProviderException();
     }
     ServiceRequest serviceRequest =
         ServiceRequest.of(

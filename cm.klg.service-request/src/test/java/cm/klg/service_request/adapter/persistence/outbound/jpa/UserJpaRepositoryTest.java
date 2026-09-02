@@ -2,10 +2,14 @@ package cm.klg.service_request.adapter.persistence.outbound.jpa;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import cm.klg.common.base.domain.CreatedAt;
+import cm.klg.common.base.entity.PhoneNumberJpa;
 import cm.klg.service_request.domain.user.EmailAddress;
 import cm.klg.service_request.domain.user.Firstname;
 import cm.klg.service_request.domain.user.IdentityId;
@@ -32,14 +36,41 @@ class UserJpaRepositoryTest {
   @InjectMocks private UserJpaRepository repository;
 
   @Test
-  void shouldInsertMappedUser() {
+  void shouldInsertIfAbsentMappedUser() {
     User user = user();
     UserJpa userJpa = new UserJpa();
+    userJpa.setId(UUID.randomUUID());
+    userJpa.setIdentityId(UUID.randomUUID());
+    userJpa.setFirstname("John");
+    userJpa.setLastname("Doe");
+    userJpa.setEmailAddress("john.doe@example.com");
+    userJpa.setPhoneNumber(new PhoneNumberJpa("+237", "699999999"));
+    userJpa.setServiceProvider(false);
+    userJpa.setCreatedAt(LocalDateTime.now());
     when(jpaMapper.toUserJpa(user)).thenReturn(userJpa);
+    when(userSpringRepository.insertIfAbsent(
+            any(UUID.class),
+            any(UUID.class),
+            any(String.class),
+            any(String.class),
+            any(String.class),
+            any(String.class),
+            anyBoolean(),
+            any(LocalDateTime.class)))
+        .thenReturn(1);
 
-    repository.insert(user);
+    repository.insertIfAbsent(user);
 
-    verify(userSpringRepository).save(userJpa);
+    verify(userSpringRepository)
+        .insertIfAbsent(
+            eq(userJpa.getId()),
+            eq(userJpa.getIdentityId()),
+            eq(userJpa.getFirstname()),
+            eq(userJpa.getLastname()),
+            eq(userJpa.getEmailAddress()),
+            any(String.class),
+            eq(userJpa.isServiceProvider()),
+            eq(userJpa.getCreatedAt()));
   }
 
   @Test

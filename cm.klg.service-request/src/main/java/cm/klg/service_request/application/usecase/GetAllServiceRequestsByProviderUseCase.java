@@ -4,6 +4,7 @@ import cm.klg.service_request.application.outbound.ServiceProviderRepository;
 import cm.klg.service_request.application.outbound.ServiceRequestRepository;
 import cm.klg.service_request.application.views.ServiceRequestViews.ServiceRequestView1;
 import cm.klg.service_request.domain.service_provider.ServiceProvider;
+import cm.klg.service_request.domain.service_provider.UnauthorizedProviderException;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
 import cm.klg.service_request.domain.user.IdentityId;
 import cm.klg.service_request.utils.PageData;
@@ -19,6 +20,10 @@ public class GetAllServiceRequestsByProviderUseCase {
   private final ServiceRequestRepository serviceRequestRepository;
 
   public Response execute(Command command) {
+
+    if (!serviceProviderRepository.isApprovedByUserId(command.userId)) {
+      throw new UnauthorizedProviderException();
+    }
 
     ServiceProvider serviceProvider = serviceProviderRepository.loadByUserId(command.userId());
     var pagination = new PaginationFetchRequest(command.limit(), command.page());

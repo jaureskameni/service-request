@@ -42,6 +42,7 @@ class RejectServiceRequestUseCaseTest {
     ServiceRequestReason reason = ServiceRequestReason.from("Not available");
 
     when(serviceProviderRepository.loadByUserId(userId)).thenReturn(provider);
+    when(serviceProviderRepository.isApprovedByUserId(userId)).thenReturn(true);
     when(serviceRequestRepository.load(requestId)).thenReturn(serviceRequest);
     when(provider.getId()).thenReturn(providerId);
     when(serviceRequest.reject(providerId, reason)).thenReturn(event);

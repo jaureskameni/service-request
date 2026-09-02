@@ -6,9 +6,17 @@ import cm.klg.service_request.domain.service_provider.ServiceProviderNotFoundExc
 import cm.klg.service_request.domain.user.IdentityId;
 
 public interface ServiceProviderRepository {
-  void insert(ServiceProvider serviceProvider);
+  void insertIfAbsent(ServiceProvider serviceProvider);
+
+  void update(ServiceProvider serviceProvider);
 
   boolean existsById(ServiceProviderId serviceProviderId);
+
+  ServiceProvider load(ServiceProviderId serviceProviderId) throws ServiceProviderNotFoundException;
+
+  boolean isApprovedById(ServiceProviderId serviceProviderId);
+
+  boolean isApprovedByUserId(IdentityId userId);
 
   ServiceProvider loadByUserId(IdentityId userId) throws ServiceProviderNotFoundException;
 }

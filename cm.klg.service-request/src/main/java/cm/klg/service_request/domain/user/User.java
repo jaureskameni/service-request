@@ -12,7 +12,7 @@ public class User {
   private final Lastname lastname;
   @Nullable private final EmailAddress email;
   private final PhoneNumber phoneNumber;
-  private final boolean isServiceProvider;
+  private boolean isServiceProvider;
   private final CreatedAt createdAt;
 
   public User(

@@ -39,4 +39,10 @@
 			<column name="c_version" type="int8" defaultValueNumeric="0" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="SR-15:1" author="kameni.nguematcha">
+		<addUniqueConstraint
+			tableName="t_service_provider" columnNames="c_user_id"
+			constraintName="uk_service_provider_user_id" />
+	</changeSet>
+
 </databaseChangeLog>

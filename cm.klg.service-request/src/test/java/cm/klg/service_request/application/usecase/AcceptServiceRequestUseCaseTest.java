@@ -40,6 +40,7 @@ class AcceptServiceRequestUseCaseTest {
     ServiceRequestId requestId = ServiceRequestId.generate();
 
     when(serviceProviderRepository.loadByUserId(userId)).thenReturn(provider);
+    when(serviceProviderRepository.isApprovedByUserId(userId)).thenReturn(true);
     when(serviceRequestRepository.load(requestId)).thenReturn(serviceRequest);
     when(provider.getId()).thenReturn(providerId);
     when(serviceRequest.accept(providerId)).thenReturn(event);
