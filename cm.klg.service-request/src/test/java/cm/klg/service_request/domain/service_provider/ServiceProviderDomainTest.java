@@ -3,7 +3,7 @@ package cm.klg.service_request.domain.service_provider;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import cm.klg.common.base.domain.CreatedAt;
-import cm.klg.service_request.domain.user.IdentityId;
+import cm.klg.service_request.domain.user.UserId;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ class ServiceProviderDomainTest {
   @Test
   void shouldReconstituteServiceProvider() {
     ServiceProviderId id = ServiceProviderId.from(UUID.randomUUID());
-    IdentityId userId = IdentityId.from(UUID.randomUUID());
+    UserId userId = UserId.from(UUID.randomUUID());
     CreatedAt approvedAt = CreatedAt.from(LocalDateTime.now());
 
     ServiceProvider serviceProvider =

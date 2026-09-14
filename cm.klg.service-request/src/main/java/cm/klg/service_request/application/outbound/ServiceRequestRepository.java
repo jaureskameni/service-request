@@ -6,7 +6,7 @@ import cm.klg.service_request.domain.service_request.ServiceRequest;
 import cm.klg.service_request.domain.service_request.ServiceRequestId;
 import cm.klg.service_request.domain.service_request.ServiceRequestNotFoundException;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
-import cm.klg.service_request.domain.user.IdentityId;
+import cm.klg.service_request.domain.user.UserId;
 import cm.klg.service_request.utils.PageData;
 import cm.klg.service_request.utils.PaginationFetchRequest;
 
@@ -16,10 +16,10 @@ public interface ServiceRequestRepository {
   void update(ServiceRequest serviceRequest);
 
   PageData<ServiceRequestView1> loadAllMyRequestsAsView1(
-      IdentityId userId, PaginationFetchRequest pagination);
+      UserId userId, PaginationFetchRequest pagination);
 
   PageData<ServiceRequestView1> loadAllMyRequestByStatusAsView1(
-      IdentityId userId, ServiceRequestStatus status, PaginationFetchRequest pagination);
+      UserId userId, ServiceRequestStatus status, PaginationFetchRequest pagination);
 
   PageData<ServiceRequestView1> loadAllRequestsByProviderAsView1(
       ServiceProviderId providerId, PaginationFetchRequest pagination);

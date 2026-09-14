@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 import cm.klg.service_request.application.outbound.ServiceRequestRepository;
 import cm.klg.service_request.application.views.ServiceRequestViews.ServiceRequestView1;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
-import cm.klg.service_request.domain.user.IdentityId;
+import cm.klg.service_request.domain.user.UserId;
 import cm.klg.service_request.utils.PageData;
 import java.util.List;
 import java.util.UUID;
@@ -30,7 +30,7 @@ class GetAllMyServiceRequestsUseCaseTest {
 
   @Test
   void shouldLoadAllRequestsWhenStatusIsAbsent() {
-    IdentityId userId = IdentityId.from(UUID.randomUUID());
+    UserId userId = UserId.from(UUID.randomUUID());
     var command = new GetAllMyServiceRequestsUseCase.Command(userId, null, 20, 2);
     when(serviceRequestRepository.loadAllMyRequestsAsView1(
             eq(userId),
@@ -50,7 +50,7 @@ class GetAllMyServiceRequestsUseCaseTest {
 
   @Test
   void shouldLoadRequestsByStatusWhenStatusIsProvided() {
-    IdentityId userId = IdentityId.from(UUID.randomUUID());
+    UserId userId = UserId.from(UUID.randomUUID());
     var command =
         new GetAllMyServiceRequestsUseCase.Command(userId, ServiceRequestStatus.ACCEPTED, 10, 0);
     when(serviceRequestRepository.loadAllMyRequestByStatusAsView1(

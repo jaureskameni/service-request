@@ -19,7 +19,6 @@ import cm.klg.service_request.domain.service_request.ServiceRequestTitle;
 import cm.klg.service_request.domain.service_request.ServiceTypeId;
 import cm.klg.service_request.domain.user.EmailAddress;
 import cm.klg.service_request.domain.user.Firstname;
-import cm.klg.service_request.domain.user.IdentityId;
 import cm.klg.service_request.domain.user.Lastname;
 import cm.klg.service_request.domain.user.PhoneNumber;
 import cm.klg.service_request.domain.user.User;
@@ -42,7 +41,6 @@ public interface JpaMapper {
 
   @BeanMapping(ignoreByDefault = true)
   @Mapping(target = "id", source = "id.value")
-  @Mapping(target = "identityId", source = "identityId.value")
   @Mapping(target = "lastname", source = "lastname.value")
   @Mapping(target = "firstname", source = "firstname.value")
   @Mapping(target = "emailAddress", source = "email.value")
@@ -64,7 +62,6 @@ public interface JpaMapper {
             phoneNumber);
     return User.reconstitute(
         UserId.from(userJpa.getId()),
-        IdentityId.from(userJpa.getIdentityId()),
         userProfile,
         userJpa.isServiceProvider(),
         CreatedAt.from(userJpa.getCreatedAt()));
@@ -139,7 +136,7 @@ public interface JpaMapper {
   default ServiceProvider toDomain(ServiceProviderJpa jpa) {
     return ServiceProvider.reconstitute(
         ServiceProviderId.from(jpa.getId()),
-        IdentityId.from(jpa.getUserId()),
+        UserId.from(jpa.getUserId()),
         ServiceProviderStatus.valueOf(jpa.getStatus()),
         CreatedAt.from(jpa.getApprovedAt()));
   }
@@ -148,7 +145,7 @@ public interface JpaMapper {
     return ServiceRequest.reconstitute(
         ServiceRequestId.from(jpa.getId()),
         new ServiceRequestParties(
-            IdentityId.from(jpa.getUserId()),
+            UserId.from(jpa.getUserId()),
             ServiceProviderId.from(jpa.getProviderId()),
             ServiceTypeId.from(jpa.getServiceTypeId())),
         new ServiceRequestDetails(

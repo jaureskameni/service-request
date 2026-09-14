@@ -18,7 +18,7 @@ import cm.klg.service_request.domain.service_request.ServiceRequestLocation;
 import cm.klg.service_request.domain.service_request.ServiceRequestReason;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
 import cm.klg.service_request.domain.service_request.ServiceRequestTitle;
-import cm.klg.service_request.domain.user.IdentityId;
+import cm.klg.service_request.domain.user.UserId;
 import java.util.Optional;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
@@ -64,13 +64,13 @@ public interface RestMapper {
   default GetAllMyServiceRequestsUseCase.Command toGetAllMyServiceRequestsCommand(
       Integer limit, @Nullable ServiceRequestStatusDTO status, Integer page, UUID userId) {
     return new GetAllMyServiceRequestsUseCase.Command(
-        IdentityId.from(userId), toStatus(status), toLimit(limit), toPage(page));
+        UserId.from(userId), toStatus(status), toLimit(limit), toPage(page));
   }
 
   default GetAllServiceRequestsByProviderUseCase.Command toGetAllServiceRequestsByProviderCommand(
       Integer limit, @Nullable ServiceRequestStatusDTO status, Integer page, UUID userId) {
     return new GetAllServiceRequestsByProviderUseCase.Command(
-        IdentityId.from(userId), toStatus(status), toLimit(limit), toPage(page));
+        UserId.from(userId), toStatus(status), toLimit(limit), toPage(page));
   }
 
   private static @Nullable ServiceRequestStatus toStatus(@Nullable ServiceRequestStatusDTO status) {
@@ -121,13 +121,13 @@ public interface RestMapper {
   default AcceptServiceRequestUseCase.Command toAcceptServiceRequestCommand(
       UUID serviceRequestId, UUID userId) {
     return new AcceptServiceRequestUseCase.Command(
-        IdentityId.from(userId), ServiceRequestId.from(serviceRequestId));
+        UserId.from(userId), ServiceRequestId.from(serviceRequestId));
   }
 
   default RejectServiceRequestUseCase.Command toRejectServiceRequestCommand(
       UUID serviceRequestId, UUID userId, ServiceRequestRejectDTO serviceRequestRejectDTO) {
     return new RejectServiceRequestUseCase.Command(
-        IdentityId.from(userId),
+        UserId.from(userId),
         ServiceRequestId.from(serviceRequestId),
         ServiceRequestReason.from(serviceRequestRejectDTO.getReason()));
   }
@@ -135,6 +135,6 @@ public interface RestMapper {
   default CancelServiceRequestUseCase.Command toCancelServiceRequestCommand(
       UUID serviceRequestId, UUID userId) {
     return new CancelServiceRequestUseCase.Command(
-        IdentityId.from(userId), ServiceRequestId.from(serviceRequestId));
+        UserId.from(userId), ServiceRequestId.from(serviceRequestId));
   }
 }

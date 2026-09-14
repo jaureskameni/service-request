@@ -4,7 +4,6 @@ import cm.klg.common.base.domain.CreatedAt;
 import cm.klg.service_request.application.outbound.UserRepository;
 import cm.klg.service_request.domain.user.EmailAddress;
 import cm.klg.service_request.domain.user.Firstname;
-import cm.klg.service_request.domain.user.IdentityId;
 import cm.klg.service_request.domain.user.Lastname;
 import cm.klg.service_request.domain.user.PhoneNumber;
 import cm.klg.service_request.domain.user.User;
@@ -28,18 +27,13 @@ public class CreateNewUserUseCase {
     UserProfile userProfile = new UserProfile(firstname, lastname, emailAddress, phoneNumber);
     User newUser =
         User.reconstitute(
-            UserId.from(command.id()),
-            IdentityId.from(command.identityId()),
-            userProfile,
-            false,
-            CreatedAt.from(command.createdAt));
+            UserId.from(command.id()), userProfile, false, CreatedAt.from(command.createdAt));
 
     userRepository.insertIfAbsent(newUser);
   }
 
   public record CreateNewUserCommand(
       UUID id,
-      UUID identityId,
       String lastname,
       @Nullable String firstname,
       @Nullable String email,

@@ -2,7 +2,7 @@ package cm.klg.service_request.application.usecase;
 
 import cm.klg.service_request.application.outbound.ServiceProviderRepository;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
-import cm.klg.service_request.domain.user.IdentityId;
+import cm.klg.service_request.domain.user.UserId;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -15,5 +15,5 @@ public class RejectServiceProviderUseCase {
     serviceProviderRepository.update(serviceProvider);
   }
 
-  public record Command(IdentityId userId, ServiceProviderId serviceProviderId) {}
+  public record Command(UserId userId, ServiceProviderId serviceProviderId) {}
 }

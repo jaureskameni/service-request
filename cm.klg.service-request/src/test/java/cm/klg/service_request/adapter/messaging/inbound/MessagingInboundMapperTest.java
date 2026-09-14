@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import cm.klg.generated.uam.adapter.messaging.inbound.dto.UamPhoneNumberDTO;
 import cm.klg.generated.uam.adapter.messaging.inbound.dto.UamUserCreatedEventDTO;
+import cm.klg.generated.uam.adapter.messaging.inbound.dto.UamUserUpdatedEventDTO;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ class MessagingInboundMapperTest {
     LocalDateTime createdAt = LocalDateTime.of(2026, 5, 31, 10, 30);
     UamUserCreatedEventDTO event =
         new UamUserCreatedEventDTO()
-            .id(id)
+            .userId(id)
             .lastname("Doe")
             .firstname("John")
             .email("john.doe@example.com")
@@ -51,6 +52,34 @@ class MessagingInboundMapperTest {
   @Test
   void shouldMapNullUserCreatedEventToNull() {
     assertThat(mapper.toCreateUserCommand(null)).isNull();
+  }
+
+  @Test
+  void shouldMapUserUpdatedEventToCommand() {
+    UUID userId = UUID.randomUUID();
+    UamUserUpdatedEventDTO event =
+        new UamUserUpdatedEventDTO()
+            .userId(userId)
+            .lastname("Doe")
+            .firstname("Jane")
+            .email("jane.doe@example.com")
+            .phoneNumber(new UamPhoneNumberDTO().countryCode("237").number("698888888"));
+
+    var command = mapper.toUpdateUserCommand(event);
+
+    assertThat(command.userId().value()).isEqualTo(userId);
+    assertThat(command.lastname().value()).isEqualTo("Doe");
+    assertThat(command.firstname()).isNotNull();
+    assertThat(command.firstname().value()).isEqualTo("Jane");
+    assertThat(command.email()).isNotNull();
+    assertThat(command.email().value()).isEqualTo("jane.doe@example.com");
+    assertThat(command.phoneNumber().countryCode()).isEqualTo("237");
+    assertThat(command.phoneNumber().number()).isEqualTo("698888888");
+  }
+
+  @Test
+  void shouldMapNullUserUpdatedEventToNull() {
+    assertThat(mapper.toUpdateUserCommand(null)).isNull();
   }
 
   @Test

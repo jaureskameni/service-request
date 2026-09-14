@@ -3,7 +3,7 @@ package cm.klg.service_request.application.outbound;
 import cm.klg.service_request.domain.service_provider.ServiceProvider;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_provider.ServiceProviderNotFoundException;
-import cm.klg.service_request.domain.user.IdentityId;
+import cm.klg.service_request.domain.user.UserId;
 
 public interface ServiceProviderRepository {
   void insertIfAbsent(ServiceProvider serviceProvider);
@@ -16,7 +16,7 @@ public interface ServiceProviderRepository {
 
   boolean isApprovedById(ServiceProviderId serviceProviderId);
 
-  boolean isApprovedByUserId(IdentityId userId);
+  boolean isApprovedByUserId(UserId userId);
 
-  ServiceProvider loadByUserId(IdentityId userId) throws ServiceProviderNotFoundException;
+  ServiceProvider loadByUserId(UserId userId) throws ServiceProviderNotFoundException;
 }

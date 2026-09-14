@@ -9,7 +9,7 @@ import cm.klg.service_request.application.outbound.ServiceProviderRepository;
 import cm.klg.service_request.domain.service_provider.ServiceProvider;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_provider.ServiceProviderStatus;
-import cm.klg.service_request.domain.user.IdentityId;
+import cm.klg.service_request.domain.user.UserId;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class ApproveServiceProviderUseCaseTest {
 
   @Test
   void shouldApproveExistingServiceProvider() {
-    IdentityId userId = IdentityId.from(UUID.randomUUID());
+    UserId userId = UserId.from(UUID.randomUUID());
     ServiceProviderId serviceProviderId = new ServiceProviderId(UUID.randomUUID());
     CreatedAt approvedAt = CreatedAt.from(LocalDateTime.now());
     var command =

@@ -17,7 +17,7 @@ import cm.klg.service_request.domain.service_request.ServiceRequestLocation;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
 import cm.klg.service_request.domain.service_request.ServiceRequestTitle;
 import cm.klg.service_request.domain.service_request.ServiceTypeId;
-import cm.klg.service_request.domain.user.IdentityId;
+import cm.klg.service_request.domain.user.UserId;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,7 +39,7 @@ class CreateNewServiceRequestUseCaseTest {
 
   @Test
   void shouldCreateServiceRequestWithProvidedOptionalFieldsWhenProviderExists() {
-    IdentityId userId = IdentityId.from(UUID.randomUUID());
+    UserId userId = UserId.from(UUID.randomUUID());
     ServiceProviderId providerId = new ServiceProviderId(UUID.randomUUID());
     ServiceTypeId serviceTypeId = ServiceTypeId.from(UUID.randomUUID());
     var command =
@@ -79,7 +79,7 @@ class CreateNewServiceRequestUseCaseTest {
 
   @Test
   void shouldCreateServiceRequestWithAbsentOptionalFieldsWhenProviderExists() {
-    IdentityId userId = IdentityId.from(UUID.randomUUID());
+    UserId userId = UserId.from(UUID.randomUUID());
     ServiceProviderId providerId = new ServiceProviderId(UUID.randomUUID());
     ServiceTypeId serviceTypeId = ServiceTypeId.from(UUID.randomUUID());
     var command =
@@ -102,7 +102,7 @@ class CreateNewServiceRequestUseCaseTest {
     ServiceProviderId providerId = new ServiceProviderId(UUID.randomUUID());
     var command =
         new CreateNewServiceRequestUseCase.Command(
-            IdentityId.from(UUID.randomUUID()),
+            UserId.from(UUID.randomUUID()),
             providerId,
             ServiceTypeId.from(UUID.randomUUID()),
             ServiceRequestTitle.from("title"),

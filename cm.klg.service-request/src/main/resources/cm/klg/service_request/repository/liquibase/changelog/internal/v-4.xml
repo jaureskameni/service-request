@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+	<changeSet id="SR-17:1" author="kameni.nguematcha">
+		<dropForeignKeyConstraint
+			baseTableName="t_service_provider"
+			constraintName="fk_service_provider_user" />
+
+		<dropForeignKeyConstraint
+			baseTableName="t_service_request"
+			constraintName="fk_service_request_user" />
+
+		<dropColumn tableName="t_user" columnName="c_identity_id" />
+
+		<addForeignKeyConstraint
+			baseTableName="t_service_provider" baseColumnNames="c_user_id"
+			constraintName="fk_service_provider_user"
+			referencedTableName="t_user" referencedColumnNames="c_id"
+			onDelete="RESTRICT" onUpdate="CASCADE" />
+
+		<addForeignKeyConstraint
+			baseTableName="t_service_request" baseColumnNames="c_user_id"
+			constraintName="fk_service_request_user" referencedTableName="t_user"
+			referencedColumnNames="c_id" onDelete="RESTRICT" onUpdate="CASCADE" />
+	</changeSet>
+
+</databaseChangeLog>
