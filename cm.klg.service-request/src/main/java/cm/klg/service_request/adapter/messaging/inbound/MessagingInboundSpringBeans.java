@@ -4,7 +4,9 @@ import cm.klg.common.base.transaction.UseCaseExecutor;
 import cm.klg.service_request.application.usecase.ApproveServiceProviderUseCase;
 import cm.klg.service_request.application.usecase.CreateNewUserUseCase;
 import cm.klg.service_request.application.usecase.CreateServiceProviderUseCase;
+import cm.klg.service_request.application.usecase.DeleteUserUseCase;
 import cm.klg.service_request.application.usecase.RejectServiceProviderUseCase;
+import cm.klg.service_request.application.usecase.UpdateUserUseCase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,6 +20,24 @@ public class MessagingInboundSpringBeans {
       UseCaseExecutor useCaseExecutor) {
     return new CreateUserInboundEventHandler(
         createNewUserUseCase, messagingInboundMapper, useCaseExecutor);
+  }
+
+  @Bean
+  public UpdateUserInboundEventHandler updateUserInboundEventHandler(
+      UpdateUserUseCase updateUserUseCase,
+      MessagingInboundMapper messagingInboundMapper,
+      UseCaseExecutor useCaseExecutor) {
+    return new UpdateUserInboundEventHandler(
+        updateUserUseCase, messagingInboundMapper, useCaseExecutor);
+  }
+
+  @Bean
+  public DeleteUserInboundEventHandler deleteUserInboundEventHandler(
+      DeleteUserUseCase deleteUserUseCase,
+      MessagingInboundMapper messagingInboundMapper,
+      UseCaseExecutor useCaseExecutor) {
+    return new DeleteUserInboundEventHandler(
+        deleteUserUseCase, messagingInboundMapper, useCaseExecutor);
   }
 
   @Bean

@@ -4,7 +4,7 @@ import cm.klg.service_request.application.outbound.DomainEventPublisher;
 import cm.klg.service_request.application.outbound.ServiceRequestRepository;
 import cm.klg.service_request.domain.service_request.ServiceRequest;
 import cm.klg.service_request.domain.service_request.ServiceRequestId;
-import cm.klg.service_request.domain.user.IdentityId;
+import cm.klg.service_request.domain.user.UserId;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -22,5 +22,5 @@ public class CancelServiceRequestUseCase {
     domainEventPublisher.publishServiceRequestCancelledEvent(event);
   }
 
-  public record Command(IdentityId userId, ServiceRequestId serviceRequestId) {}
+  public record Command(UserId userId, ServiceRequestId serviceRequestId) {}
 }

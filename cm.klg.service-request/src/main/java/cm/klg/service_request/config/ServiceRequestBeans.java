@@ -13,11 +13,13 @@ import cm.klg.service_request.application.usecase.CancelServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.CreateNewServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.CreateNewUserUseCase;
 import cm.klg.service_request.application.usecase.CreateServiceProviderUseCase;
+import cm.klg.service_request.application.usecase.DeleteUserUseCase;
 import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
 import cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase;
 import cm.klg.service_request.application.usecase.GetServiceRequestByIdUseCase;
 import cm.klg.service_request.application.usecase.RejectServiceProviderUseCase;
 import cm.klg.service_request.application.usecase.RejectServiceRequestUseCase;
+import cm.klg.service_request.application.usecase.UpdateUserUseCase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
@@ -38,6 +40,16 @@ public class ServiceRequestBeans implements TransactionBeansProvider {
   @Bean
   public CreateNewUserUseCase createNewUserUseCase(UserRepository userRepository) {
     return new CreateNewUserUseCase(userRepository);
+  }
+
+  @Bean
+  public UpdateUserUseCase updateUserUseCase(UserRepository userRepository) {
+    return new UpdateUserUseCase(userRepository);
+  }
+
+  @Bean
+  public DeleteUserUseCase deleteUserUseCase(UserRepository userRepository) {
+    return new DeleteUserUseCase(userRepository);
   }
 
   @Bean

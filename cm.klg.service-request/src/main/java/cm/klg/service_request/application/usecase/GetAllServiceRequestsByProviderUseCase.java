@@ -6,7 +6,7 @@ import cm.klg.service_request.application.views.ServiceRequestViews.ServiceReque
 import cm.klg.service_request.domain.service_provider.ServiceProvider;
 import cm.klg.service_request.domain.service_provider.UnauthorizedProviderException;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
-import cm.klg.service_request.domain.user.IdentityId;
+import cm.klg.service_request.domain.user.UserId;
 import cm.klg.service_request.utils.PageData;
 import cm.klg.service_request.utils.PaginationFetchRequest;
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class GetAllServiceRequestsByProviderUseCase {
   }
 
   public record Command(
-      IdentityId userId, @Nullable ServiceRequestStatus status, Integer limit, Integer page) {}
+      UserId userId, @Nullable ServiceRequestStatus status, Integer limit, Integer page) {}
 
   public record Response(List<ServiceRequestView1> serviceRequestView1s, long count) {}
 }

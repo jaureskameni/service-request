@@ -26,11 +26,10 @@ class CreateNewUserUseCaseTest {
   @Test
   void shouldCreateNewUser() {
     UUID userId = UUID.randomUUID();
-    UUID identityId = UUID.randomUUID();
     LocalDateTime now = LocalDateTime.now();
     CreateNewUserUseCase.CreateNewUserCommand command =
         new CreateNewUserUseCase.CreateNewUserCommand(
-            userId, identityId, "Doe", " John ", "john.doe@example.com", "+237", "699999999", now);
+            userId, "Doe", " John ", "john.doe@example.com", "+237", "699999999", now);
 
     createNewUserUseCase.execute(command);
 
@@ -56,11 +55,10 @@ class CreateNewUserUseCaseTest {
   @Test
   void shouldCreateUserWithNullableFirstnameAndEmail() {
     UUID userId = UUID.randomUUID();
-    UUID identityId = UUID.randomUUID();
     LocalDateTime now = LocalDateTime.now();
     CreateNewUserUseCase.CreateNewUserCommand command =
         new CreateNewUserUseCase.CreateNewUserCommand(
-            userId, identityId, "Doe", null, null, "+237", "699999999", now);
+            userId, "Doe", null, null, "+237", "699999999", now);
 
     createNewUserUseCase.execute(command);
 
@@ -76,7 +74,6 @@ class CreateNewUserUseCaseTest {
   void shouldRejectBlankFirstname() {
     CreateNewUserUseCase.CreateNewUserCommand command =
         new CreateNewUserUseCase.CreateNewUserCommand(
-            UUID.randomUUID(),
             UUID.randomUUID(),
             "Doe",
             " ",

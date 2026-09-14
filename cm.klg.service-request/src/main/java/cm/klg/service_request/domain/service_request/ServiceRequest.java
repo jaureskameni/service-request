@@ -7,7 +7,7 @@ import cm.klg.service_request.domain.event.ServiceRequestCancelledEvent;
 import cm.klg.service_request.domain.event.ServiceRequestCreatedEvent;
 import cm.klg.service_request.domain.event.ServiceRequestRejectedEvent;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
-import cm.klg.service_request.domain.user.IdentityId;
+import cm.klg.service_request.domain.user.UserId;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.Getter;
@@ -16,7 +16,7 @@ import org.jspecify.annotations.Nullable;
 @Getter
 public class ServiceRequest {
   private final ServiceRequestId id;
-  private final IdentityId userId;
+  private final UserId userId;
   private final ServiceProviderId serviceProviderId;
   private final ServiceTypeId serviceTypeId;
   @Nullable private final ServiceRequestTitle title;
@@ -117,7 +117,7 @@ public class ServiceRequest {
         this.reason);
   }
 
-  public ServiceRequestCancelledEvent cancel(IdentityId userId) {
+  public ServiceRequestCancelledEvent cancel(UserId userId) {
     if (this.status != ServiceRequestStatus.PENDING) {
       throw new InvalidServiceRequestStatusException();
     }

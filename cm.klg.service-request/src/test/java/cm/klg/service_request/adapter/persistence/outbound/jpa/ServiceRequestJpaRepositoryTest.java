@@ -10,7 +10,7 @@ import cm.klg.service_request.application.views.ServiceRequestViews.ServiceReque
 import cm.klg.service_request.domain.service_request.ServiceRequest;
 import cm.klg.service_request.domain.service_request.ServiceRequestId;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
-import cm.klg.service_request.domain.user.IdentityId;
+import cm.klg.service_request.domain.user.UserId;
 import cm.klg.service_request.utils.PageData;
 import cm.klg.service_request.utils.PaginationFetchRequest;
 import java.util.List;
@@ -45,7 +45,7 @@ class ServiceRequestJpaRepositoryTest {
 
   @Test
   void shouldLoadAllMyRequestsWithPageable() {
-    IdentityId userId = IdentityId.from(UUID.randomUUID());
+    UserId userId = UserId.from(UUID.randomUUID());
     var pageable = PageRequest.of(1, 15);
     when(springRepository.findAllMyRequestByUserIdAsView1(userId.value(), pageable))
         .thenReturn(new PageImpl<>(List.of(serviceRequestView1), pageable, 16));
@@ -63,7 +63,7 @@ class ServiceRequestJpaRepositoryTest {
 
   @Test
   void shouldLoadAllMyRequestsByStatusWithPageable() {
-    IdentityId userId = IdentityId.from(UUID.randomUUID());
+    UserId userId = UserId.from(UUID.randomUUID());
     var pageable = PageRequest.of(0, 10);
     when(springRepository.findAllMyRequestByUserIdAndStatusAsView1(
             userId.value(), ServiceRequestStatus.PENDING.name(), pageable))

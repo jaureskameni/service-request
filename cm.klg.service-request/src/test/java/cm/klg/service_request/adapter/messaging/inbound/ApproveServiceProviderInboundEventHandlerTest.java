@@ -11,7 +11,7 @@ import cm.klg.common.base.domain.CreatedAt;
 import cm.klg.common.base.transaction.UseCaseExecutor;
 import cm.klg.service_request.application.usecase.ApproveServiceProviderUseCase;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
-import cm.klg.service_request.domain.user.IdentityId;
+import cm.klg.service_request.domain.user.UserId;
 import com.emb.domain.inboxevent.InboxEventCommand;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -51,7 +51,7 @@ class ApproveServiceProviderInboundEventHandlerTest {
     InboxEventCommand inboxEventCommand = mock(InboxEventCommand.class);
     ApproveServiceProviderUseCase.ApproveServiceProviderCommand command =
         new ApproveServiceProviderUseCase.ApproveServiceProviderCommand(
-            IdentityId.from(UUID.randomUUID()),
+            UserId.from(UUID.randomUUID()),
             new ServiceProviderId(UUID.randomUUID()),
             CreatedAt.from(LocalDateTime.now()));
 

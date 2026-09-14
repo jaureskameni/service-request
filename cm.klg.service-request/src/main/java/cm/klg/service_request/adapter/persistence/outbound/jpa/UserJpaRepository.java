@@ -2,7 +2,6 @@ package cm.klg.service_request.adapter.persistence.outbound.jpa;
 
 import cm.klg.common.base.entity.PhoneNumberJpaConverter;
 import cm.klg.service_request.application.outbound.UserRepository;
-import cm.klg.service_request.domain.user.IdentityId;
 import cm.klg.service_request.domain.user.User;
 import cm.klg.service_request.domain.user.UserId;
 import cm.klg.service_request.domain.user.UserNotFoundException;
@@ -29,7 +28,6 @@ public class UserJpaRepository implements UserRepository {
       int insertedRows =
           userSpringRepository.insertIfAbsent(
               userJpa.getId(),
-              userJpa.getIdentityId(),
               userJpa.getFirstname(),
               userJpa.getLastname(),
               userJpa.getEmailAddress(),
@@ -37,21 +35,19 @@ public class UserJpaRepository implements UserRepository {
               userJpa.isServiceProvider(),
               userJpa.getCreatedAt());
       if (insertedRows == 0) {
-        log.debug(
-            "User with identityId {} already exists, skipping insertion.",
-            user.getIdentityId().value());
+        log.debug("User with id {} already exists, skipping insertion.", user.getId().value());
       }
     } catch (DataIntegrityViolationException e) {
       log.warn(
-          "Unexpected constraint violation while creating user with identityId {}",
-          user.getIdentityId().value(),
+          "Unexpected constraint violation while creating user with id {}",
+          user.getId().value(),
           e);
     }
   }
 
   @Override
-  public boolean existsByUserId(@NonNull IdentityId userId) {
-    return userSpringRepository.existsByIdentityId(userId.value());
+  public boolean existsByUserId(@NonNull UserId userId) {
+    return userSpringRepository.existsById(userId.value());
   }
 
   @Override
@@ -65,15 +61,12 @@ public class UserJpaRepository implements UserRepository {
   }
 
   @Override
-  public User loadByIdentityId(@NonNull IdentityId identityId) {
-    return userSpringRepository
-        .findByIdentityId(identityId.value())
-        .map(jpaMapper::toDomain)
-        .orElseThrow(UserNotFoundException::new);
+  public void update(@NonNull User user) {
+    userSpringRepository.save(jpaMapper.toUserJpa(user));
   }
 
   @Override
-  public void update(@NonNull User user) {
-    userSpringRepository.save(jpaMapper.toUserJpa(user));
+  public void delete(@NonNull UserId userId) {
+    userSpringRepository.deleteById(userId.value());
   }
 }
