@@ -24,6 +24,12 @@
 			public.t_service_request DROP CONSTRAINT
 			fk_service_request_user; END
 			IF; END $$;</sql>
+		<sql splitStatements="false">DO $$ BEGIN IF EXISTS (SELECT 1 FROM
+			pg_constraint WHERE conname = 'fk_service_request_provider' AND
+			conrelid = 't_service_request'::regclass) THEN ALTER TABLE
+			public.t_service_request DROP CONSTRAINT
+			fk_service_request_provider;
+			END IF; END $$;</sql>
 
 		<sql splitStatements="false">DELETE FROM public.t_service_provider
 			sp WHERE
@@ -50,6 +56,12 @@
 			baseTableName="t_service_request" baseColumnNames="c_user_id"
 			constraintName="fk_service_request_user" referencedTableName="t_user"
 			referencedColumnNames="c_id" onDelete="RESTRICT" onUpdate="CASCADE" />
+
+		<addForeignKeyConstraint
+			baseTableName="t_service_request" baseColumnNames="c_provider_id"
+			constraintName="fk_service_request_provider"
+			referencedTableName="t_service_provider" referencedColumnNames="c_id"
+			onDelete="RESTRICT" onUpdate="CASCADE" />
 	</changeSet>
 
 </databaseChangeLog>
