@@ -6,13 +6,37 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
 	<changeSet id="SR-17:1" author="kameni.nguematcha">
-		<dropForeignKeyConstraint
-			baseTableName="t_service_provider"
-			constraintName="fk_service_provider_user" />
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="t_service_provider" />
+		</preConditions>
 
-		<dropForeignKeyConstraint
-			baseTableName="t_service_request"
-			constraintName="fk_service_request_user" />
+		<sql splitStatements="false">DO $$ BEGIN IF EXISTS (SELECT 1 FROM
+			pg_constraint WHERE conname = 'fk_service_provider_user' AND
+			conrelid
+			= 't_service_provider'::regclass) THEN ALTER TABLE
+			public.t_service_provider DROP CONSTRAINT
+			fk_service_provider_user;
+			END IF; END $$;</sql>
+		<sql splitStatements="false">DO $$ BEGIN IF EXISTS (SELECT 1 FROM
+			pg_constraint WHERE conname = 'fk_service_request_user' AND
+			conrelid =
+			't_service_request'::regclass) THEN ALTER TABLE
+			public.t_service_request DROP CONSTRAINT
+			fk_service_request_user; END
+			IF; END $$;</sql>
+
+		<sql splitStatements="false">DELETE FROM public.t_service_provider
+			sp WHERE
+			NOT EXISTS (
+			SELECT 1 FROM public.t_user u WHERE
+			u.c_id = sp.c_user_id
+			);</sql>
+		<sql splitStatements="false">DELETE FROM public.t_service_request
+			sr WHERE
+			NOT EXISTS (
+			SELECT 1 FROM public.t_user u WHERE
+			u.c_id = sr.c_user_id
+			);</sql>
 
 		<dropColumn tableName="t_user" columnName="c_identity_id" />
 
