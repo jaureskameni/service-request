@@ -1,13 +1,10 @@
 package cm.klg.service_request.adapter.messaging.inbound;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import cm.klg.common.base.transaction.UseCaseExecutor;
 import cm.klg.generated.uam.adapter.messaging.inbound.dto.UamDomainEventType;
 import cm.klg.generated.uam.adapter.messaging.inbound.dto.UamUserUpdatedEventDTO;
 import cm.klg.service_request.application.usecase.UpdateUserUseCase;
@@ -29,7 +26,6 @@ class UpdateUserInboundEventHandlerTest {
 
   @Mock private UpdateUserUseCase updateUserUseCase;
   @Mock private MessagingInboundMapper messagingInboundMapper;
-  @Mock private UseCaseExecutor useCaseExecutor;
 
   @InjectMocks private UpdateUserInboundEventHandler updateUserInboundEventHandler;
 
@@ -57,14 +53,6 @@ class UpdateUserInboundEventHandlerTest {
             PhoneNumber.from("237", "699"));
 
     when(messagingInboundMapper.toUpdateUserCommand(userUpdatedEventDTO)).thenReturn(command);
-    doAnswer(
-            invocation -> {
-              Runnable runnable = invocation.getArgument(0);
-              runnable.run();
-              return null;
-            })
-        .when(useCaseExecutor)
-        .runCommand(any(Runnable.class));
 
     updateUserInboundEventHandler.handle(userUpdatedEventDTO, inboxEventCommand);
 

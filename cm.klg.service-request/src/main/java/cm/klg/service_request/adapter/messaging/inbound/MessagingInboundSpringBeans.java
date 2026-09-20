@@ -1,6 +1,5 @@
 package cm.klg.service_request.adapter.messaging.inbound;
 
-import cm.klg.common.base.transaction.UseCaseExecutor;
 import cm.klg.service_request.application.usecase.ApproveServiceProviderUseCase;
 import cm.klg.service_request.application.usecase.CreateNewUserUseCase;
 import cm.klg.service_request.application.usecase.CreateServiceProviderUseCase;
@@ -15,55 +14,43 @@ public class MessagingInboundSpringBeans {
 
   @Bean
   public CreateUserInboundEventHandler createUserInboundEventHandler(
-      CreateNewUserUseCase createNewUserUseCase,
-      MessagingInboundMapper messagingInboundMapper,
-      UseCaseExecutor useCaseExecutor) {
-    return new CreateUserInboundEventHandler(
-        createNewUserUseCase, messagingInboundMapper, useCaseExecutor);
+      CreateNewUserUseCase createNewUserUseCase, MessagingInboundMapper messagingInboundMapper) {
+    return new CreateUserInboundEventHandler(createNewUserUseCase, messagingInboundMapper);
   }
 
   @Bean
   public UpdateUserInboundEventHandler updateUserInboundEventHandler(
-      UpdateUserUseCase updateUserUseCase,
-      MessagingInboundMapper messagingInboundMapper,
-      UseCaseExecutor useCaseExecutor) {
-    return new UpdateUserInboundEventHandler(
-        updateUserUseCase, messagingInboundMapper, useCaseExecutor);
+      UpdateUserUseCase updateUserUseCase, MessagingInboundMapper messagingInboundMapper) {
+    return new UpdateUserInboundEventHandler(updateUserUseCase, messagingInboundMapper);
   }
 
   @Bean
   public DeleteUserInboundEventHandler deleteUserInboundEventHandler(
-      DeleteUserUseCase deleteUserUseCase,
-      MessagingInboundMapper messagingInboundMapper,
-      UseCaseExecutor useCaseExecutor) {
-    return new DeleteUserInboundEventHandler(
-        deleteUserUseCase, messagingInboundMapper, useCaseExecutor);
+      DeleteUserUseCase deleteUserUseCase, MessagingInboundMapper messagingInboundMapper) {
+    return new DeleteUserInboundEventHandler(deleteUserUseCase, messagingInboundMapper);
   }
 
   @Bean
   public ApproveServiceProviderInboundEventHandler approveServiceProviderInboundEventHandler(
       ApproveServiceProviderUseCase approveServiceProviderUseCase,
-      MessagingInboundMapper messagingInboundMapper,
-      UseCaseExecutor useCaseExecutor) {
+      MessagingInboundMapper messagingInboundMapper) {
     return new ApproveServiceProviderInboundEventHandler(
-        approveServiceProviderUseCase, useCaseExecutor, messagingInboundMapper);
+        approveServiceProviderUseCase, messagingInboundMapper);
   }
 
   @Bean
   public CreateServiceProviderInboundEventHandler createServiceProviderInboundEventHandler(
       CreateServiceProviderUseCase createServiceProviderUseCase,
-      MessagingInboundMapper messagingInboundMapper,
-      UseCaseExecutor useCaseExecutor) {
+      MessagingInboundMapper messagingInboundMapper) {
     return new CreateServiceProviderInboundEventHandler(
-        createServiceProviderUseCase, useCaseExecutor, messagingInboundMapper);
+        createServiceProviderUseCase, messagingInboundMapper);
   }
 
   @Bean
   public RejectServiceProviderInboundEventHandler rejectServiceProviderInboundEventHandler(
       RejectServiceProviderUseCase rejectServiceProviderUseCase,
-      MessagingInboundMapper messagingInboundMapper,
-      UseCaseExecutor useCaseExecutor) {
+      MessagingInboundMapper messagingInboundMapper) {
     return new RejectServiceProviderInboundEventHandler(
-        rejectServiceProviderUseCase, useCaseExecutor, messagingInboundMapper);
+        rejectServiceProviderUseCase, messagingInboundMapper);
   }
 }

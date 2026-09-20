@@ -21,7 +21,7 @@ class MessagingInboundMapperTest {
     LocalDateTime createdAt = LocalDateTime.of(2026, 5, 31, 10, 30);
     UamUserCreatedEventDTO event =
         new UamUserCreatedEventDTO()
-            .userId(id)
+            .id(id)
             .lastname("Doe")
             .firstname("John")
             .email("john.doe@example.com")
@@ -56,10 +56,10 @@ class MessagingInboundMapperTest {
 
   @Test
   void shouldMapUserUpdatedEventToCommand() {
-    UUID userId = UUID.randomUUID();
+    UUID id = UUID.randomUUID();
     UamUserUpdatedEventDTO event =
         new UamUserUpdatedEventDTO()
-            .userId(userId)
+            .id(id)
             .lastname("Doe")
             .firstname("Jane")
             .email("jane.doe@example.com")
@@ -67,7 +67,7 @@ class MessagingInboundMapperTest {
 
     var command = mapper.toUpdateUserCommand(event);
 
-    assertThat(command.userId().value()).isEqualTo(userId);
+    assertThat(command.userId().value()).isEqualTo(id);
     assertThat(command.lastname().value()).isEqualTo("Doe");
     assertThat(command.firstname()).isNotNull();
     assertThat(command.firstname().value()).isEqualTo("Jane");
