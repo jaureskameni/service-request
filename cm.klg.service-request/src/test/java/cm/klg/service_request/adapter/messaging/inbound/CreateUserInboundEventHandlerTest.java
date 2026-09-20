@@ -1,13 +1,10 @@
 package cm.klg.service_request.adapter.messaging.inbound;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import cm.klg.common.base.transaction.UseCaseExecutor;
 import cm.klg.generated.uam.adapter.messaging.inbound.dto.UamDomainEventType;
 import cm.klg.generated.uam.adapter.messaging.inbound.dto.UamUserCreatedEventDTO;
 import cm.klg.service_request.application.usecase.CreateNewUserUseCase;
@@ -25,7 +22,6 @@ class CreateUserInboundEventHandlerTest {
 
   @Mock private CreateNewUserUseCase createNewUserUseCase;
   @Mock private MessagingInboundMapper messagingInboundMapper;
-  @Mock private UseCaseExecutor useCaseExecutor;
 
   @InjectMocks private CreateUserInboundEventHandler createUserInboundEventHandler;
 
@@ -49,14 +45,6 @@ class CreateUserInboundEventHandlerTest {
             UUID.randomUUID(), "Doe", "John", "john@doe.com", "237", "699", LocalDateTime.now());
 
     when(messagingInboundMapper.toCreateUserCommand(userCreatedEventDTO)).thenReturn(command);
-    doAnswer(
-            invocation -> {
-              Runnable runnable = invocation.getArgument(0);
-              runnable.run();
-              return null;
-            })
-        .when(useCaseExecutor)
-        .runCommand(any(Runnable.class));
 
     createUserInboundEventHandler.handle(userCreatedEventDTO, inboxEventCommand);
 

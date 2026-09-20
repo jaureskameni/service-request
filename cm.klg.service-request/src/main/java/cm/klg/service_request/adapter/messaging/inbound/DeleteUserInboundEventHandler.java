@@ -1,6 +1,5 @@
 package cm.klg.service_request.adapter.messaging.inbound;
 
-import cm.klg.common.base.transaction.UseCaseExecutor;
 import cm.klg.generated.uam.adapter.messaging.inbound.dto.UamDomainEventType;
 import cm.klg.generated.uam.adapter.messaging.inbound.dto.UamUserDeletedEventDTO;
 import cm.klg.service_request.application.usecase.DeleteUserUseCase;
@@ -10,9 +9,7 @@ import com.emb.domain.inboxevent.InboxEventCommand;
 import java.util.Objects;
 
 public record DeleteUserInboundEventHandler(
-    DeleteUserUseCase deleteUserUseCase,
-    MessagingInboundMapper messagingInboundMapper,
-    UseCaseExecutor useCaseExecutor)
+    DeleteUserUseCase deleteUserUseCase, MessagingInboundMapper messagingInboundMapper)
     implements InboxEventHandler<UamUserDeletedEventDTO> {
   @Override
   public String getEventType() {
@@ -27,9 +24,6 @@ public record DeleteUserInboundEventHandler(
   @Override
   public void handle(
       UamUserDeletedEventDTO userDeletedEventDTO, InboxEventCommand inboxEventCommand) {
-    useCaseExecutor.runCommand(
-        () ->
-            deleteUserUseCase.execute(
-                UserId.from(Objects.requireNonNull(userDeletedEventDTO.getUserId()))));
+    deleteUserUseCase.execute(UserId.from(Objects.requireNonNull(userDeletedEventDTO.getId())));
   }
 }
