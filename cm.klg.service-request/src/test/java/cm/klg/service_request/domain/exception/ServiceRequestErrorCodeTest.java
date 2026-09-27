@@ -8,6 +8,10 @@ class ServiceRequestErrorCodeTest {
 
   @Test
   void shouldExposeErrorCodeValuesAndDescriptions() {
+    assertThat(ServiceRequestErrorCode.SERVICE_REQUEST_400_001.value())
+        .isEqualTo("SERVICE_REQUEST_400_001");
+    assertThat(ServiceRequestErrorCode.SERVICE_REQUEST_400_001.getDescription())
+        .isEqualTo("Invalid Pagination Data");
     assertThat(ServiceRequestErrorCode.SERVICE_REQUEST_404_001.value())
         .isEqualTo("SERVICE_REQUEST_404_001");
     assertThat(ServiceRequestErrorCode.SERVICE_REQUEST_404_001.getDescription())

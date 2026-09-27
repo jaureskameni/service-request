@@ -28,7 +28,7 @@ public interface ServiceRequestSpringRepository extends JpaRepository<ServiceReq
               s.updatedAt                 AS updatedAt
           FROM ServiceRequestJpa s
           WHERE s.userId = :userId AND s.status = :status
-          ORDER BY s.createdAt DESC\
+          ORDER BY s.createdAt DESC, s.id DESC\
           """,
       countQuery =
           "SELECT COUNT(DISTINCT s) FROM ServiceRequestJpa s WHERE"
@@ -53,7 +53,7 @@ public interface ServiceRequestSpringRepository extends JpaRepository<ServiceReq
               s.updatedAt                 AS updatedAt
           FROM ServiceRequestJpa s
           WHERE s.userId = :userId
-          ORDER BY s.createdAt DESC\
+          ORDER BY s.createdAt DESC, s.id DESC\
           """,
       countQuery =
           "SELECT COUNT(DISTINCT s) FROM ServiceRequestJpa s WHERE" + " s.userId = :userId")
@@ -77,7 +77,7 @@ public interface ServiceRequestSpringRepository extends JpaRepository<ServiceReq
               s.updatedAt                 AS updatedAt
           FROM ServiceRequestJpa s
           WHERE s.providerId = :providerId AND s.status = :status
-          ORDER BY s.createdAt DESC\
+          ORDER BY s.createdAt DESC, s.id DESC\
           """,
       countQuery =
           "SELECT COUNT(DISTINCT s) FROM ServiceRequestJpa s WHERE"
@@ -102,7 +102,7 @@ public interface ServiceRequestSpringRepository extends JpaRepository<ServiceReq
               s.updatedAt                 AS updatedAt
           FROM ServiceRequestJpa s
           WHERE s.providerId = :providerId
-          ORDER BY s.createdAt DESC\
+          ORDER BY s.createdAt DESC, s.id DESC\
           """,
       countQuery =
           "SELECT COUNT(DISTINCT s) FROM ServiceRequestJpa s WHERE" + " s.providerId = :providerId")

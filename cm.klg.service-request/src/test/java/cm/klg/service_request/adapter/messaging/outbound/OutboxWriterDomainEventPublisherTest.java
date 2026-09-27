@@ -5,11 +5,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import cm.klg.generated.service.request.adapter.messaging.outbound.dto.DomainEventType;
 import cm.klg.generated.service.request.adapter.messaging.outbound.dto.ServiceRequestAcceptedEventDTO;
 import cm.klg.service_request.domain.event.ServiceRequestAcceptedEvent;
 import cm.klg.service_request.domain.service_request.ServiceRequestId;
-import com.emb.application.outbound.OutboxWriter;
-import com.emb.domain.outboxevent.OutboxEventCommand;
+import com.emb.application.outbound.EventPublisher;
+import com.emb.domain.outboxevent.EventCommand;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class OutboxWriterDomainEventPublisherTest {
 
-  @Mock private OutboxWriter outboxWriter;
+  @Mock private EventPublisher eventPublisher;
   @Mock private OutboxWriterMapper outboxWriterMapper;
 
   @InjectMocks private OutboxWriterDomainEventPublisher publisher;
@@ -39,9 +40,12 @@ class OutboxWriterDomainEventPublisherTest {
     publisher.publishServiceRequestAcceptedEvent(event);
 
     // Then
-    ArgumentCaptor<OutboxEventCommand> captor = ArgumentCaptor.forClass(OutboxEventCommand.class);
-    verify(outboxWriter).publish(captor.capture());
-    OutboxEventCommand captured = captor.getValue();
-    assertThat(captured).isNotNull();
+    ArgumentCaptor<EventCommand> captor = ArgumentCaptor.forClass(EventCommand.class);
+    verify(eventPublisher).publish(captor.capture());
+    EventCommand captured = captor.getValue();
+    assertThat(captured.topic()).isEqualTo(EventTopics.DESTINATION_SERVICE_REQUEST_OUT);
+    assertThat(captured.type()).isEqualTo(DomainEventType.SERVICE_REQUEST_ACCEPTED.name());
+    assertThat(captured.key()).isEqualTo(requestId.toString());
+    assertThat(captured.data()).isEqualTo(dto);
   }
 }

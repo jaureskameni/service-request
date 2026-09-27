@@ -91,8 +91,8 @@ class RestMapperTest {
 
     assertThat(resultUnderTest.userId().value()).isEqualTo(userId);
     assertThat(resultUnderTest.status()).isNull();
-    assertThat(resultUnderTest.limit()).isEqualTo(10);
-    assertThat(resultUnderTest.page()).isZero();
+    assertThat(resultUnderTest.pagination().limit()).isEqualTo(10);
+    assertThat(resultUnderTest.pagination().pageIndex()).isZero();
   }
 
   @Test
@@ -104,8 +104,8 @@ class RestMapperTest {
 
     assertThat(resultUnderTest.userId().value()).isEqualTo(userId);
     assertThat(resultUnderTest.status()).isEqualTo(ServiceRequestStatus.ACCEPTED);
-    assertThat(resultUnderTest.limit()).isEqualTo(20);
-    assertThat(resultUnderTest.page()).isEqualTo(2);
+    assertThat(resultUnderTest.pagination().limit()).isEqualTo(20);
+    assertThat(resultUnderTest.pagination().pageIndex()).isEqualTo(2);
   }
 
   @Test
@@ -116,8 +116,8 @@ class RestMapperTest {
 
     assertThat(resultUnderTest.userId().value()).isEqualTo(userId);
     assertThat(resultUnderTest.status()).isNull();
-    assertThat(resultUnderTest.limit()).isEqualTo(10);
-    assertThat(resultUnderTest.page()).isZero();
+    assertThat(resultUnderTest.pagination().limit()).isEqualTo(10);
+    assertThat(resultUnderTest.pagination().pageIndex()).isZero();
   }
 
   @Test
@@ -130,8 +130,8 @@ class RestMapperTest {
 
     assertThat(resultUnderTest.userId().value()).isEqualTo(userId);
     assertThat(resultUnderTest.status()).isEqualTo(ServiceRequestStatus.ACCEPTED);
-    assertThat(resultUnderTest.limit()).isEqualTo(20);
-    assertThat(resultUnderTest.page()).isEqualTo(2);
+    assertThat(resultUnderTest.pagination().limit()).isEqualTo(20);
+    assertThat(resultUnderTest.pagination().pageIndex()).isEqualTo(2);
   }
 
   @Test

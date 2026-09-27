@@ -16,15 +16,13 @@ public class GetAllMyServiceRequestsUseCase {
   private final ServiceRequestRepository serviceRequestRepository;
 
   public Response execute(Command command) {
-    var pagination = new PaginationFetchRequest(command.limit(), command.page());
-
     if (command.status() == null) {
       return toResponse(
-          serviceRequestRepository.loadAllMyRequestsAsView1(command.userId, pagination));
+          serviceRequestRepository.loadAllMyRequestsAsView1(command.userId, command.pagination()));
     }
     return toResponse(
         serviceRequestRepository.loadAllMyRequestByStatusAsView1(
-            command.userId, command.status(), pagination));
+            command.userId, command.status(), command.pagination()));
   }
 
   private static Response toResponse(PageData<ServiceRequestView1> pageData) {
@@ -32,7 +30,7 @@ public class GetAllMyServiceRequestsUseCase {
   }
 
   public record Command(
-      UserId userId, @Nullable ServiceRequestStatus status, Integer limit, Integer page) {}
+      UserId userId, @Nullable ServiceRequestStatus status, PaginationFetchRequest pagination) {}
 
   public record Response(List<ServiceRequestView1> serviceRequestView1s, long count) {}
 }

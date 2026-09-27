@@ -6,6 +6,7 @@ import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_provider.ServiceProviderNotFoundException;
 import cm.klg.service_request.domain.service_provider.ServiceProviderStatus;
 import cm.klg.service_request.domain.user.UserId;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -71,6 +72,13 @@ public class ServiceProviderJpaRepository implements ServiceProviderRepository {
   public boolean isApprovedByUserId(@NonNull UserId userId) {
     return springRepository.existsByUserIdAndStatus(
         userId.value(), ServiceProviderStatus.APPROVED.name());
+  }
+
+  @Override
+  public Optional<ServiceProvider> loadApprovedByUserId(@NonNull UserId userId) {
+    return springRepository
+        .findByUserIdAndStatus(userId.value(), ServiceProviderStatus.APPROVED.name())
+        .map(jpaMapper::toDomain);
   }
 
   @Override

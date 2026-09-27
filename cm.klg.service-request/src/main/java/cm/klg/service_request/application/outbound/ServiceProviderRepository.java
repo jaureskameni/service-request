@@ -4,6 +4,7 @@ import cm.klg.service_request.domain.service_provider.ServiceProvider;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_provider.ServiceProviderNotFoundException;
 import cm.klg.service_request.domain.user.UserId;
+import java.util.Optional;
 
 public interface ServiceProviderRepository {
   void insertIfAbsent(ServiceProvider serviceProvider);
@@ -17,6 +18,8 @@ public interface ServiceProviderRepository {
   boolean isApprovedById(ServiceProviderId serviceProviderId);
 
   boolean isApprovedByUserId(UserId userId);
+
+  Optional<ServiceProvider> loadApprovedByUserId(UserId userId);
 
   ServiceProvider loadByUserId(UserId userId) throws ServiceProviderNotFoundException;
 }

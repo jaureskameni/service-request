@@ -4,6 +4,10 @@ import cm.klg.common.base.utils.ErrorCode;
 import lombok.Getter;
 
 public enum ServiceRequestErrorCode implements ErrorCode {
+
+  // 400
+  SERVICE_REQUEST_400_001("SERVICE_REQUEST_400_001", "Invalid Pagination Data"),
+
   // ERROR-403
   SERVICE_REQUEST_403_001(
       "SERVICE_REQUEST_403_001", "Request Does Not Belong To Provider Exception"),

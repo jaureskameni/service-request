@@ -21,21 +21,18 @@ public class GetAllServiceRequestsByProviderUseCase {
 
   public Response execute(Command command) {
 
-    if (!serviceProviderRepository.isApprovedByUserId(command.userId)) {
-      throw new UnauthorizedProviderException();
-    }
-
-    ServiceProvider serviceProvider = serviceProviderRepository.loadByUserId(command.userId());
-    var pagination = new PaginationFetchRequest(command.limit(), command.page());
-
+    ServiceProvider serviceProvider =
+        serviceProviderRepository
+            .loadApprovedByUserId(command.userId())
+            .orElseThrow(UnauthorizedProviderException::new);
     if (command.status() == null) {
       return toResponse(
           serviceRequestRepository.loadAllRequestsByProviderAsView1(
-              serviceProvider.getId(), pagination));
+              serviceProvider.getId(), command.pagination()));
     }
     return toResponse(
         serviceRequestRepository.loadAllRequestByProviderAndStatusAsView1(
-            serviceProvider.getId(), command.status(), pagination));
+            serviceProvider.getId(), command.status(), command.pagination()));
   }
 
   private static Response toResponse(PageData<ServiceRequestView1> pageData) {
@@ -43,7 +40,7 @@ public class GetAllServiceRequestsByProviderUseCase {
   }
 
   public record Command(
-      UserId userId, @Nullable ServiceRequestStatus status, Integer limit, Integer page) {}
+      UserId userId, @Nullable ServiceRequestStatus status, PaginationFetchRequest pagination) {}
 
   public record Response(List<ServiceRequestView1> serviceRequestView1s, long count) {}
 }
