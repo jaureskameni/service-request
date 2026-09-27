@@ -1,11 +1,13 @@
 package cm.klg.service_request.adapter.rest.inbound;
 
+import cm.klg.common.base.exception.BadRequestException;
 import cm.klg.common.base.exception.ConflictException;
 import cm.klg.common.base.exception.ForbiddenException;
 import cm.klg.common.base.exception.HttpErrorException;
 import cm.klg.common.base.exception.InternalException;
 import cm.klg.common.base.exception.ResourceNotFoundException;
 import cm.klg.common.base.transaction.DomainToHttpExceptionTranslator;
+import cm.klg.service_request.domain.common.InvalidPaginationDataException;
 import cm.klg.service_request.domain.service_provider.ServiceProviderNotFoundException;
 import cm.klg.service_request.domain.service_provider.UnauthorizedProviderException;
 import cm.klg.service_request.domain.service_request.InvalidServiceRequestStatusException;
@@ -20,6 +22,7 @@ public record DefaultDomainToHttpExceptionTranslator() implements DomainToHttpEx
   public HttpErrorException translate(RuntimeException ex) {
     var message = Optional.ofNullable(ex.getMessage()).orElse("missing error code");
     return switch (ex) {
+      case InvalidPaginationDataException _ -> new BadRequestException(message);
       case RequestDoesNotBelongToProviderException _,
           RequestDoesNotBelongToUserException _,
           UnauthorizedProviderException _ ->

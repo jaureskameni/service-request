@@ -2,8 +2,10 @@ package cm.klg.service_request.adapter.rest.inbound;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import cm.klg.common.base.exception.BadRequestException;
 import cm.klg.common.base.exception.InternalException;
 import cm.klg.common.base.exception.ResourceNotFoundException;
+import cm.klg.service_request.domain.common.InvalidPaginationDataException;
 import cm.klg.service_request.domain.service_provider.ServiceProviderNotFoundException;
 import cm.klg.service_request.domain.user.UserNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,13 @@ class DefaultDomainToHttpExceptionTranslatorTest {
 
   private final DefaultDomainToHttpExceptionTranslator translator =
       new DefaultDomainToHttpExceptionTranslator();
+
+  @Test
+  void shouldTranslateInvalidPaginationToBadRequest() {
+    assertThat(translator.translate(new InvalidPaginationDataException()))
+        .isInstanceOf(BadRequestException.class)
+        .hasMessage("SERVICE_REQUEST_400_001");
+  }
 
   @Test
   void shouldTranslateUserNotFoundToResourceNotFound() {

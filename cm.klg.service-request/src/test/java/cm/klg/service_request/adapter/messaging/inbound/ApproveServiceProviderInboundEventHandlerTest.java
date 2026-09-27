@@ -30,13 +30,13 @@ class ApproveServiceProviderInboundEventHandlerTest {
 
   @Test
   void shouldReturnCorrectEventType() {
-    assertThat(handler.getEventType())
+    assertThat(handler.handledEventType())
         .isEqualTo(ServiceProviderDomainEventType.SERVICE_PROVIDER_APPROVED.getValue());
   }
 
   @Test
   void shouldReturnCorrectDataType() {
-    assertThat(handler.getDataType())
+    assertThat(handler.payloadType())
         .isEqualTo(ServiceProviderServiceProviderApprovedEventDTO.class);
   }
 
@@ -44,7 +44,8 @@ class ApproveServiceProviderInboundEventHandlerTest {
   void shouldHandleServiceProviderApprovedEvent() {
     ServiceProviderServiceProviderApprovedEventDTO event =
         new ServiceProviderServiceProviderApprovedEventDTO();
-    InboxEventCommand inboxEventCommand = mock(InboxEventCommand.class);
+    InboxEventCommand<ServiceProviderServiceProviderApprovedEventDTO> inboxEventCommand =
+        mock(InboxEventCommand.class);
     ApproveServiceProviderUseCase.ApproveServiceProviderCommand command =
         new ApproveServiceProviderUseCase.ApproveServiceProviderCommand(
             UserId.from(UUID.randomUUID()),
@@ -52,8 +53,9 @@ class ApproveServiceProviderInboundEventHandlerTest {
             CreatedAt.from(LocalDateTime.now()));
 
     when(messagingInboundMapper.toApproveServiceProviderCommand(event)).thenReturn(command);
+    when(inboxEventCommand.data()).thenReturn(event);
 
-    handler.handle(event, inboxEventCommand);
+    handler.handle(inboxEventCommand);
 
     verify(approveServiceProviderUseCase).execute(command);
   }

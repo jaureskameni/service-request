@@ -8,52 +8,49 @@ import cm.klg.service_request.domain.event.ServiceRequestAcceptedEvent;
 import cm.klg.service_request.domain.event.ServiceRequestCancelledEvent;
 import cm.klg.service_request.domain.event.ServiceRequestCreatedEvent;
 import cm.klg.service_request.domain.event.ServiceRequestRejectedEvent;
-import com.emb.application.outbound.OutboxWriter;
-import com.emb.domain.outboxevent.OutboxEventCommand;
+import com.emb.application.outbound.EventPublisher;
+import com.emb.domain.outboxevent.EventCommand;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class OutboxWriterDomainEventPublisher implements DomainEventPublisher {
-  private final OutboxWriter outboxWriter;
+  private final EventPublisher eventPublisher;
   private final OutboxWriterMapper outboxWriterMapper;
 
   @Override
   public void publishServiceRequestCreatedEvent(ServiceRequestCreatedEvent event) {
-    outboxWriter.publish(
-        new OutboxEventCommand(
-            DESTINATION_SERVICE_REQUEST_OUT,
-            "SERVICE_REQUEST_CREATED",
-            event.id().value().toString(),
-            outboxWriterMapper.toServiceRequestCreatedEventDTO(event)));
+    this.publish(
+        DomainEventType.SERVICE_REQUEST_CREATED,
+        event.id().value().toString(),
+        outboxWriterMapper.toServiceRequestCreatedEventDTO(event));
   }
 
   @Override
   public void publishServiceRequestAcceptedEvent(ServiceRequestAcceptedEvent event) {
-    outboxWriter.publish(
-        new OutboxEventCommand(
-            DESTINATION_SERVICE_REQUEST_OUT,
-            DomainEventType.SERVICE_REQUEST_ACCEPTED.name(),
-            event.id().value().toString(),
-            outboxWriterMapper.toServiceRequestAcceptedEventDTO(event)));
+    this.publish(
+        DomainEventType.SERVICE_REQUEST_ACCEPTED,
+        event.id().value().toString(),
+        outboxWriterMapper.toServiceRequestAcceptedEventDTO(event));
   }
 
   @Override
   public void publishServiceRequestRejectedEvent(ServiceRequestRejectedEvent event) {
-    outboxWriter.publish(
-        new OutboxEventCommand(
-            DESTINATION_SERVICE_REQUEST_OUT,
-            DomainEventType.SERVICE_REQUEST_REJECTED.name(),
-            event.id().value().toString(),
-            outboxWriterMapper.toServiceRequestRejectedEventDTO(event)));
+    this.publish(
+        DomainEventType.SERVICE_REQUEST_REJECTED,
+        event.id().value().toString(),
+        outboxWriterMapper.toServiceRequestRejectedEventDTO(event));
   }
 
   @Override
   public void publishServiceRequestCancelledEvent(ServiceRequestCancelledEvent event) {
-    outboxWriter.publish(
-        new OutboxEventCommand(
-            DESTINATION_SERVICE_REQUEST_OUT,
-            DomainEventType.SERVICE_REQUEST_CANCELLED.name(),
-            event.id().value().toString(),
-            outboxWriterMapper.toServiceRequestCancelledEventDTO(event)));
+    this.publish(
+        DomainEventType.SERVICE_REQUEST_CANCELLED,
+        event.id().value().toString(),
+        outboxWriterMapper.toServiceRequestCancelledEventDTO(event));
+  }
+
+  private void publish(DomainEventType eventType, String key, Object payload) {
+    eventPublisher.publish(
+        new EventCommand(DESTINATION_SERVICE_REQUEST_OUT, eventType.name(), key, payload));
   }
 }

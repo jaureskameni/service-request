@@ -27,26 +27,27 @@ class CreateUserInboundEventHandlerTest {
 
   @Test
   void shouldReturnCorrectEventType() {
-    assertThat(createUserInboundEventHandler.getEventType())
+    assertThat(createUserInboundEventHandler.handledEventType())
         .isEqualTo(UamDomainEventType.USER_CREATED.getValue());
   }
 
   @Test
   void shouldReturnCorrectDataType() {
-    assertThat(createUserInboundEventHandler.getDataType()).isEqualTo(UamUserCreatedEventDTO.class);
+    assertThat(createUserInboundEventHandler.payloadType()).isEqualTo(UamUserCreatedEventDTO.class);
   }
 
   @Test
   void shouldHandleUserCreatedEvent() {
     UamUserCreatedEventDTO userCreatedEventDTO = new UamUserCreatedEventDTO();
-    InboxEventCommand inboxEventCommand = mock(InboxEventCommand.class);
+    InboxEventCommand<UamUserCreatedEventDTO> inboxEventCommand = mock(InboxEventCommand.class);
     CreateNewUserUseCase.CreateNewUserCommand command =
         new CreateNewUserUseCase.CreateNewUserCommand(
             UUID.randomUUID(), "Doe", "John", "john@doe.com", "237", "699", LocalDateTime.now());
 
     when(messagingInboundMapper.toCreateUserCommand(userCreatedEventDTO)).thenReturn(command);
+    when(inboxEventCommand.data()).thenReturn(userCreatedEventDTO);
 
-    createUserInboundEventHandler.handle(userCreatedEventDTO, inboxEventCommand);
+    createUserInboundEventHandler.handle(inboxEventCommand);
 
     verify(createNewUserUseCase).execute(command);
   }

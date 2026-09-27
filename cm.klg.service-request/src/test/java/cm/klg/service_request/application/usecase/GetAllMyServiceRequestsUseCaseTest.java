@@ -12,6 +12,7 @@ import cm.klg.service_request.application.views.ServiceRequestViews.ServiceReque
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
 import cm.klg.service_request.domain.user.UserId;
 import cm.klg.service_request.utils.PageData;
+import cm.klg.service_request.utils.PaginationFetchRequest;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,8 @@ class GetAllMyServiceRequestsUseCaseTest {
   @Test
   void shouldLoadAllRequestsWhenStatusIsAbsent() {
     UserId userId = UserId.from(UUID.randomUUID());
-    var command = new GetAllMyServiceRequestsUseCase.Command(userId, null, 20, 2);
+    var command =
+        new GetAllMyServiceRequestsUseCase.Command(userId, null, new PaginationFetchRequest(20, 2));
     when(serviceRequestRepository.loadAllMyRequestsAsView1(
             eq(userId),
             argThat(pagination -> pagination.limit() == 20 && pagination.pageIndex() == 2)))
@@ -52,7 +54,8 @@ class GetAllMyServiceRequestsUseCaseTest {
   void shouldLoadRequestsByStatusWhenStatusIsProvided() {
     UserId userId = UserId.from(UUID.randomUUID());
     var command =
-        new GetAllMyServiceRequestsUseCase.Command(userId, ServiceRequestStatus.ACCEPTED, 10, 0);
+        new GetAllMyServiceRequestsUseCase.Command(
+            userId, ServiceRequestStatus.ACCEPTED, new PaginationFetchRequest(10, 0));
     when(serviceRequestRepository.loadAllMyRequestByStatusAsView1(
             eq(userId),
             eq(ServiceRequestStatus.ACCEPTED),

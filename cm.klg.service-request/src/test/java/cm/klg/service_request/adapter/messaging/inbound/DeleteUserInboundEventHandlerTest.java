@@ -3,6 +3,7 @@ package cm.klg.service_request.adapter.messaging.inbound;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import cm.klg.generated.uam.adapter.messaging.inbound.dto.UamDomainEventType;
 import cm.klg.generated.uam.adapter.messaging.inbound.dto.UamUserDeletedEventDTO;
@@ -26,22 +27,23 @@ class DeleteUserInboundEventHandlerTest {
 
   @Test
   void shouldReturnCorrectEventType() {
-    assertThat(deleteUserInboundEventHandler.getEventType())
+    assertThat(deleteUserInboundEventHandler.handledEventType())
         .isEqualTo(UamDomainEventType.USER_DELETED.getValue());
   }
 
   @Test
   void shouldReturnCorrectDataType() {
-    assertThat(deleteUserInboundEventHandler.getDataType()).isEqualTo(UamUserDeletedEventDTO.class);
+    assertThat(deleteUserInboundEventHandler.payloadType()).isEqualTo(UamUserDeletedEventDTO.class);
   }
 
   @Test
   void shouldHandleUserDeletedEvent() {
     UUID userId = UUID.randomUUID();
     UamUserDeletedEventDTO userDeletedEventDTO = new UamUserDeletedEventDTO().id(userId);
-    InboxEventCommand inboxEventCommand = mock(InboxEventCommand.class);
+    InboxEventCommand<UamUserDeletedEventDTO> inboxEventCommand = mock(InboxEventCommand.class);
+    when(inboxEventCommand.data()).thenReturn(userDeletedEventDTO);
 
-    deleteUserInboundEventHandler.handle(userDeletedEventDTO, inboxEventCommand);
+    deleteUserInboundEventHandler.handle(inboxEventCommand);
 
     verify(deleteUserUseCase).execute(UserId.from(userId));
   }

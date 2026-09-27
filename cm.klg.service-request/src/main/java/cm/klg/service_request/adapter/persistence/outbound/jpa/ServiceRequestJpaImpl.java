@@ -39,7 +39,7 @@ public class ServiceRequestJpaImpl implements ServiceRequestRepository {
   @Override
   public PageData<ServiceRequestViews.ServiceRequestView1> loadAllMyRequestsAsView1(
       UserId userId, PaginationFetchRequest pagination) {
-    Pageable pageable = PageRequest.of(pagination.pageIndex(), pagination.limit());
+    Pageable pageable = toPageable(pagination);
     var serviceRequestPage =
         springRepository.findAllMyRequestByUserIdAsView1(userId.value(), pageable);
     return new PageData<>(serviceRequestPage.getTotalElements(), serviceRequestPage.getContent());
@@ -49,7 +49,7 @@ public class ServiceRequestJpaImpl implements ServiceRequestRepository {
   public PageData<ServiceRequestViews.ServiceRequestView1> loadAllMyRequestByStatusAsView1(
       UserId userId, @NonNull ServiceRequestStatus status, PaginationFetchRequest pagination) {
 
-    Pageable pageable = PageRequest.of(pagination.pageIndex(), pagination.limit());
+    Pageable pageable = toPageable(pagination);
     var serviceRequestPage =
         springRepository.findAllMyRequestByUserIdAndStatusAsView1(
             userId.value(), status.name(), pageable);
@@ -59,7 +59,7 @@ public class ServiceRequestJpaImpl implements ServiceRequestRepository {
   @Override
   public PageData<ServiceRequestViews.ServiceRequestView1> loadAllRequestsByProviderAsView1(
       @NonNull ServiceProviderId providerId, PaginationFetchRequest pagination) {
-    Pageable pageable = PageRequest.of(pagination.pageIndex(), pagination.limit());
+    Pageable pageable = toPageable(pagination);
     var serviceRequestPage =
         springRepository.findAllRequestByProviderIdAsView1(providerId.value(), pageable);
     return new PageData<>(serviceRequestPage.getTotalElements(), serviceRequestPage.getContent());
@@ -70,7 +70,7 @@ public class ServiceRequestJpaImpl implements ServiceRequestRepository {
       @NonNull ServiceProviderId providerId,
       @NonNull ServiceRequestStatus status,
       PaginationFetchRequest pagination) {
-    Pageable pageable = PageRequest.of(pagination.pageIndex(), pagination.limit());
+    Pageable pageable = toPageable(pagination);
     var serviceRequestPage =
         springRepository.findAllRequestByProviderIdAndStatusAsView1(
             providerId.value(), status.name(), pageable);
@@ -94,5 +94,9 @@ public class ServiceRequestJpaImpl implements ServiceRequestRepository {
 
   private Optional<ServiceRequestJpa> getById(ServiceRequestId id) {
     return springRepository.findById(id.value());
+  }
+
+  private static Pageable toPageable(PaginationFetchRequest pagination) {
+    return PageRequest.of(pagination.pageIndex(), pagination.limit());
   }
 }

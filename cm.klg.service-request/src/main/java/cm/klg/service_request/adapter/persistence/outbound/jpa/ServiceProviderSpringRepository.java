@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 public interface ServiceProviderSpringRepository extends JpaRepository<ServiceProviderJpa, UUID> {
   Optional<ServiceProviderJpa> findByUserId(UUID userId);
 
+  Optional<ServiceProviderJpa> findByUserIdAndStatus(UUID userId, String status);
+
   default Optional<ServiceProviderJpa> findAggregateById(UUID id) {
     return findById(id);
   }

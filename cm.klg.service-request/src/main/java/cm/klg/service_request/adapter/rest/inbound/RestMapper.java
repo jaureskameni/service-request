@@ -19,6 +19,7 @@ import cm.klg.service_request.domain.service_request.ServiceRequestReason;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
 import cm.klg.service_request.domain.service_request.ServiceRequestTitle;
 import cm.klg.service_request.domain.user.UserId;
+import cm.klg.service_request.utils.PaginationFetchRequest;
 import java.util.Optional;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
@@ -64,13 +65,13 @@ public interface RestMapper {
   default GetAllMyServiceRequestsUseCase.Command toGetAllMyServiceRequestsCommand(
       Integer limit, @Nullable ServiceRequestStatusDTO status, Integer page, UUID userId) {
     return new GetAllMyServiceRequestsUseCase.Command(
-        UserId.from(userId), toStatus(status), toLimit(limit), toPage(page));
+        UserId.from(userId), toStatus(status), toPagination(limit, page));
   }
 
   default GetAllServiceRequestsByProviderUseCase.Command toGetAllServiceRequestsByProviderCommand(
       Integer limit, @Nullable ServiceRequestStatusDTO status, Integer page, UUID userId) {
     return new GetAllServiceRequestsByProviderUseCase.Command(
-        UserId.from(userId), toStatus(status), toLimit(limit), toPage(page));
+        UserId.from(userId), toStatus(status), toPagination(limit, page));
   }
 
   private static @Nullable ServiceRequestStatus toStatus(@Nullable ServiceRequestStatusDTO status) {
@@ -83,6 +84,10 @@ public interface RestMapper {
 
   private static int toPage(Integer page) {
     return Optional.ofNullable(page).orElse(0);
+  }
+
+  private static PaginationFetchRequest toPagination(Integer limit, Integer page) {
+    return PaginationFetchRequest.of(toLimit(limit), toPage(page));
   }
 
   default ServiceRequestPaginateDTO toServiceRequestPaginateDTO(

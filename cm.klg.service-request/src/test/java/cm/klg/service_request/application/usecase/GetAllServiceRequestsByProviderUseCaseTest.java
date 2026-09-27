@@ -16,7 +16,9 @@ import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
 import cm.klg.service_request.domain.user.UserId;
 import cm.klg.service_request.utils.PageData;
+import cm.klg.service_request.utils.PaginationFetchRequest;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,10 +40,12 @@ class GetAllServiceRequestsByProviderUseCaseTest {
     ServiceProviderId providerId = ServiceProviderId.from(UUID.randomUUID());
     var userId = UserId.from(UUID.randomUUID());
     ServiceProvider serviceProvider = mock(ServiceProvider.class);
-    var command = new GetAllServiceRequestsByProviderUseCase.Command(userId, null, 20, 2);
+    var command =
+        new GetAllServiceRequestsByProviderUseCase.Command(
+            userId, null, new PaginationFetchRequest(20, 2));
 
-    when(serviceProviderRepository.loadByUserId(userId)).thenReturn(serviceProvider);
-    when(serviceProviderRepository.isApprovedByUserId(userId)).thenReturn(true);
+    when(serviceProviderRepository.loadApprovedByUserId(userId))
+        .thenReturn(Optional.of(serviceProvider));
     when(serviceProvider.getId()).thenReturn(providerId);
     when(serviceRequestRepository.loadAllRequestsByProviderAsView1(
             eq(providerId),
@@ -65,11 +69,11 @@ class GetAllServiceRequestsByProviderUseCaseTest {
     var providerId = ServiceProviderId.from(UUID.randomUUID());
     var command =
         new GetAllServiceRequestsByProviderUseCase.Command(
-            userId, ServiceRequestStatus.ACCEPTED, 10, 0);
+            userId, ServiceRequestStatus.ACCEPTED, new PaginationFetchRequest(10, 0));
     ServiceProvider serviceProvider = mock(ServiceProvider.class);
 
-    when(serviceProviderRepository.loadByUserId(userId)).thenReturn(serviceProvider);
-    when(serviceProviderRepository.isApprovedByUserId(userId)).thenReturn(true);
+    when(serviceProviderRepository.loadApprovedByUserId(userId))
+        .thenReturn(Optional.of(serviceProvider));
     when(serviceProvider.getId()).thenReturn(providerId);
     when(serviceRequestRepository.loadAllRequestByProviderAndStatusAsView1(
             eq(providerId),
