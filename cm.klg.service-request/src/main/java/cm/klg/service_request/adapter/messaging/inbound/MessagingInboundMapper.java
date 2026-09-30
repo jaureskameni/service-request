@@ -5,7 +5,6 @@ import cm.klg.generated.uam.adapter.messaging.inbound.dto.UamUserUpdatedEventDTO
 import cm.klg.service_request.application.usecase.ApproveServiceProviderUseCase;
 import cm.klg.service_request.application.usecase.CreateNewUserUseCase;
 import cm.klg.service_request.application.usecase.CreateServiceProviderUseCase;
-import cm.klg.service_request.application.usecase.RejectServiceProviderUseCase;
 import cm.klg.service_request.application.usecase.UpdateUserUseCase;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.InjectionStrategy;
@@ -14,7 +13,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.openapitools.model.ServiceProviderServiceProviderApprovedEventDTO;
 import org.openapitools.model.ServiceProviderServiceProviderCreatedEventDTO;
-import org.openapitools.model.ServiceProviderServiceProviderRejectedEventDTO;
 
 @Mapper(
     componentModel = "spring",
@@ -54,10 +52,4 @@ public interface MessagingInboundMapper {
   @Mapping(target = "serviceProviderId.value", source = "serviceProviderId")
   CreateServiceProviderUseCase.Command toCreateServiceProviderCommand(
       ServiceProviderServiceProviderCreatedEventDTO providerCreatedEventDTO);
-
-  @BeanMapping(ignoreByDefault = true)
-  @Mapping(target = "userId.value", source = "userId")
-  @Mapping(target = "serviceProviderId.value", source = "serviceProviderId")
-  RejectServiceProviderUseCase.Command toRejectServiceProviderCommand(
-      ServiceProviderServiceProviderRejectedEventDTO providerRejectedEventDTO);
 }

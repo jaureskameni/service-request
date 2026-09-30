@@ -17,7 +17,6 @@ import cm.klg.service_request.application.usecase.DeleteUserUseCase;
 import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
 import cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase;
 import cm.klg.service_request.application.usecase.GetServiceRequestByIdUseCase;
-import cm.klg.service_request.application.usecase.RejectServiceProviderUseCase;
 import cm.klg.service_request.application.usecase.RejectServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.UpdateUserUseCase;
 import org.springframework.context.annotation.Bean;
@@ -56,12 +55,6 @@ public class ServiceRequestBeans implements TransactionBeansProvider {
   public CreateServiceProviderUseCase createServiceProviderUseCase(
       ServiceProviderRepository serviceProviderRepository) {
     return new CreateServiceProviderUseCase(serviceProviderRepository);
-  }
-
-  @Bean
-  public RejectServiceProviderUseCase rejectServiceProviderUseCase(
-      ServiceProviderRepository serviceProviderRepository) {
-    return new RejectServiceProviderUseCase(serviceProviderRepository);
   }
 
   @Bean
