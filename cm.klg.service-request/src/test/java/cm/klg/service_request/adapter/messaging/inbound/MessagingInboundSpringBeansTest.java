@@ -7,7 +7,6 @@ import cm.klg.service_request.application.usecase.ApproveServiceProviderUseCase;
 import cm.klg.service_request.application.usecase.CreateNewUserUseCase;
 import cm.klg.service_request.application.usecase.CreateServiceProviderUseCase;
 import cm.klg.service_request.application.usecase.DeleteUserUseCase;
-import cm.klg.service_request.application.usecase.RejectServiceProviderUseCase;
 import cm.klg.service_request.application.usecase.UpdateUserUseCase;
 import org.junit.jupiter.api.Test;
 
@@ -72,18 +71,6 @@ class MessagingInboundSpringBeansTest {
         beans.createServiceProviderInboundEventHandler(useCase, mapper);
 
     assertThat(handler.createServiceProviderUseCase()).isEqualTo(useCase);
-    assertThat(handler.messagingInboundMapper()).isEqualTo(mapper);
-  }
-
-  @Test
-  void shouldRejectServiceProviderInboundEventHandler() {
-    RejectServiceProviderUseCase useCase = mock(RejectServiceProviderUseCase.class);
-    MessagingInboundMapper mapper = mock(MessagingInboundMapper.class);
-
-    RejectServiceProviderInboundEventHandler handler =
-        beans.rejectServiceProviderInboundEventHandler(useCase, mapper);
-
-    assertThat(handler.rejectServiceProviderUseCase()).isEqualTo(useCase);
     assertThat(handler.messagingInboundMapper()).isEqualTo(mapper);
   }
 }

@@ -4,7 +4,6 @@ import cm.klg.service_request.application.usecase.ApproveServiceProviderUseCase;
 import cm.klg.service_request.application.usecase.CreateNewUserUseCase;
 import cm.klg.service_request.application.usecase.CreateServiceProviderUseCase;
 import cm.klg.service_request.application.usecase.DeleteUserUseCase;
-import cm.klg.service_request.application.usecase.RejectServiceProviderUseCase;
 import cm.klg.service_request.application.usecase.UpdateUserUseCase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,13 +43,5 @@ public class MessagingInboundSpringBeans {
       MessagingInboundMapper messagingInboundMapper) {
     return new CreateServiceProviderInboundEventHandler(
         createServiceProviderUseCase, messagingInboundMapper);
-  }
-
-  @Bean
-  public RejectServiceProviderInboundEventHandler rejectServiceProviderInboundEventHandler(
-      RejectServiceProviderUseCase rejectServiceProviderUseCase,
-      MessagingInboundMapper messagingInboundMapper) {
-    return new RejectServiceProviderInboundEventHandler(
-        rejectServiceProviderUseCase, messagingInboundMapper);
   }
 }
