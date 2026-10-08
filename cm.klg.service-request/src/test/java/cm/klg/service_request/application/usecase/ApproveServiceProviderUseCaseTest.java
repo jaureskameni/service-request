@@ -38,6 +38,7 @@ class ApproveServiceProviderUseCaseTest {
     ServiceProvider serviceProvider =
         ServiceProvider.reconstitute(
             serviceProviderId, userId, ServiceProviderStatus.PENDING, null);
+    when(serviceProviderRepository.existsById(serviceProviderId)).thenReturn(true);
     when(serviceProviderRepository.load(serviceProviderId)).thenReturn(serviceProvider);
 
     useCase.execute(command);
@@ -50,7 +51,32 @@ class ApproveServiceProviderUseCaseTest {
               assertThat(sp.getId()).isEqualTo(serviceProviderId);
               assertThat(sp.getUserId()).isEqualTo(userId);
               assertThat(sp.getStatus()).isEqualTo(ServiceProviderStatus.APPROVED);
-              assertThat(sp.getApprovedAt()).isNotNull();
+              assertThat(sp.getApprovedAt()).isEqualTo(approvedAt);
+            });
+  }
+
+  @Test
+  void shouldCreateApprovedServiceProviderWhenItDoesNotExist() {
+    UserId userId = UserId.from(UUID.randomUUID());
+    ServiceProviderId serviceProviderId = new ServiceProviderId(UUID.randomUUID());
+    CreatedAt approvedAt = CreatedAt.from(LocalDateTime.now());
+    var command =
+        new ApproveServiceProviderUseCase.ApproveServiceProviderCommand(
+            userId, serviceProviderId, approvedAt);
+
+    when(serviceProviderRepository.existsById(serviceProviderId)).thenReturn(false);
+
+    useCase.execute(command);
+
+    ArgumentCaptor<ServiceProvider> captor = ArgumentCaptor.forClass(ServiceProvider.class);
+    verify(serviceProviderRepository).insertIfAbsent(captor.capture());
+    assertThat(captor.getValue())
+        .satisfies(
+            serviceProvider -> {
+              assertThat(serviceProvider.getId()).isEqualTo(serviceProviderId);
+              assertThat(serviceProvider.getUserId()).isEqualTo(userId);
+              assertThat(serviceProvider.getStatus()).isEqualTo(ServiceProviderStatus.APPROVED);
+              assertThat(serviceProvider.getApprovedAt()).isEqualTo(approvedAt);
             });
   }
 }
