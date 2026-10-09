@@ -2,7 +2,6 @@ package cm.klg.service_request.domain.service_provider;
 
 import cm.klg.common.base.domain.CreatedAt;
 import cm.klg.service_request.domain.user.UserId;
-import java.time.LocalDateTime;
 import lombok.Getter;
 import org.jspecify.annotations.Nullable;
 
@@ -32,9 +31,9 @@ public class ServiceProvider {
     return new ServiceProvider(id, userId, status, approvedAt);
   }
 
-  public void approve() {
+  public void approve(CreatedAt approvedAt) {
     this.status = ServiceProviderStatus.APPROVED;
-    this.approvedAt = CreatedAt.from(LocalDateTime.now());
+    this.approvedAt = approvedAt;
   }
 
   public void reject() {

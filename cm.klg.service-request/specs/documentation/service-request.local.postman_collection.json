@@ -1,0 +1,283 @@
+{
+  "info": {
+    "name": "Z-Link · Service Request API (local)",
+    "description": "Collection alignée sur specs/openapi/inbound/main.yml. Service local: http://localhost:8086 (server.port dans application.yaml). Renseignez userToken et providerToken avec des JWT valides et remplacez les UUID d'exemple par des identifiants existants.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "noauth"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8086",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Demandes de l'utilisateur",
+      "item": [
+        {
+          "name": "Créer une demande [POST /service-request]",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/service-request",
+            "description": "Crée une demande pour un prestataire. Requiert un JWT utilisateur.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"providerId\": \"{{providerId}}\",\n  \"serviceTypeId\": \"{{serviceTypeId}}\",\n  \"title\": \"Réparation de plomberie\",\n  \"description\": \"Réparer une fuite sous l'évier.\",\n  \"location\": \"Douala\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Réponse HTTP attendue\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "  const body = pm.response.json();",
+                  "  if (body.newId) pm.environment.set(\"serviceRequestId\", body.newId);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Lister mes demandes [GET /my/service-request]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/my/service-request?status={{status}}&page={{page}}&limit={{limit}}",
+            "description": "Liste paginée des demandes de l'utilisateur connecté. limit doit être compris entre 10 et 100.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Réponse HTTP attendue\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Annuler une demande [PUT /service-request/{serviceRequestId}/cancel]",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{baseUrl}}/service-request/{{serviceRequestId}}/cancel",
+            "description": "Annule une demande appartenant à l'utilisateur connecté. Aucun corps.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Réponse HTTP attendue\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Demandes du prestataire",
+      "item": [
+        {
+          "name": "Lister les demandes reçues [GET /my/provider/service-requests]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/my/provider/service-requests?status={{status}}&page={{page}}&limit={{limit}}",
+            "description": "Liste paginée des demandes reçues par le prestataire connecté. Requiert un prestataire approuvé et limit compris entre 10 et 100.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{providerToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Réponse HTTP attendue\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Accepter une demande [PUT /service-request/{serviceRequestId}/accept]",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{baseUrl}}/service-request/{{serviceRequestId}}/accept",
+            "description": "Accepte une demande reçue par le prestataire connecté. Aucun corps.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{providerToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Réponse HTTP attendue\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Rejeter une demande [PUT /service-request/{serviceRequestId}/reject]",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/service-request/{{serviceRequestId}}/reject",
+            "description": "Rejette une demande avec un motif texte requis.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{providerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Indisponible à la date demandée\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Réponse HTTP attendue\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Détail",
+      "item": [
+        {
+          "name": "Consulter une demande [GET /service-request/{serviceRequestId}]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/service-request/{{serviceRequestId}}",
+            "description": "Retourne le détail de la demande identifiée. Requiert un JWT.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Réponse HTTP attendue\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
