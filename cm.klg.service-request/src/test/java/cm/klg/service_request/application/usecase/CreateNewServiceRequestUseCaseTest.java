@@ -27,7 +27,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class CreateNewServiceRequestUseCaseTest {
+class CreateServiceRequestUseCaseTest {
 
   @Mock private ServiceProviderRepository serviceProviderRepository;
   @Mock private ServiceRequestRepository serviceRequestRepository;
@@ -35,7 +35,7 @@ class CreateNewServiceRequestUseCaseTest {
   @Mock
   private cm.klg.service_request.application.outbound.DomainEventPublisher domainEventPublisher;
 
-  @InjectMocks private CreateNewServiceRequestUseCase useCase;
+  @InjectMocks private CreateServiceRequestUseCase useCase;
 
   @Test
   void shouldCreateServiceRequestWithProvidedOptionalFieldsWhenProviderExists() {
@@ -43,7 +43,7 @@ class CreateNewServiceRequestUseCaseTest {
     ServiceProviderId providerId = new ServiceProviderId(UUID.randomUUID());
     ServiceTypeId serviceTypeId = ServiceTypeId.from(UUID.randomUUID());
     var command =
-        new CreateNewServiceRequestUseCase.Command(
+        new CreateServiceRequestUseCase.Command(
             userId,
             providerId,
             serviceTypeId,
@@ -61,7 +61,7 @@ class CreateNewServiceRequestUseCaseTest {
     assertThat(captor.getValue())
         .satisfies(
             serviceRequest -> {
-              assertThat(serviceRequest.getUserId()).isEqualTo(userId);
+              assertThat(serviceRequest.getClientId()).isEqualTo(userId);
               assertThat(serviceRequest.getServiceProviderId()).isEqualTo(providerId);
               assertThat(serviceRequest.getServiceTypeId()).isEqualTo(serviceTypeId);
               assertThat(serviceRequest.getTitle()).isNotNull();
@@ -83,7 +83,7 @@ class CreateNewServiceRequestUseCaseTest {
     ServiceProviderId providerId = new ServiceProviderId(UUID.randomUUID());
     ServiceTypeId serviceTypeId = ServiceTypeId.from(UUID.randomUUID());
     var command =
-        new CreateNewServiceRequestUseCase.Command(
+        new CreateServiceRequestUseCase.Command(
             userId, providerId, serviceTypeId, null, null, null);
     when(serviceProviderRepository.existsById(providerId)).thenReturn(true);
     when(serviceProviderRepository.isApprovedById(providerId)).thenReturn(true);
@@ -101,7 +101,7 @@ class CreateNewServiceRequestUseCaseTest {
   void shouldThrowWhenServiceProviderDoesNotExist() {
     ServiceProviderId providerId = new ServiceProviderId(UUID.randomUUID());
     var command =
-        new CreateNewServiceRequestUseCase.Command(
+        new CreateServiceRequestUseCase.Command(
             UserId.from(UUID.randomUUID()),
             providerId,
             ServiceTypeId.from(UUID.randomUUID()),

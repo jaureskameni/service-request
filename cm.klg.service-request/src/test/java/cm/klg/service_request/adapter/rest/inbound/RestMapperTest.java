@@ -4,9 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestRegisterDTO;
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestStatusDTO;
-import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
+import cm.klg.service_request.application.usecase.GetMyServiceRequestsUseCase;
+import cm.klg.service_request.application.usecase.GetProviderServiceRequestsUseCase;
 import cm.klg.service_request.application.views.ServiceRequestViews.ServiceRequestView1;
+import cm.klg.service_request.domain.service_request.ServiceRequestDescription;
+import cm.klg.service_request.domain.service_request.ServiceRequestLocation;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
+import cm.klg.service_request.domain.service_request.ServiceRequestTitle;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -30,7 +34,7 @@ class RestMapperTest {
             .description("description")
             .location("location");
 
-    var resultUnderTest = mapper.toCreateNewServiceRequestCommand(dto, userId);
+    var resultUnderTest = mapper.toCreateServiceRequestCommand(dto, userId);
 
     assertThat(resultUnderTest)
         .satisfies(
@@ -54,14 +58,14 @@ class RestMapperTest {
             .providerId(UUID.randomUUID())
             .serviceTypeId(UUID.randomUUID());
 
-    var resultUnderTest = mapper.toCreateNewServiceRequestCommand(dto, UUID.randomUUID());
+    var resultUnderTest = mapper.toCreateServiceRequestCommand(dto, UUID.randomUUID());
 
     assertThat(resultUnderTest)
         .satisfies(
             command -> {
-              assertThat(command.title()).isNull();
-              assertThat(command.description()).isNull();
-              assertThat(command.location()).isNull();
+              assertThat(command.title()).isEqualTo(ServiceRequestTitle.NULL);
+              assertThat(command.description()).isEqualTo(ServiceRequestDescription.NULL);
+              assertThat(command.location()).isEqualTo(ServiceRequestLocation.NULL);
             });
   }
 
@@ -69,7 +73,7 @@ class RestMapperTest {
   void shouldMapNullDtoWithCurrentUser() {
     UUID userId = UUID.randomUUID();
 
-    var resultUnderTest = mapper.toCreateNewServiceRequestCommand(null, userId);
+    var resultUnderTest = mapper.toCreateServiceRequestCommand(null, userId);
 
     assertThat(resultUnderTest)
         .satisfies(
@@ -87,7 +91,7 @@ class RestMapperTest {
   void shouldMapGetAllMyServiceRequestsCommandWithDefaults() {
     UUID userId = UUID.randomUUID();
 
-    var resultUnderTest = mapper.toGetAllMyServiceRequestsCommand(null, null, null, userId);
+    var resultUnderTest = mapper.toGetMyServiceRequestsCommand(null, null, null, userId);
 
     assertThat(resultUnderTest.userId().value()).isEqualTo(userId);
     assertThat(resultUnderTest.status()).isNull();
@@ -100,7 +104,7 @@ class RestMapperTest {
     UUID userId = UUID.randomUUID();
 
     var resultUnderTest =
-        mapper.toGetAllMyServiceRequestsCommand(20, ServiceRequestStatusDTO.ACCEPTED, 2, userId);
+        mapper.toGetMyServiceRequestsCommand(20, ServiceRequestStatusDTO.ACCEPTED, 2, userId);
 
     assertThat(resultUnderTest.userId().value()).isEqualTo(userId);
     assertThat(resultUnderTest.status()).isEqualTo(ServiceRequestStatus.ACCEPTED);
@@ -112,7 +116,7 @@ class RestMapperTest {
   void shouldMapGetAllServiceRequestsByProviderCommandWithDefaults() {
     UUID userId = UUID.randomUUID();
 
-    var resultUnderTest = mapper.toGetAllServiceRequestsByProviderCommand(null, null, null, userId);
+    var resultUnderTest = mapper.toGetProviderServiceRequestsCommand(null, null, null, userId);
 
     assertThat(resultUnderTest.userId().value()).isEqualTo(userId);
     assertThat(resultUnderTest.status()).isNull();
@@ -125,8 +129,7 @@ class RestMapperTest {
     UUID userId = UUID.randomUUID();
 
     var resultUnderTest =
-        mapper.toGetAllServiceRequestsByProviderCommand(
-            20, ServiceRequestStatusDTO.ACCEPTED, 2, userId);
+        mapper.toGetProviderServiceRequestsCommand(20, ServiceRequestStatusDTO.ACCEPTED, 2, userId);
 
     assertThat(resultUnderTest.userId().value()).isEqualTo(userId);
     assertThat(resultUnderTest.status()).isEqualTo(ServiceRequestStatus.ACCEPTED);
@@ -144,8 +147,7 @@ class RestMapperTest {
     LocalDateTime createdAt = LocalDateTime.of(2026, 6, 4, 10, 0);
     LocalDateTime updatedAt = LocalDateTime.of(2026, 6, 4, 10, 0);
     var response =
-        new cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase
-            .Response(
+        new GetProviderServiceRequestsUseCase.Response(
             List.of(
                 new FakeServiceRequestView1(
                     id,
@@ -214,7 +216,7 @@ class RestMapperTest {
     LocalDateTime createdAt = LocalDateTime.of(2026, 6, 4, 10, 0);
     LocalDateTime updatedAt = LocalDateTime.of(2026, 6, 4, 10, 0);
     var response =
-        new GetAllMyServiceRequestsUseCase.Response(
+        new GetMyServiceRequestsUseCase.Response(
             List.of(
                 new FakeServiceRequestView1(
                     id,

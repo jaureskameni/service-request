@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 
 import cm.klg.generated.uam.adapter.messaging.inbound.dto.UamDomainEventType;
 import cm.klg.generated.uam.adapter.messaging.inbound.dto.UamUserCreatedEventDTO;
-import cm.klg.service_request.application.usecase.CreateNewUserUseCase;
+import cm.klg.service_request.application.usecase.CreateUserUseCase;
 import com.emb.domain.inboxevent.InboxEventCommand;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -20,7 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class CreateUserInboundEventHandlerTest {
 
-  @Mock private CreateNewUserUseCase createNewUserUseCase;
+  @Mock private CreateUserUseCase createNewUserUseCase;
   @Mock private MessagingInboundMapper messagingInboundMapper;
 
   @InjectMocks private CreateUserInboundEventHandler createUserInboundEventHandler;
@@ -40,8 +40,8 @@ class CreateUserInboundEventHandlerTest {
   void shouldHandleUserCreatedEvent() {
     UamUserCreatedEventDTO userCreatedEventDTO = new UamUserCreatedEventDTO();
     InboxEventCommand<UamUserCreatedEventDTO> inboxEventCommand = mock(InboxEventCommand.class);
-    CreateNewUserUseCase.CreateNewUserCommand command =
-        new CreateNewUserUseCase.CreateNewUserCommand(
+    CreateUserUseCase.CreateNewUserCommand command =
+        new CreateUserUseCase.CreateNewUserCommand(
             UUID.randomUUID(), "Doe", "John", "john@doe.com", "237", "699", LocalDateTime.now());
 
     when(messagingInboundMapper.toCreateUserCommand(userCreatedEventDTO)).thenReturn(command);

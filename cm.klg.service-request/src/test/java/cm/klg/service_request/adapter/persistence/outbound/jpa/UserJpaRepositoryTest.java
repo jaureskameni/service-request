@@ -83,7 +83,7 @@ class UserJpaRepositoryTest {
     UserJpa userJpa = new UserJpa();
     User user = user();
     when(userSpringRepository.findById(userId.value())).thenReturn(Optional.of(userJpa));
-    when(jpaMapper.toDomain(userJpa)).thenReturn(user);
+    when(jpaMapper.toReviewSummary(userJpa)).thenReturn(user);
 
     assertThat(repository.loadById(userId)).contains(user);
   }
@@ -102,7 +102,7 @@ class UserJpaRepositoryTest {
     UserJpa userJpa = new UserJpa();
     User user = user();
     when(userSpringRepository.findById(userId.value())).thenReturn(Optional.of(userJpa));
-    when(jpaMapper.toDomain(userJpa)).thenReturn(user);
+    when(jpaMapper.toReviewSummary(userJpa)).thenReturn(user);
 
     assertThat(repository.load(userId)).isEqualTo(user);
   }

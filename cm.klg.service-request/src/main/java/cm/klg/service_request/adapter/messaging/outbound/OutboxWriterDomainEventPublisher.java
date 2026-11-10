@@ -7,6 +7,7 @@ import cm.klg.service_request.application.outbound.DomainEventPublisher;
 import cm.klg.service_request.domain.event.ServiceRequestAcceptedEvent;
 import cm.klg.service_request.domain.event.ServiceRequestCancelledEvent;
 import cm.klg.service_request.domain.event.ServiceRequestCreatedEvent;
+import cm.klg.service_request.domain.event.ServiceRequestFollowUpRequestedEvent;
 import cm.klg.service_request.domain.event.ServiceRequestRejectedEvent;
 import com.emb.application.outbound.EventPublisher;
 import com.emb.domain.outboxevent.EventCommand;
@@ -47,6 +48,15 @@ public class OutboxWriterDomainEventPublisher implements DomainEventPublisher {
         DomainEventType.SERVICE_REQUEST_CANCELLED,
         event.id().value().toString(),
         outboxWriterMapper.toServiceRequestCancelledEventDTO(event));
+  }
+
+  @Override
+  public void publishServiceRequestFollowUpRequestedEvent(
+      ServiceRequestFollowUpRequestedEvent event) {
+    this.publish(
+        DomainEventType.SERVICE_REQUEST_FOLLOW_UP_REQUESTED,
+        event.serviceRequestId().value().toString(),
+        outboxWriterMapper.toServiceRequestFollowUpRequestedEventDTO(event));
   }
 
   private void publish(DomainEventType eventType, String key, Object payload) {

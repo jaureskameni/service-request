@@ -1,45 +1,56 @@
 # API REST du microservice `service-request`
 
-Cette documentation décrit uniquement les routes définies dans [`main.yml`](../openapi/inbound/main.yml).
-Le port local `8086` provient de `server.port` dans `src/main/resources/application.yaml`.
+Cette documentation résume le contrat défini dans [`main.yml`](../openapi/inbound/main.yml) et les règles d’accès de [`SecurityConfig.java`](../../src/main/java/cm/klg/service_request/config/SecurityConfig.java). En local, l’API écoute sur `http://localhost:8086`.
 
-Toutes les routes nécessitent un token Bearer JWT. Utiliser le token de l'utilisateur qui effectue l'action :
-un utilisateur crée et consulte ses demandes, tandis qu'un prestataire consulte et traite les demandes qui lui
-sont destinées.
+## Authentification et autorisations
+
+- Les routes marquées **JWT** nécessitent un Bearer JWT valide.
+- Les routes marquées **Publique** acceptent les appels sans token.
+- Les demandes peuvent être consultées par leur client ou par le prestataire approuvé auquel elles sont assignées. Les autres utilisateurs authentifiés reçoivent `403 SERVICE_REQUEST_403_005`.
+- La modération d’avis nécessite le rôle Keycloak `review-moderate`.
 
 ## Routes
 
-| Méthode et route | Description | Paramètres / corps | Réponses documentées |
+| Méthode et route | Accès | Description et paramètres | Réponses principales |
 |---|---|---|---|
-| `POST /service-request` | Créer une demande de service pour un prestataire. | Corps `ServiceRequestRegister` : `providerId` (UUID, requis), `serviceTypeId` (UUID, requis), `title`, `description`, `location` (chaînes optionnelles). | `201 CreationResponse`; `400` corps invalide; `403` prestataire non approuvé (`SERVICE_REQUEST_403_003`); `404` prestataire absent (`SERVICE_REQUEST_404_002`); `401`; `500`. |
-| `GET /service-request/{serviceRequestId}` | Lire une demande par son identifiant. | `serviceRequestId` UUID dans le chemin. | `200 ServiceRequest`; `400` UUID invalide; `404` demande absente (`SERVICE_REQUEST_404_003`); `401`; `500`. |
-| `PUT /service-request/{serviceRequestId}/accept` | Accepter une demande reçue par le prestataire. | `serviceRequestId` UUID dans le chemin; aucun corps. | `204`; `400` UUID invalide; `403` demande appartenant à un autre prestataire (`SERVICE_REQUEST_403_001`) ou prestataire non approuvé (`SERVICE_REQUEST_403_003`); `404` demande absente (`SERVICE_REQUEST_404_003`); `409` transition invalide (`SERVICE_REQUEST_409_001`); `401`; `500`. |
-| `PUT /service-request/{serviceRequestId}/reject` | Rejeter une demande reçue par le prestataire. | `serviceRequestId` UUID dans le chemin; corps `{"reason":"..."}` avec `reason` requis (chaîne). | `204`; `400` UUID/corps invalide; `403` demande appartenant à un autre prestataire (`SERVICE_REQUEST_403_001`) ou prestataire non approuvé (`SERVICE_REQUEST_403_003`); `404` demande absente (`SERVICE_REQUEST_404_003`); `409` transition invalide (`SERVICE_REQUEST_409_001`); `401`; `500`. |
-| `PUT /service-request/{serviceRequestId}/cancel` | Annuler une demande créée par l'utilisateur courant. | `serviceRequestId` UUID dans le chemin; aucun corps. | `204`; `400` UUID invalide; `403` demande appartenant à un autre utilisateur (`SERVICE_REQUEST_403_002`); `404` demande absente (`SERVICE_REQUEST_404_003`); `409` transition invalide (`SERVICE_REQUEST_409_001`); `401`; `500`. |
-| `GET /my/service-request` | Lister les demandes de l'utilisateur courant. | Query `status` optionnel; `page` optionnel (défaut `0`, minimum `0`); `limit` requis (défaut OpenAPI `10`, entre `10` et `100`). | `200 ServiceRequestPaginate`; `400` pagination invalide (`SERVICE_REQUEST_400_001`) ou paramètres invalides; `401`; `500`. |
-| `GET /my/provider/service-requests` | Lister les demandes reçues par le prestataire courant. | Query `status` optionnel; `page` optionnel (défaut `0`, minimum `0`); `limit` requis (défaut OpenAPI `10`, entre `10` et `100`). | `200 ServiceRequestPaginate`; `400` pagination invalide (`SERVICE_REQUEST_400_001`) ou paramètres invalides; `403` prestataire non approuvé (`SERVICE_REQUEST_403_003`); `401`; `500`. |
+| `POST /service-request` | JWT utilisateur | Crée une demande. Corps `ServiceRequestRegister` : `providerId` et `serviceTypeId` (UUID requis), `title`, `description`, `location` (chaînes optionnelles). | `201 CreationResponse`; `403 SERVICE_REQUEST_403_003` prestataire non approuvé; `404 SERVICE_REQUEST_404_002` prestataire introuvable. |
+| `GET /service-request/{serviceRequestId}` | JWT, client ou prestataire assigné | Lit le détail d’une demande. `serviceRequestId` est un UUID. | `200 ServiceRequest`; `403 SERVICE_REQUEST_403_005` appelant non associé; `404 SERVICE_REQUEST_404_003` demande absente. |
+| `PUT /service-request/{serviceRequestId}/accept` | JWT prestataire | Accepte une demande reçue. Aucun corps. | `204`; `403 SERVICE_REQUEST_403_001` demande assignée à un autre prestataire ou `SERVICE_REQUEST_403_003` prestataire non approuvé; `404 SERVICE_REQUEST_404_003`; `409 SERVICE_REQUEST_409_001`. |
+| `PUT /service-request/{serviceRequestId}/reject` | JWT prestataire | Rejette une demande reçue. Corps `{"reason":"..."}`. | `204`; `403 SERVICE_REQUEST_403_001` ou `SERVICE_REQUEST_403_003`; `404 SERVICE_REQUEST_404_003`; `409 SERVICE_REQUEST_409_001`. |
+| `PUT /service-request/{serviceRequestId}/cancel` | JWT client | Annule une demande appartenant au client connecté. Aucun corps. | `204`; `403 SERVICE_REQUEST_403_002`; `404 SERVICE_REQUEST_404_003`; `409 SERVICE_REQUEST_409_001`. |
+| `GET /my/service-request` | JWT client | Liste ses demandes. Query : `status` optionnel; `page` (défaut `0`, minimum `0`); `limit` (défaut `10`, de `10` à `100`). | `200 ServiceRequestPaginate`; `400 SERVICE_REQUEST_400_001`. |
+| `GET /my/provider/service-requests` | JWT prestataire approuvé | Liste les demandes reçues. Mêmes paramètres de pagination que ci-dessus. | `200 ServiceRequestPaginate`; `400 SERVICE_REQUEST_400_001`; `403 SERVICE_REQUEST_403_003`. |
+| `GET /service-request/{serviceRequestId}/follow-up` | JWT client ou prestataire associé | Lit l’état bilatéral du suivi et les actions disponibles. | `200 ServiceRequestFollowUp`; `403 SERVICE_REQUEST_403_004` ou `SERVICE_REQUEST_403_005`; `404 SERVICE_REQUEST_404_003` ou `SERVICE_REQUEST_404_004`; `409 SERVICE_REQUEST_409_001`. |
+| `PUT /service-request/{serviceRequestId}/follow-up/agreement` | JWT client ou prestataire associé | Enregistre la réponse d’accord. Corps `{"answer":"YES"}` ou `{"answer":"NO"}`. | `204`; `403 SERVICE_REQUEST_403_004` ou `SERVICE_REQUEST_403_005`; `404 SERVICE_REQUEST_404_003` ou `SERVICE_REQUEST_404_004`; `409 SERVICE_REQUEST_409_001` ou `SERVICE_REQUEST_409_002`. |
+| `PUT /service-request/{serviceRequestId}/follow-up/service-completion` | JWT client ou prestataire associé | Déclare si le service est terminé. Même corps que pour l’accord. | `204`; `403 SERVICE_REQUEST_403_004` ou `SERVICE_REQUEST_403_005`; `404 SERVICE_REQUEST_404_003`; `409 SERVICE_REQUEST_409_001`, `SERVICE_REQUEST_409_002` ou `SERVICE_REQUEST_409_003`. |
+| `POST /service-request/{serviceRequestId}/review` | JWT client | Publie un avis si le client est éligible. Corps `ReviewRequest`. | `204`; `400 SERVICE_REQUEST_400_002`; `403 SERVICE_REQUEST_403_002`; `404 SERVICE_REQUEST_404_003` ou `SERVICE_REQUEST_404_004`; `409 SERVICE_REQUEST_409_004` ou `SERVICE_REQUEST_409_005`. |
+| `GET /service-provider/{providerId}/reviews` | Publique | Liste les avis publics. `providerId` UUID; `limit` optionnel (défaut `10`, de `10` à `100`); `page` optionnel (défaut `0`, minimum `0`). | `200 ProviderReviews`; `400 SERVICE_REQUEST_400_001`; `404 SERVICE_REQUEST_404_002`. |
+| `GET /service-provider/{providerId}/reviews/summary` | Publique | Renvoie la note moyenne, le nombre d’avis et leur distribution. `providerId` UUID. | `200 ReviewSummary`; `404 SERVICE_REQUEST_404_002`. |
+| `GET /me/reviews/summary` | JWT prestataire approuvé | Renvoie les statistiques publiques des avis du prestataire connecté. | `200 ReviewSummary`; `404 SERVICE_REQUEST_404_002` si aucun prestataire approuvé n’est associé au compte. |
+| `PUT /reviews/{reviewId}/moderation` | JWT, rôle `review-moderate` | Masque un avis. Corps `ReviewModerationRequest` : `reason` requis, longueur de 1 à 2000 caractères. | `204`; `400 SERVICE_REQUEST_400_003`; `404 SERVICE_REQUEST_404_005`. |
 
-## Schémas
+## Schémas principaux
 
-`ServiceRequestRegister` accepte les champs suivants :
+### Demandes
 
-| Champ | Type | Requis |
-|---|---|---|
-| `providerId` | UUID | Oui |
-| `serviceTypeId` | UUID | Oui |
-| `title` | Chaîne | Non |
-| `description` | Chaîne | Non |
-| `location` | Chaîne | Non |
+`ServiceRequest` contient les identifiants `id`, `userId`, `providerId` et `serviceTypeId`, son `status`, sa date `createdAt`, ainsi que les champs optionnels `title`, `description`, `location`, `updatedAt` et `reason`. Les statuts sont `PENDING`, `ACCEPTED`, `REJECTED` et `CANCELLED`.
 
-`ServiceRequestReject` est un objet sans propriétés supplémentaires, avec le champ requis `reason` de type chaîne.
-La spécification ne définit pas d'énumération de motifs.
+`ServiceRequestPaginate` contient `serviceRequest` (tableau) et `count` (nombre total d’éléments). La création renvoie `CreationResponse` avec `newId`.
 
-`ServiceRequest` comprend `id`, `userId`, `providerId`, `serviceTypeId`, `status` et `createdAt` (requis), ainsi que
-`title`, `description`, `location`, `updatedAt` et `reason` (optionnels). Les statuts définis sont `PENDING`,
-`ACCEPTED`, `REJECTED` et `CANCELLED`.
+### Suivi
 
-`ServiceRequestPaginate` contient `serviceRequest` (tableau de demandes) et `count` (entier 64 bits).
-`CreationResponse` contient `newId` (UUID).
+`FollowUpAnswerRequest.answer` vaut `YES` ou `NO`. `ServiceRequestFollowUp` contient les réponses et dates du client et du prestataire, `scheduledAt`, `agreementConfirmedAt`, le statut, ainsi que `canSubmitReview`, `canAnswerAgreement` et `canAnswerCompletion`. Les réponses et dates peuvent être `null`.
 
-Les descriptions et statuts ci-dessus suivent le contrat OpenAPI; les erreurs HTTP sans code métier explicite dans
-ce contrat peuvent ne pas contenir de code de service.
+Les statuts de suivi sont `WAITING_FOR_AGREEMENT`, `AGREEMENT_DISPUTED`, `NO_AGREEMENT`, `WAITING_FOR_COMPLETION`, `COMPLETION_REPORTED_BY_CLIENT`, `COMPLETION_CONFIRMED`, `COMPLETION_DISPUTED` et `NOT_COMPLETED`.
+
+`completionAvailableAt` indique quand la déclaration de fin devient disponible. Après accord des deux parties, cette date est `scheduledAt` si elle est définie; sinon, elle correspond à `agreementConfirmedAt` plus le délai configuré.
+
+### Avis
+
+`ReviewRequest.rating` est un entier de 1 à 5; `comment` est optionnel et limité à 2000 caractères. Un avis public fournit une confirmation parmi `CONFIRMED_BY_BOTH`, `REPORTED_BY_CLIENT` et `CONTESTED_BY_PROVIDER`.
+
+`ReviewSummary` contient `averageRating`, `reviewCount` et les nombres d’avis de une à cinq étoiles.
+
+## Erreurs hors codes métier
+
+Les codes `SERVICE_REQUEST_*` sont les erreurs métier listées dans [`ERROR_CODES.md`](ERROR_CODES.md). Les erreurs de sécurité ou de transport qui ne correspondent pas à une exception métier — par exemple un token absent ou un JSON mal formé — peuvent utiliser le format d’erreur commun sans code `SERVICE_REQUEST_*`.

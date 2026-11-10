@@ -19,9 +19,9 @@ class ServiceRequestDomainTest {
 
   @Test
   void shouldExposeNullConstantsForAbsentValueObjects() {
-    assertThat(ServiceRequestTitle.NULL).isNull();
-    assertThat(ServiceRequestDescription.NULL).isNull();
-    assertThat(ServiceRequestLocation.NULL).isNull();
+    assertThat(ServiceRequestTitle.NULL.value()).isEmpty();
+    assertThat(ServiceRequestDescription.NULL.value()).isEmpty();
+    assertThat(ServiceRequestLocation.NULL.value()).isEmpty();
   }
 
   @Test
@@ -42,7 +42,7 @@ class ServiceRequestDomainTest {
         .satisfies(
             serviceRequest -> {
               assertThat(serviceRequest.getId().value()).isNotNull();
-              assertThat(serviceRequest.getUserId()).isEqualTo(userId);
+              assertThat(serviceRequest.getClientId()).isEqualTo(userId);
               assertThat(serviceRequest.getServiceProviderId()).isEqualTo(providerId);
               assertThat(serviceRequest.getServiceTypeId()).isEqualTo(serviceTypeId);
               assertThat(serviceRequest.getTitle()).isEqualTo(title);
@@ -69,9 +69,9 @@ class ServiceRequestDomainTest {
     assertThat(resultUnderTest)
         .satisfies(
             serviceRequest -> {
-              assertThat(serviceRequest.getTitle()).isNull();
-              assertThat(serviceRequest.getDescription()).isNull();
-              assertThat(serviceRequest.getLocation()).isNull();
+              assertThat(serviceRequest.getTitle()).isEqualTo(ServiceRequestTitle.NULL);
+              assertThat(serviceRequest.getDescription()).isEqualTo(ServiceRequestDescription.NULL);
+              assertThat(serviceRequest.getLocation()).isEqualTo(ServiceRequestLocation.NULL);
             });
   }
 
@@ -88,9 +88,11 @@ class ServiceRequestDomainTest {
 
     assertThat(serviceRequest.getStatus()).isEqualTo(ServiceRequestStatus.ACCEPTED);
     assertThat(serviceRequest.getUpdatedAt()).isNotNull();
+    assertThat(serviceRequest.getAcceptedAt().value())
+        .isEqualTo(serviceRequest.getUpdatedAt().value());
     assertThat(event).isNotNull();
     assertThat(event.id()).isEqualTo(serviceRequest.getId());
-    assertThat(event.userId()).isEqualTo(serviceRequest.getUserId());
+    assertThat(event.userId()).isEqualTo(serviceRequest.getClientId());
     assertThat(event.providerId()).isEqualTo(serviceRequest.getServiceProviderId());
     assertThat(event.status()).isEqualTo(ServiceRequestStatus.ACCEPTED);
   }
@@ -113,7 +115,7 @@ class ServiceRequestDomainTest {
     assertThat(serviceRequest.getUpdatedAt()).isNotNull();
     assertThat(event).isNotNull();
     assertThat(event.id()).isEqualTo(serviceRequest.getId());
-    assertThat(event.userId()).isEqualTo(serviceRequest.getUserId());
+    assertThat(event.userId()).isEqualTo(serviceRequest.getClientId());
     assertThat(event.providerId()).isEqualTo(serviceRequest.getServiceProviderId());
     assertThat(event.status()).isEqualTo(ServiceRequestStatus.REJECTED);
     assertThat(event.reason()).isEqualTo(reason);

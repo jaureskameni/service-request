@@ -13,6 +13,8 @@
 		file="cm/klg/service_request/repository/liquibase/changelog/internal/v-3.xml" />
 	<include
 		file="cm/klg/service_request/repository/liquibase/changelog/internal/v-4.xml" />
+	<include
+		file="cm/klg/service_request/repository/liquibase/changelog/internal/v-5.xml" />
 
 	<include file="classpath:liquibase/emb/master.xml" />
 </databaseChangeLog>

@@ -17,18 +17,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class CreateNewUserUseCaseTest {
+class CreateUserUseCaseTest {
 
   @Mock private UserRepository userRepository;
 
-  @InjectMocks private CreateNewUserUseCase createNewUserUseCase;
+  @InjectMocks private CreateUserUseCase createNewUserUseCase;
 
   @Test
   void shouldCreateNewUser() {
     UUID userId = UUID.randomUUID();
     LocalDateTime now = LocalDateTime.now();
-    CreateNewUserUseCase.CreateNewUserCommand command =
-        new CreateNewUserUseCase.CreateNewUserCommand(
+    CreateUserUseCase.CreateNewUserCommand command =
+        new CreateUserUseCase.CreateNewUserCommand(
             userId, "Doe", " John ", "john.doe@example.com", "+237", "699999999", now);
 
     createNewUserUseCase.execute(command);
@@ -56,8 +56,8 @@ class CreateNewUserUseCaseTest {
   void shouldCreateUserWithNullableFirstnameAndEmail() {
     UUID userId = UUID.randomUUID();
     LocalDateTime now = LocalDateTime.now();
-    CreateNewUserUseCase.CreateNewUserCommand command =
-        new CreateNewUserUseCase.CreateNewUserCommand(
+    CreateUserUseCase.CreateNewUserCommand command =
+        new CreateUserUseCase.CreateNewUserCommand(
             userId, "Doe", null, null, "+237", "699999999", now);
 
     createNewUserUseCase.execute(command);
@@ -72,8 +72,8 @@ class CreateNewUserUseCaseTest {
 
   @Test
   void shouldRejectBlankFirstname() {
-    CreateNewUserUseCase.CreateNewUserCommand command =
-        new CreateNewUserUseCase.CreateNewUserCommand(
+    CreateUserUseCase.CreateNewUserCommand command =
+        new CreateUserUseCase.CreateNewUserCommand(
             UUID.randomUUID(),
             "Doe",
             " ",

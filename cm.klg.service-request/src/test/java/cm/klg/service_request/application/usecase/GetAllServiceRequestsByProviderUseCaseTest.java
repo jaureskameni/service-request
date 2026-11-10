@@ -27,13 +27,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class GetAllServiceRequestsByProviderUseCaseTest {
+class GetProviderServiceRequestsUseCaseTest {
 
   @Mock private ServiceRequestRepository serviceRequestRepository;
   @Mock private ServiceProviderRepository serviceProviderRepository;
   @Mock private ServiceRequestView1 serviceRequestView1;
 
-  @InjectMocks private GetAllServiceRequestsByProviderUseCase useCase;
+  @InjectMocks private GetProviderServiceRequestsUseCase useCase;
 
   @Test
   void shouldLoadAllRequestsWhenStatusIsAbsent() {
@@ -41,7 +41,7 @@ class GetAllServiceRequestsByProviderUseCaseTest {
     var userId = UserId.from(UUID.randomUUID());
     ServiceProvider serviceProvider = mock(ServiceProvider.class);
     var command =
-        new GetAllServiceRequestsByProviderUseCase.Command(
+        new GetProviderServiceRequestsUseCase.Command(
             userId, null, new PaginationFetchRequest(20, 2));
 
     when(serviceProviderRepository.loadApprovedByUserId(userId))
@@ -68,7 +68,7 @@ class GetAllServiceRequestsByProviderUseCaseTest {
     UserId userId = UserId.from(UUID.randomUUID());
     var providerId = ServiceProviderId.from(UUID.randomUUID());
     var command =
-        new GetAllServiceRequestsByProviderUseCase.Command(
+        new GetProviderServiceRequestsUseCase.Command(
             userId, ServiceRequestStatus.ACCEPTED, new PaginationFetchRequest(10, 0));
     ServiceProvider serviceProvider = mock(ServiceProvider.class);
 

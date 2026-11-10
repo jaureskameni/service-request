@@ -1,10 +1,7 @@
 package cm.klg.service_request.application.usecase;
 
-import cm.klg.service_request.application.outbound.ServiceProviderRepository;
 import cm.klg.service_request.application.outbound.ServiceRequestRepository;
 import cm.klg.service_request.application.views.ServiceRequestViews.ServiceRequestView1;
-import cm.klg.service_request.domain.service_provider.ServiceProvider;
-import cm.klg.service_request.domain.service_provider.UnauthorizedProviderException;
 import cm.klg.service_request.domain.service_request.ServiceRequestStatus;
 import cm.klg.service_request.domain.user.UserId;
 import cm.klg.service_request.utils.PageData;
@@ -15,24 +12,17 @@ import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 
 @RequiredArgsConstructor
-public class GetAllServiceRequestsByProviderUseCase {
-  private final ServiceProviderRepository serviceProviderRepository;
+public class GetMyServiceRequestsUseCase {
   private final ServiceRequestRepository serviceRequestRepository;
 
   public Response execute(Command command) {
-
-    ServiceProvider serviceProvider =
-        serviceProviderRepository
-            .loadApprovedByUserId(command.userId())
-            .orElseThrow(UnauthorizedProviderException::new);
     if (command.status() == null) {
       return toResponse(
-          serviceRequestRepository.loadAllRequestsByProviderAsView1(
-              serviceProvider.getId(), command.pagination()));
+          serviceRequestRepository.loadAllMyRequestsAsView1(command.userId, command.pagination()));
     }
     return toResponse(
-        serviceRequestRepository.loadAllRequestByProviderAndStatusAsView1(
-            serviceProvider.getId(), command.status(), command.pagination()));
+        serviceRequestRepository.loadAllMyRequestByStatusAsView1(
+            command.userId, command.status(), command.pagination()));
   }
 
   private static Response toResponse(PageData<ServiceRequestView1> pageData) {

@@ -3,10 +3,12 @@ package cm.klg.service_request.adapter.messaging.outbound;
 import cm.klg.generated.service.request.adapter.messaging.outbound.dto.ServiceRequestAcceptedEventDTO;
 import cm.klg.generated.service.request.adapter.messaging.outbound.dto.ServiceRequestCancelledEventDTO;
 import cm.klg.generated.service.request.adapter.messaging.outbound.dto.ServiceRequestCreatedEventDTO;
+import cm.klg.generated.service.request.adapter.messaging.outbound.dto.ServiceRequestFollowUpRequestedEventDTO;
 import cm.klg.generated.service.request.adapter.messaging.outbound.dto.ServiceRequestRejectedEventDTO;
 import cm.klg.service_request.domain.event.ServiceRequestAcceptedEvent;
 import cm.klg.service_request.domain.event.ServiceRequestCancelledEvent;
 import cm.klg.service_request.domain.event.ServiceRequestCreatedEvent;
+import cm.klg.service_request.domain.event.ServiceRequestFollowUpRequestedEvent;
 import cm.klg.service_request.domain.event.ServiceRequestRejectedEvent;
 import cm.klg.service_request.domain.service_request.ServiceRequestDescription;
 import cm.klg.service_request.domain.service_request.ServiceRequestLocation;
@@ -61,15 +63,24 @@ public interface OutboxWriterMapper {
   @Mapping(target = "createdAt", source = "lifecycle.createdAt.value")
   ServiceRequestCreatedEventDTO toServiceRequestCreatedEventDTO(ServiceRequestCreatedEvent event);
 
-  default @Nullable String map(@Nullable ServiceRequestTitle title) {
-    return title == null ? null : title.value();
+  @BeanMapping(ignoreByDefault = true)
+  @Mapping(target = "serviceRequestId", source = "serviceRequestId.value")
+  @Mapping(target = "clientId", source = "clientId.value")
+  @Mapping(target = "providerId", source = "providerId.value")
+  @Mapping(target = "stage", source = "stage")
+  @Mapping(target = "requestedAt", source = "requestedAt.value")
+  ServiceRequestFollowUpRequestedEventDTO toServiceRequestFollowUpRequestedEventDTO(
+      ServiceRequestFollowUpRequestedEvent event);
+
+  default @Nullable String map(ServiceRequestTitle title) {
+    return title == ServiceRequestTitle.NULL ? null : title.value();
   }
 
-  default @Nullable String map(@Nullable ServiceRequestDescription description) {
-    return description == null ? null : description.value();
+  default @Nullable String map(ServiceRequestDescription description) {
+    return description == ServiceRequestDescription.NULL ? null : description.value();
   }
 
-  default @Nullable String map(@Nullable ServiceRequestLocation location) {
-    return location == null ? null : location.value();
+  default @Nullable String map(ServiceRequestLocation location) {
+    return location == ServiceRequestLocation.NULL ? null : location.value();
   }
 }

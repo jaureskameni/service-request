@@ -58,7 +58,7 @@ public class ServiceProviderJpaRepository implements ServiceProviderRepository {
       throws ServiceProviderNotFoundException {
     return springRepository
         .findAggregateById(serviceProviderId.value())
-        .map(jpaMapper::toDomain)
+        .map(jpaMapper::toReviewSummary)
         .orElseThrow(ServiceProviderNotFoundException::new);
   }
 
@@ -75,10 +75,10 @@ public class ServiceProviderJpaRepository implements ServiceProviderRepository {
   }
 
   @Override
-  public Optional<ServiceProvider> loadApprovedByUserId(@NonNull UserId userId) {
+  public Optional<@NonNull ServiceProvider> loadApprovedByUserId(@NonNull UserId userId) {
     return springRepository
         .findByUserIdAndStatus(userId.value(), ServiceProviderStatus.APPROVED.name())
-        .map(jpaMapper::toDomain);
+        .map(jpaMapper::toReviewSummary);
   }
 
   @Override
@@ -86,7 +86,7 @@ public class ServiceProviderJpaRepository implements ServiceProviderRepository {
       throws ServiceProviderNotFoundException {
     return springRepository
         .findByUserId(userId.value())
-        .map(jpaMapper::toDomain)
+        .map(jpaMapper::toReviewSummary)
         .orElseThrow(ServiceProviderNotFoundException::new);
   }
 }

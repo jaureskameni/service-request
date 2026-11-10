@@ -2,12 +2,12 @@ package cm.klg.service_request.adapter.messaging.inbound;
 
 import cm.klg.generated.uam.adapter.messaging.inbound.dto.UamDomainEventType;
 import cm.klg.generated.uam.adapter.messaging.inbound.dto.UamUserCreatedEventDTO;
-import cm.klg.service_request.application.usecase.CreateNewUserUseCase;
+import cm.klg.service_request.application.usecase.CreateUserUseCase;
 import com.emb.application.handler.InboundEventHandler;
 import com.emb.domain.inboxevent.InboxEventCommand;
 
 public record CreateUserInboundEventHandler(
-    CreateNewUserUseCase createNewUserUseCase, MessagingInboundMapper messagingInboundMapper)
+    CreateUserUseCase createUserUseCase, MessagingInboundMapper messagingInboundMapper)
     implements InboundEventHandler<UamUserCreatedEventDTO> {
   @Override
   public String handledEventType() {
@@ -21,7 +21,6 @@ public record CreateUserInboundEventHandler(
 
   @Override
   public void handle(InboxEventCommand<UamUserCreatedEventDTO> inboxEventCommand) {
-    createNewUserUseCase.execute(
-        messagingInboundMapper.toCreateUserCommand(inboxEventCommand.data()));
+    createUserUseCase.execute(messagingInboundMapper.toCreateUserCommand(inboxEventCommand.data()));
   }
 }

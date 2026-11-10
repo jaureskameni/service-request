@@ -3,7 +3,7 @@ package cm.klg.service_request.adapter.messaging.inbound;
 import cm.klg.generated.uam.adapter.messaging.inbound.dto.UamUserCreatedEventDTO;
 import cm.klg.generated.uam.adapter.messaging.inbound.dto.UamUserUpdatedEventDTO;
 import cm.klg.service_request.application.usecase.ApproveServiceProviderUseCase;
-import cm.klg.service_request.application.usecase.CreateNewUserUseCase;
+import cm.klg.service_request.application.usecase.CreateUserUseCase;
 import cm.klg.service_request.application.usecase.UpdateUserUseCase;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.InjectionStrategy;
@@ -26,7 +26,7 @@ public interface MessagingInboundMapper {
   @Mapping(target = "phoneNumber", source = "phoneNumber.number")
   @Mapping(target = "email", source = "email")
   @Mapping(target = "createdAt", source = "createdAt")
-  CreateNewUserUseCase.CreateNewUserCommand toCreateUserCommand(
+  CreateUserUseCase.CreateNewUserCommand toCreateUserCommand(
       UamUserCreatedEventDTO userCreatedEventDTO);
 
   @Mapping(target = "userId.value", source = "id")

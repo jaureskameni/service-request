@@ -46,6 +46,40 @@ public class SecurityConfig {
                         "/service-request/{serviceRequestId:%s}/cancel"
                             .formatted(REGEX_UUID_WITH_DELIMITER))
                     .authenticated()
+                    .requestMatchers(
+                        HttpMethod.GET,
+                        "/service-request/{serviceRequestId:%s}/follow-up"
+                            .formatted(REGEX_UUID_WITH_DELIMITER))
+                    .authenticated()
+                    .requestMatchers(
+                        HttpMethod.PUT,
+                        "/service-request/{serviceRequestId:%s}/follow-up/agreement"
+                            .formatted(REGEX_UUID_WITH_DELIMITER))
+                    .authenticated()
+                    .requestMatchers(
+                        HttpMethod.PUT,
+                        "/service-request/{serviceRequestId:%s}/follow-up/service-completion"
+                            .formatted(REGEX_UUID_WITH_DELIMITER))
+                    .authenticated()
+                    .requestMatchers(
+                        HttpMethod.POST,
+                        "/service-request/{serviceRequestId:%s}/review"
+                            .formatted(REGEX_UUID_WITH_DELIMITER))
+                    .authenticated()
+                    .requestMatchers(
+                        HttpMethod.GET,
+                        "/service-provider/{providerId:%s}/reviews"
+                            .formatted(REGEX_UUID_WITH_DELIMITER))
+                    .permitAll()
+                    .requestMatchers(
+                        HttpMethod.GET,
+                        "/service-provider/{providerId:%s}/reviews/summary"
+                            .formatted(REGEX_UUID_WITH_DELIMITER))
+                    .permitAll()
+                    .requestMatchers(
+                        HttpMethod.PUT,
+                        "/reviews/{reviewId:%s}/moderation".formatted(REGEX_UUID_WITH_DELIMITER))
+                    .hasRole("review-moderate")
                     .requestMatchers(HttpMethod.GET, "/my/service-request")
                     .authenticated()
                     .requestMatchers(HttpMethod.GET, "/my/provider/service-requests")
