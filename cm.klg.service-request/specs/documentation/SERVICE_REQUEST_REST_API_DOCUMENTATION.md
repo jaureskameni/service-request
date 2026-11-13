@@ -7,7 +7,7 @@ Cette documentation résume le contrat défini dans [`main.yml`](../openapi/inbo
 - Les routes marquées **JWT** nécessitent un Bearer JWT valide.
 - Les routes marquées **Publique** acceptent les appels sans token.
 - Les demandes peuvent être consultées par leur client ou par le prestataire approuvé auquel elles sont assignées. Les autres utilisateurs authentifiés reçoivent `403 SERVICE_REQUEST_403_005`.
-- La modération d’avis nécessite le rôle Keycloak `review-moderate`.
+- Le masquage d’un avis nécessite le scope `review:hide`, attribué à l’administrateur dans Keycloak.
 
 ## Routes
 
@@ -27,7 +27,7 @@ Cette documentation résume le contrat défini dans [`main.yml`](../openapi/inbo
 | `GET /service-provider/{providerId}/reviews` | Publique | Liste les avis publics. `providerId` UUID; `limit` optionnel (défaut `10`, de `10` à `100`); `page` optionnel (défaut `0`, minimum `0`). | `200 ProviderReviews`; `400 SERVICE_REQUEST_400_001`; `404 SERVICE_REQUEST_404_002`. |
 | `GET /service-provider/{providerId}/reviews/summary` | Publique | Renvoie la note moyenne, le nombre d’avis et leur distribution. `providerId` UUID. | `200 ReviewSummary`; `404 SERVICE_REQUEST_404_002`. |
 | `GET /me/reviews/summary` | JWT prestataire approuvé | Renvoie les statistiques publiques des avis du prestataire connecté. | `200 ReviewSummary`; `404 SERVICE_REQUEST_404_002` si aucun prestataire approuvé n’est associé au compte. |
-| `PUT /reviews/{reviewId}/moderation` | JWT, rôle `review-moderate` | Masque un avis. Corps `ReviewModerationRequest` : `reason` requis, longueur de 1 à 2000 caractères. | `204`; `400 SERVICE_REQUEST_400_003`; `404 SERVICE_REQUEST_404_005`. |
+| `PUT /reviews/{reviewId}/moderation` | JWT avec le scope `review:hide` (administrateur) | Masque un avis. Corps `ReviewModerationRequest` : `reason` requis, longueur de 1 à 2000 caractères. | `204`; `400 SERVICE_REQUEST_400_003`; `404 SERVICE_REQUEST_404_005`. |
 
 ## Schémas principaux
 

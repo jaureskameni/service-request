@@ -286,8 +286,10 @@ paths:
       - "ReviewModeration"
       summary: "Hide a review with a moderation reason"
       operationId: "hideReview"
+      description: "Requires the review:hide scope, assigned to administrators."
       security:
-      - bearerAuth: []
+      - oAuth:
+        - "review:hide"
       parameters:
       - name: "reviewId"
         in: "path"
