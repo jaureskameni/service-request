@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 
 @RequiredArgsConstructor
-public class CreateNewUserUseCase {
+public class CreateUserUseCase {
   private final UserRepository userRepository;
 
   public void execute(CreateNewUserCommand command) {

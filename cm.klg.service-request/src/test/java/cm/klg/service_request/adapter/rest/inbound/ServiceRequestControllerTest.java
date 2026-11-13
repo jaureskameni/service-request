@@ -14,12 +14,12 @@ import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestR
 import cm.klg.generated.service.request.adapter.rest.inbound.dto.ServiceRequestStatusDTO;
 import cm.klg.service_request.application.usecase.AcceptServiceRequestUseCase;
 import cm.klg.service_request.application.usecase.CancelServiceRequestUseCase;
-import cm.klg.service_request.application.usecase.CreateNewServiceRequestUseCase;
-import cm.klg.service_request.application.usecase.GetAllMyServiceRequestsUseCase;
-import cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase;
+import cm.klg.service_request.application.usecase.CreateServiceRequestUseCase;
+import cm.klg.service_request.application.usecase.GetMyServiceRequestsUseCase;
+import cm.klg.service_request.application.usecase.GetProviderServiceRequestsUseCase;
 import cm.klg.service_request.application.usecase.GetServiceRequestByIdUseCase;
 import cm.klg.service_request.application.usecase.RejectServiceRequestUseCase;
-import cm.klg.service_request.application.views.ServiceRequestViews.ServiceRequestView1;
+import cm.klg.service_request.domain.service_request.ServiceRequest;
 import cm.klg.service_request.domain.service_request.ServiceRequestId;
 import java.util.List;
 import java.util.UUID;
@@ -36,9 +36,9 @@ import org.springframework.http.MediaType;
 class ServiceRequestControllerTest {
   @Mock private UseCaseExecutor useCaseExecutor;
   @Mock private RestMapper restMapper;
-  @Mock private CreateNewServiceRequestUseCase createNewServiceRequestUseCase;
-  @Mock private GetAllMyServiceRequestsUseCase getAllMyServiceRequestsUseCase;
-  @Mock private GetAllServiceRequestsByProviderUseCase getAllServiceRequestsByProviderUseCase;
+  @Mock private CreateServiceRequestUseCase createNewServiceRequestUseCase;
+  @Mock private GetMyServiceRequestsUseCase getAllMyServiceRequestsUseCase;
+  @Mock private GetProviderServiceRequestsUseCase getAllServiceRequestsByProviderUseCase;
   @Mock private GetServiceRequestByIdUseCase getServiceRequestByIdUseCase;
   @Mock private AcceptServiceRequestUseCase acceptServiceRequestUseCase;
   @Mock private RejectServiceRequestUseCase rejectServiceRequestUseCase;
@@ -50,7 +50,7 @@ class ServiceRequestControllerTest {
   void getServiceRequestByIdTest() {
     // Given
     UUID serviceRequestId = UUID.randomUUID();
-    var result = mock(ServiceRequestView1.class);
+    var result = mock(ServiceRequest.class);
     var dto = new ServiceRequestDTO().id(serviceRequestId);
 
     BDDMockito.given(useCaseExecutor.executeQuery(any())).willReturn(result);
@@ -175,7 +175,7 @@ class ServiceRequestControllerTest {
 
     ServiceRequestStatusDTO statusDTO = ServiceRequestStatusDTO.ACCEPTED;
     var serviceProviderDTO = new ServiceRequestDTO().id(UUID.randomUUID());
-    var useCaseResponse = new GetAllMyServiceRequestsUseCase.Response(List.of(), 1L);
+    var useCaseResponse = new GetMyServiceRequestsUseCase.Response(List.of(), 1L);
     var paginateDTO =
         new ServiceRequestPaginateDTO().count(1L).serviceRequest(List.of(serviceProviderDTO));
 
@@ -209,8 +209,8 @@ class ServiceRequestControllerTest {
     ServiceRequestStatusDTO statusDTO = ServiceRequestStatusDTO.ACCEPTED;
     var serviceProviderDTO = new ServiceRequestDTO().id(UUID.randomUUID());
     var useCaseResponse =
-        new cm.klg.service_request.application.usecase.GetAllServiceRequestsByProviderUseCase
-            .Response(List.of(), 1L);
+        new cm.klg.service_request.application.usecase.GetProviderServiceRequestsUseCase.Response(
+            List.of(), 1L);
     var paginateDTO =
         new ServiceRequestPaginateDTO().count(1L).serviceRequest(List.of(serviceProviderDTO));
 

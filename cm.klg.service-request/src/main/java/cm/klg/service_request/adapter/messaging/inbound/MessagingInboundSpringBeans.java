@@ -1,7 +1,7 @@
 package cm.klg.service_request.adapter.messaging.inbound;
 
 import cm.klg.service_request.application.usecase.ApproveServiceProviderUseCase;
-import cm.klg.service_request.application.usecase.CreateNewUserUseCase;
+import cm.klg.service_request.application.usecase.CreateUserUseCase;
 import cm.klg.service_request.application.usecase.DeleteUserUseCase;
 import cm.klg.service_request.application.usecase.UpdateUserUseCase;
 import org.springframework.context.annotation.Bean;
@@ -12,8 +12,8 @@ public class MessagingInboundSpringBeans {
 
   @Bean
   public CreateUserInboundEventHandler createUserInboundEventHandler(
-      CreateNewUserUseCase createNewUserUseCase, MessagingInboundMapper messagingInboundMapper) {
-    return new CreateUserInboundEventHandler(createNewUserUseCase, messagingInboundMapper);
+      CreateUserUseCase createUserUseCase, MessagingInboundMapper messagingInboundMapper) {
+    return new CreateUserInboundEventHandler(createUserUseCase, messagingInboundMapper);
   }
 
   @Bean

@@ -11,3 +11,5 @@ gradle.prefs
 **/*.log
 .pgpass
 **/application-local.yml
+cm.klg.service-request/specs/documentation/JOINTURES_JPA_EXPLIQUEES.md
+cm.klg.service-request/specs/documentation/images/jpa-joins-analogie.svg

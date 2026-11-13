@@ -1,9 +1,12 @@
 package cm.klg.service_request.adapter.persistence.outbound.jpa;
 
 import cm.klg.common.base.domain.AggregateRootEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -26,8 +29,8 @@ public class ServiceRequestJpa extends AggregateRootEntity<UUID> {
   @Column(name = "c_id")
   private UUID id;
 
-  @Column(name = "c_user_id")
-  private UUID userId;
+  @Column(name = "c_client_id")
+  private UUID clientId;
 
   @Column(name = "c_provider_id")
   private UUID providerId;
@@ -55,6 +58,23 @@ public class ServiceRequestJpa extends AggregateRootEntity<UUID> {
 
   @Column(name = "c_updated_at")
   private LocalDateTime updatedAt;
+
+  @Column(name = "c_accepted_at")
+  private LocalDateTime acceptedAt;
+
+  @OneToOne(
+      mappedBy = "serviceRequest",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.LAZY)
+  private ServiceRequestFollowUpJpa followUp;
+
+  public void setFollowUp(ServiceRequestFollowUpJpa followUp) {
+    this.followUp = followUp;
+    if (followUp != null && followUp.getServiceRequest() != this) {
+      followUp.setServiceRequest(this);
+    }
+  }
 
   @Override
   public boolean equals(Object o) {

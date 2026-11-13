@@ -1,0 +1,12 @@
+package cm.klg.service_request.domain.service_request;
+
+public enum FollowUpStatus {
+  WAITING_FOR_AGREEMENT,
+  AGREEMENT_DISPUTED,
+  NO_AGREEMENT,
+  WAITING_FOR_COMPLETION,
+  COMPLETION_REPORTED_BY_CLIENT,
+  COMPLETION_CONFIRMED,
+  COMPLETION_DISPUTED,
+  NOT_COMPLETED
+}

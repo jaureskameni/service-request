@@ -1,6 +1,7 @@
 package cm.klg.service_request.adapter.persistence.outbound.jpa;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import cm.klg.common.base.domain.CreatedAt;
 import cm.klg.common.base.entity.PhoneNumberJpa;
@@ -73,7 +74,7 @@ class JpaMapperTest {
     userJpa.setServiceProvider(true);
     userJpa.setCreatedAt(createdAt);
 
-    var resultUnderTest = mapper.toDomain(userJpa);
+    var resultUnderTest = mapper.toReviewSummary(userJpa);
 
     assertThat(resultUnderTest)
         .satisfies(
@@ -140,7 +141,7 @@ class JpaMapperTest {
         .satisfies(
             jpa -> {
               assertThat(jpa.getId()).isEqualTo(serviceRequest.getId().value());
-              assertThat(jpa.getUserId()).isEqualTo(userId);
+              assertThat(jpa.getClientId()).isEqualTo(userId);
               assertThat(jpa.getProviderId()).isEqualTo(providerId);
               assertThat(jpa.getServiceTypeId()).isEqualTo(serviceTypeId);
               assertThat(jpa.getTitle()).isEqualTo("title");
@@ -176,7 +177,28 @@ class JpaMapperTest {
   }
 
   @Test
+  void shouldPersistAndRestoreAcceptedAt() {
+    ServiceProviderId providerId = ServiceProviderId.generate();
+    ServiceRequest serviceRequest =
+        ServiceRequest.of(
+            new ServiceRequestParties(
+                UserId.from(UUID.randomUUID()), providerId, ServiceTypeId.from(UUID.randomUUID())),
+            new ServiceRequestDetails(
+                ServiceRequestTitle.NULL,
+                ServiceRequestDescription.NULL,
+                ServiceRequestLocation.NULL));
+    serviceRequest.accept(providerId);
+
+    ServiceRequestJpa serviceRequestJpa = mapper.toJpa(serviceRequest);
+    ServiceRequest restoredServiceRequest = mapper.toReviewSummary(serviceRequestJpa);
+
+    assertThat(serviceRequestJpa.getAcceptedAt()).isEqualTo(serviceRequest.getAcceptedAt().value());
+    assertThat(restoredServiceRequest.getAcceptedAt()).isEqualTo(serviceRequest.getAcceptedAt());
+  }
+
+  @Test
   void shouldMapNullServiceRequestToNullTest() {
-    assertThat(mapper.toJpa((ServiceRequest) null)).isNull();
+    assertThatThrownBy(() -> mapper.toJpa((ServiceRequest) null))
+        .isInstanceOf(NullPointerException.class);
   }
 }

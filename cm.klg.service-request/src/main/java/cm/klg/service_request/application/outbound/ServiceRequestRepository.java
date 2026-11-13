@@ -27,7 +27,5 @@ public interface ServiceRequestRepository {
   PageData<ServiceRequestView1> loadAllRequestByProviderAndStatusAsView1(
       ServiceProviderId providerId, ServiceRequestStatus status, PaginationFetchRequest pagination);
 
-  ServiceRequestView1 loadByIdAsView1(ServiceRequestId id) throws ServiceRequestNotFoundException;
-
   ServiceRequest load(ServiceRequestId id) throws ServiceRequestNotFoundException;
 }

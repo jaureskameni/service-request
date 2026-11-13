@@ -27,17 +27,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/CreationResponse"
         "403":
-          description: "SERVICE_REQUEST_403_003 — provider is not approved; insufficient\
-            \ authorization also returns 403 without a service code."
+          description: "SERVICE_REQUEST_403_003"
         "404":
-          description: "SERVICE_REQUEST_404_002 — service provider not found."
-        "400":
-          description: "Malformed or invalid request body or UUID; no service business\
-            \ code is guaranteed."
-        "401":
-          description: "Bearer token is missing or invalid."
-        "500":
-          description: "Unexpected internal error."
+          description: "SERVICE_REQUEST_404_002"
   /service-request/{serviceRequestId}:
     get:
       tags:
@@ -62,14 +54,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ServiceRequest"
         "404":
-          description: "SERVICE_REQUEST_404_003 — service request not found."
-        "400":
-          description: "Invalid serviceRequestId UUID; no service business code is\
-            \ guaranteed."
-        "401":
-          description: "Bearer token is missing or invalid."
-        "500":
-          description: "Unexpected internal error."
+          description: "SERVICE_REQUEST_404_003"
   /service-request/{serviceRequestId}/accept:
     put:
       tags:
@@ -90,20 +75,239 @@ paths:
         "204":
           description: "Successful operation"
         "403":
-          description: "SERVICE_REQUEST_403_001 — request belongs to another provider;\
-            \ SERVICE_REQUEST_403_003 — provider is not approved; insufficient authorization\
-            \ returns 403 without a service code."
+          description: "SERVICE_REQUEST_403_001, SERVICE_REQUEST_403_003"
         "404":
-          description: "SERVICE_REQUEST_404_003 — service request not found"
+          description: "SERVICE_REQUEST_404_003"
         "409":
           description: "SERVICE_REQUEST_409_001"
+  /service-request/{serviceRequestId}/follow-up:
+    get:
+      tags:
+      - "ServiceRequestFollowUp"
+      summary: "Get the follow-up for a service request"
+      operationId: "getServiceRequestFollowUp"
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: "serviceRequestId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+          format: "uuid"
+      responses:
+        "200":
+          description: "Current bilateral follow-up state"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceRequestFollowUp"
+        "403":
+          description: "SERVICE_REQUEST_403_004, SERVICE_REQUEST_403_005"
+        "404":
+          description: "SERVICE_REQUEST_404_003, SERVICE_REQUEST_404_004"
+        "409":
+          description: "SERVICE_REQUEST_409_001"
+  /service-request/{serviceRequestId}/follow-up/agreement:
+    put:
+      tags:
+      - "ServiceRequestFollowUp"
+      summary: "Submit the caller's agreement response"
+      operationId: "answerServiceRequestAgreement"
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: "serviceRequestId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+          format: "uuid"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FollowUpAnswerRequest"
+      responses:
+        "204":
+          description: "Response recorded"
+        "403":
+          description: "SERVICE_REQUEST_403_004, SERVICE_REQUEST_403_005"
+        "404":
+          description: "SERVICE_REQUEST_404_003, SERVICE_REQUEST_404_004"
+        "409":
+          description: "SERVICE_REQUEST_409_001, SERVICE_REQUEST_409_002"
+  /service-request/{serviceRequestId}/follow-up/service-completion:
+    put:
+      tags:
+      - "ServiceRequestFollowUp"
+      summary: "Declare whether the agreed service was completed"
+      description: "Declare whether the agreed service was completed"
+      operationId: "answerServiceRequestCompletion"
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: "serviceRequestId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+          format: "uuid"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FollowUpAnswerRequest"
+      responses:
+        "204":
+          description: "The caller's completion declaration was recorded."
+        "403":
+          description: "SERVICE_REQUEST_403_004, SERVICE_REQUEST_403_005"
+        "404":
+          description: "SERVICE_REQUEST_404_003"
+        "409":
+          description: "SERVICE_REQUEST_409_001, SERVICE_REQUEST_409_002, SERVICE_REQUEST_409_003"
+  /service-request/{serviceRequestId}/review:
+    post:
+      tags:
+      - "Review"
+      summary: "Publish a review for a service request"
+      operationId: "publishServiceRequestReview"
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: "serviceRequestId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+          format: "uuid"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewRequest"
+      responses:
+        "204":
+          description: "Review published"
         "400":
-          description: "Invalid serviceRequestId UUID; no service business code is\
-            \ guaranteed."
-        "401":
-          description: "Bearer token is missing or invalid."
-        "500":
-          description: "Unexpected internal error."
+          description: "SERVICE_REQUEST_400_002"
+        "403":
+          description: "SERVICE_REQUEST_403_002"
+        "404":
+          description: "SERVICE_REQUEST_404_003, SERVICE_REQUEST_404_004"
+        "409":
+          description: "SERVICE_REQUEST_409_004, SERVICE_REQUEST_409_005"
+  /service-provider/{providerId}/reviews:
+    get:
+      tags:
+      - "Review"
+      summary: "List public reviews for a provider"
+      operationId: "getProviderReviews"
+      parameters:
+      - name: "providerId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+          format: "uuid"
+      - name: "limit"
+        in: "query"
+        required: false
+        description: "Number of reviews per page, between 10 and 100."
+        schema:
+          type: "integer"
+          minimum: 10
+          maximum: 100
+          default: 10
+      - name: "page"
+        in: "query"
+        required: false
+        schema:
+          type: "integer"
+          minimum: 0
+          default: 0
+      responses:
+        "200":
+          description: "Published reviews with their confirmation level"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProviderReviews"
+        "404":
+          description: "SERVICE_REQUEST_404_002"
+        "400":
+          description: "SERVICE_REQUEST_400_001"
+  /service-provider/{providerId}/reviews/summary:
+    get:
+      tags:
+      - "Review"
+      summary: "Get public review statistics for a provider"
+      operationId: "getProviderReviewSummary"
+      parameters:
+      - name: "providerId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+          format: "uuid"
+      responses:
+        "200":
+          description: "Average rating, review count and rating distribution"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReviewSummary"
+        "404":
+          description: "SERVICE_REQUEST_404_002"
+  /me/reviews/summary:
+    get:
+      tags:
+      - "Review"
+      summary: "Get the authenticated provider's public review statistics"
+      operationId: "getMyReviewSummary"
+      security:
+      - bearerAuth: []
+      responses:
+        "200":
+          description: "Average rating, review count and rating distribution"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReviewSummary"
+        "404":
+          description: "SERVICE_REQUEST_404_002"
+  /reviews/{reviewId}/moderation:
+    put:
+      tags:
+      - "ReviewModeration"
+      summary: "Hide a review with a moderation reason"
+      operationId: "hideReview"
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: "reviewId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+          format: "uuid"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewModerationRequest"
+      responses:
+        "204":
+          description: "Review hidden"
+        "400":
+          description: "SERVICE_REQUEST_400_003"
+        "404":
+          description: "SERVICE_REQUEST_404_005"
   /service-request/{serviceRequestId}/reject:
     put:
       tags:
@@ -129,20 +333,11 @@ paths:
         "204":
           description: "Successful operation"
         "403":
-          description: "SERVICE_REQUEST_403_001 — request belongs to another provider;\
-            \ SERVICE_REQUEST_403_003 — provider is not approved; insufficient authorization\
-            \ returns 403 without a service code."
+          description: "SERVICE_REQUEST_403_001, SERVICE_REQUEST_403_003"
         "404":
-          description: "SERVICE_REQUEST_404_003 — service request not found"
+          description: "SERVICE_REQUEST_404_003"
         "409":
           description: "SERVICE_REQUEST_409_001"
-        "400":
-          description: "Invalid serviceRequestId UUID or reject body; no service business\
-            \ code is guaranteed."
-        "401":
-          description: "Bearer token is missing or invalid."
-        "500":
-          description: "Unexpected internal error."
   /service-request/{serviceRequestId}/cancel:
     put:
       tags:
@@ -163,19 +358,11 @@ paths:
         "204":
           description: "Successful operation"
         "403":
-          description: "SERVICE_REQUEST_403_002 — request belongs to another user;\
-            \ insufficient authorization returns 403 without a service code."
+          description: "SERVICE_REQUEST_403_002"
         "404":
-          description: "SERVICE_REQUEST_404_003 — service request not found"
+          description: "SERVICE_REQUEST_404_003"
         "409":
           description: "SERVICE_REQUEST_409_001"
-        "400":
-          description: "Invalid serviceRequestId UUID; no service business code is\
-            \ guaranteed."
-        "401":
-          description: "Bearer token is missing or invalid."
-        "500":
-          description: "Unexpected internal error."
   /my/service-request:
     get:
       tags:
@@ -196,7 +383,7 @@ paths:
         required: false
         schema:
           type: "integer"
-          minimum: "0"
+          minimum: 0
           default: 0
       - name: "limit"
         in: "query"
@@ -204,7 +391,8 @@ paths:
         description: "Number of service requests per page, between 10 and 100."
         schema:
           type: "integer"
-          minimum: "10"
+          minimum: 10
+          maximum: 100
           default: 10
       responses:
         "200":
@@ -214,13 +402,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ServiceRequestPaginate"
         "400":
-          description: "SERVICE_REQUEST_400_001 — limit must be between 10 and 100\
-            \ and page must be non-negative; malformed parameters return 400 without\
-            \ a service code."
-        "401":
-          description: "Bearer token is missing or invalid."
-        "500":
-          description: "Unexpected internal error."
+          description: "SERVICE_REQUEST_400_001"
   /my/provider/service-requests:
     get:
       tags:
@@ -251,6 +433,7 @@ paths:
         schema:
           type: "integer"
           minimum: "10"
+          maximum: "100"
           default: 10
       responses:
         "200":
@@ -260,31 +443,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/ServiceRequestPaginate"
         "403":
-          description: "SERVICE_REQUEST_403_003 — service provider is not approved;\
-            \ insufficient authorization returns 403 without a service code."
+          description: "SERVICE_REQUEST_403_003"
         "400":
-          description: "SERVICE_REQUEST_400_001 — limit must be between 10 and 100\
-            \ and page must be non-negative; malformed parameters return 400 without\
-            \ a service code."
-        "401":
-          description: "Bearer token is missing or invalid."
-        "500":
-          description: "Unexpected internal error."
+          description: "SERVICE_REQUEST_400_001"
 components:
   securitySchemes:
     bearerAuth:
       type: "http"
       scheme: "bearer"
       bearerFormat: "JWT"
-  responses:
-    Unauthorized:
-      description: "Token is missing or invalid"
-    Forbidden:
-      description: "Action is forbidden or service provider is not approved"
-    NotFound:
-      description: "Resource not found"
-    Conflict:
-      description: "Business transition is not allowed"
   schemas:
     ServiceRequestReject:
       type: "object"
@@ -370,6 +537,207 @@ components:
       - "ACCEPTED"
       - "REJECTED"
       - "CANCELLED"
+    FollowUpAnswer:
+      type: "string"
+      enum:
+      - "YES"
+      - "NO"
+    FollowUpStatus:
+      type: "string"
+      enum:
+      - "WAITING_FOR_AGREEMENT"
+      - "AGREEMENT_DISPUTED"
+      - "NO_AGREEMENT"
+      - "WAITING_FOR_COMPLETION"
+      - "COMPLETION_REPORTED_BY_CLIENT"
+      - "COMPLETION_CONFIRMED"
+      - "COMPLETION_DISPUTED"
+      - "NOT_COMPLETED"
+    FollowUpAnswerRequest:
+      type: "object"
+      additionalProperties: false
+      required:
+      - "answer"
+      properties:
+        answer:
+          $ref: "#/components/schemas/FollowUpAnswer"
+    ServiceRequestFollowUp:
+      type: "object"
+      required:
+      - "serviceRequestId"
+      - "status"
+      - "clientAgreement"
+      - "clientAgreementAt"
+      - "providerAgreement"
+      - "providerAgreementAt"
+      - "scheduledAt"
+      - "agreementConfirmedAt"
+      - "clientCompletion"
+      - "clientCompletionAt"
+      - "providerCompletion"
+      - "providerCompletionAt"
+      - "canSubmitReview"
+      - "canAnswerAgreement"
+      - "canAnswerCompletion"
+      - "completionAvailableAt"
+      properties:
+        serviceRequestId:
+          type: "string"
+          format: "uuid"
+        status:
+          $ref: "#/components/schemas/FollowUpStatus"
+        clientAgreement:
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/FollowUpAnswer"
+        clientAgreementAt:
+          type: "string"
+          format: "date-time"
+          nullable: true
+        providerAgreement:
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/FollowUpAnswer"
+        providerAgreementAt:
+          type: "string"
+          format: "date-time"
+          nullable: true
+        scheduledAt:
+          type: "string"
+          format: "date-time"
+          nullable: true
+        agreementConfirmedAt:
+          type: "string"
+          format: "date-time"
+          nullable: true
+        clientCompletion:
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/FollowUpAnswer"
+        clientCompletionAt:
+          type: "string"
+          format: "date-time"
+          nullable: true
+        providerCompletion:
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/FollowUpAnswer"
+        providerCompletionAt:
+          type: "string"
+          format: "date-time"
+          nullable: true
+        canSubmitReview:
+          type: "boolean"
+        canAnswerAgreement:
+          type: "boolean"
+        canAnswerCompletion:
+          type: "boolean"
+        completionAvailableAt:
+          type: "string"
+          format: "date-time"
+          nullable: true
+    ReviewRequest:
+      type: "object"
+      additionalProperties: false
+      required:
+      - "rating"
+      properties:
+        rating:
+          type: "integer"
+          minimum: 1
+          maximum: 5
+        comment:
+          type: "string"
+          maxLength: 2000
+    ReviewConfirmation:
+      type: "string"
+      enum:
+      - "CONFIRMED_BY_BOTH"
+      - "REPORTED_BY_CLIENT"
+      - "CONTESTED_BY_PROVIDER"
+    Review:
+      type: "object"
+      required:
+      - "id"
+      - "serviceRequestId"
+      - "clientId"
+      - "rating"
+      - "confirmation"
+      - "createdAt"
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+        serviceRequestId:
+          type: "string"
+          format: "uuid"
+        clientId:
+          type: "string"
+          format: "uuid"
+        rating:
+          type: "integer"
+        comment:
+          type: "string"
+        confirmation:
+          $ref: "#/components/schemas/ReviewConfirmation"
+        createdAt:
+          type: "string"
+          format: "date-time"
+    ProviderReviews:
+      type: "object"
+      required:
+      - "count"
+      - "reviews"
+      properties:
+        count:
+          type: "integer"
+          format: "int64"
+        reviews:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Review"
+    ReviewSummary:
+      type: "object"
+      required:
+      - "averageRating"
+      - "reviewCount"
+      - "oneStarCount"
+      - "twoStarCount"
+      - "threeStarCount"
+      - "fourStarCount"
+      - "fiveStarCount"
+      properties:
+        averageRating:
+          type: "number"
+          format: "double"
+        reviewCount:
+          type: "integer"
+          format: "int64"
+        oneStarCount:
+          type: "integer"
+          format: "int64"
+        twoStarCount:
+          type: "integer"
+          format: "int64"
+        threeStarCount:
+          type: "integer"
+          format: "int64"
+        fourStarCount:
+          type: "integer"
+          format: "int64"
+        fiveStarCount:
+          type: "integer"
+          format: "int64"
+    ReviewModerationRequest:
+      type: "object"
+      additionalProperties: false
+      required:
+      - "reason"
+      properties:
+        reason:
+          type: "string"
+          minLength: 1
+          maxLength: 2000
     CreationResponse:
       type: "object"
       required:

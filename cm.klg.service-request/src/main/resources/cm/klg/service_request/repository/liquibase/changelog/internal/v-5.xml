@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+	<changeSet id="SR-36:1" author="kameni.nguematcha">
+		<createTable tableName="t_service_request_follow_up">
+			<column name="c_id" type="varchar(36)">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="pk_service_request_follow_up" />
+			</column>
+			<column name="c_service_request_id" type="varchar(36)">
+				<constraints nullable="false" unique="true"
+					uniqueConstraintName="uk_service_request_follow_up_request" />
+			</column>
+			<column name="c_client_agreement" type="varchar(8)" />
+			<column name="c_client_agreement_at" type="timestamp" />
+			<column name="c_provider_agreement" type="varchar(8)" />
+			<column name="c_provider_agreement_at" type="timestamp" />
+			<column name="c_scheduled_at" type="timestamp" />
+			<column name="c_agreement_confirmed_at" type="timestamp" />
+			<column name="c_client_completion" type="varchar(8)" />
+			<column name="c_client_completion_at" type="timestamp" />
+			<column name="c_provider_completion" type="varchar(8)" />
+			<column name="c_provider_completion_at" type="timestamp" />
+		</createTable>
+		<addForeignKeyConstraint
+			baseTableName="t_service_request_follow_up"
+			baseColumnNames="c_service_request_id"
+			constraintName="fk_service_request_follow_up_request"
+			referencedTableName="t_service_request" referencedColumnNames="c_id"
+			onDelete="CASCADE" onUpdate="CASCADE" />
+
+		<createTable tableName="t_review">
+			<column name="c_id" type="varchar(36)">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="pk_review" />
+			</column>
+			<column name="c_service_request_id" type="varchar(36)">
+				<constraints nullable="false" unique="true"
+					uniqueConstraintName="uk_review_request" />
+			</column>
+			<column name="c_client_id" type="varchar(36)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_provider_id" type="varchar(36)">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_rating" type="integer">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_comment" type="text" />
+			<column name="c_status" type="varchar(15)" />
+			<column name="c_moderation_reason" type="text" />
+			<column name="c_moderated_by" type="varchar(36)" />
+			<column name="c_moderated_at" type="timestamp" />
+			<column name="c_created_at" type="timestamp" />
+			<column name="c_version" type="bigint" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_deleted" type="boolean"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addForeignKeyConstraint
+			baseTableName="t_review" baseColumnNames="c_service_request_id"
+			constraintName="fk_review_request"
+			referencedTableName="t_service_request" referencedColumnNames="c_id"
+			onDelete="RESTRICT" onUpdate="CASCADE" />
+		<createIndex tableName="t_review"
+			indexName="idx_review_provider_status_created">
+			<column name="c_provider_id" />
+			<column name="c_status" />
+			<column name="c_created_at" />
+		</createIndex>
+
+		<sql splitStatements="false">
+			INSERT INTO
+			public.t_service_request_follow_up
+			(c_id, c_service_request_id)
+			SELECT
+			gen_random_uuid()::varchar, sr.c_id
+			FROM public.t_service_request sr
+			WHERE sr.c_status = 'ACCEPTED'
+			AND NOT EXISTS (
+			SELECT 1
+			FROM
+			public.t_service_request_follow_up fu
+			WHERE fu.c_service_request_id =
+			sr.c_id
+			)
+		</sql>
+	</changeSet>
+
+	<changeSet id="SR-36:2" author="kameni.nguematcha">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="t_user" columnName="c_deleted" />
+			</not>
+		</preConditions>
+		<addColumn tableName="t_user">
+			<column name="c_deleted" type="boolean"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_version" type="bigint" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="SR-36:3" author="kameni.nguematcha">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="t_service_provider"
+					columnName="c_deleted" />
+			</not>
+		</preConditions>
+		<addColumn tableName="t_service_provider">
+			<column name="c_deleted" type="boolean"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+			<column name="c_version" type="bigint" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="SR-36:4" author="kameni.nguematcha">
+		<renameColumn tableName="t_service_request"
+			oldColumnName="c_user_id" newColumnName="c_client_id" />
+	</changeSet>
+
+	<changeSet id="SR-36:5" author="kameni.nguematcha">
+		<addColumn tableName="t_service_request">
+			<column name="c_accepted_at" type="timestamp" />
+		</addColumn>
+		<sql>
+			UPDATE public.t_service_request
+			SET c_accepted_at = c_updated_at
+			WHERE c_status = 'ACCEPTED'
+			AND c_updated_at IS NOT NULL
+		</sql>
+	</changeSet>
+</databaseChangeLog>

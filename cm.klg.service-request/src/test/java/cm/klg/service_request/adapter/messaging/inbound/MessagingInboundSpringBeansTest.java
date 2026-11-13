@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 import cm.klg.service_request.application.usecase.ApproveServiceProviderUseCase;
-import cm.klg.service_request.application.usecase.CreateNewUserUseCase;
+import cm.klg.service_request.application.usecase.CreateUserUseCase;
 import cm.klg.service_request.application.usecase.DeleteUserUseCase;
 import cm.klg.service_request.application.usecase.UpdateUserUseCase;
 import org.junit.jupiter.api.Test;
@@ -15,13 +15,13 @@ class MessagingInboundSpringBeansTest {
 
   @Test
   void shouldCreateUserInboundEventHandler() {
-    CreateNewUserUseCase createNewUserUseCase = mock(CreateNewUserUseCase.class);
+    CreateUserUseCase createNewUserUseCase = mock(CreateUserUseCase.class);
     MessagingInboundMapper mapper = mock(MessagingInboundMapper.class);
 
     CreateUserInboundEventHandler handler =
         beans.createUserInboundEventHandler(createNewUserUseCase, mapper);
 
-    assertThat(handler.createNewUserUseCase()).isEqualTo(createNewUserUseCase);
+    assertThat(handler.createUserUseCase()).isEqualTo(createNewUserUseCase);
     assertThat(handler.messagingInboundMapper()).isEqualTo(mapper);
   }
 

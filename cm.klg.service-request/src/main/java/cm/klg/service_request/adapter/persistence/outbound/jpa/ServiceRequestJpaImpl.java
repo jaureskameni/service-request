@@ -1,7 +1,7 @@
 package cm.klg.service_request.adapter.persistence.outbound.jpa;
 
 import cm.klg.service_request.application.outbound.ServiceRequestRepository;
-import cm.klg.service_request.application.views.ServiceRequestViews;
+import cm.klg.service_request.application.views.ServiceRequestViews.ServiceRequestView1;
 import cm.klg.service_request.domain.service_provider.ServiceProviderId;
 import cm.klg.service_request.domain.service_request.ServiceRequest;
 import cm.klg.service_request.domain.service_request.ServiceRequestId;
@@ -28,17 +28,16 @@ public class ServiceRequestJpaImpl implements ServiceRequestRepository {
 
   @Override
   public void update(@NonNull ServiceRequest serviceRequest) {
-    getById(serviceRequest.getId())
-        .ifPresent(
-            serviceRequestJpa -> {
-              jpaMapper.toJpa(serviceRequestJpa, serviceRequest);
-              springRepository.save(serviceRequestJpa);
-            });
+    ServiceRequestJpa serviceRequestJpa =
+        getByIdWithFollowUp(serviceRequest.getId())
+            .orElseThrow(ServiceRequestNotFoundException::new);
+    jpaMapper.toJpa(serviceRequestJpa, serviceRequest);
+    springRepository.save(serviceRequestJpa);
   }
 
   @Override
-  public PageData<ServiceRequestViews.ServiceRequestView1> loadAllMyRequestsAsView1(
-      UserId userId, PaginationFetchRequest pagination) {
+  public PageData<@NonNull ServiceRequestView1> loadAllMyRequestsAsView1(
+      @NonNull UserId userId, @NonNull PaginationFetchRequest pagination) {
     Pageable pageable = toPageable(pagination);
     var serviceRequestPage =
         springRepository.findAllMyRequestByUserIdAsView1(userId.value(), pageable);
@@ -46,8 +45,10 @@ public class ServiceRequestJpaImpl implements ServiceRequestRepository {
   }
 
   @Override
-  public PageData<ServiceRequestViews.ServiceRequestView1> loadAllMyRequestByStatusAsView1(
-      UserId userId, @NonNull ServiceRequestStatus status, PaginationFetchRequest pagination) {
+  public PageData<@NonNull ServiceRequestView1> loadAllMyRequestByStatusAsView1(
+      @NonNull UserId userId,
+      @NonNull ServiceRequestStatus status,
+      @NonNull PaginationFetchRequest pagination) {
 
     Pageable pageable = toPageable(pagination);
     var serviceRequestPage =
@@ -57,8 +58,8 @@ public class ServiceRequestJpaImpl implements ServiceRequestRepository {
   }
 
   @Override
-  public PageData<ServiceRequestViews.ServiceRequestView1> loadAllRequestsByProviderAsView1(
-      @NonNull ServiceProviderId providerId, PaginationFetchRequest pagination) {
+  public PageData<@NonNull ServiceRequestView1> loadAllRequestsByProviderAsView1(
+      @NonNull ServiceProviderId providerId, @NonNull PaginationFetchRequest pagination) {
     Pageable pageable = toPageable(pagination);
     var serviceRequestPage =
         springRepository.findAllRequestByProviderIdAsView1(providerId.value(), pageable);
@@ -66,10 +67,10 @@ public class ServiceRequestJpaImpl implements ServiceRequestRepository {
   }
 
   @Override
-  public PageData<ServiceRequestViews.ServiceRequestView1> loadAllRequestByProviderAndStatusAsView1(
+  public PageData<@NonNull ServiceRequestView1> loadAllRequestByProviderAndStatusAsView1(
       @NonNull ServiceProviderId providerId,
       @NonNull ServiceRequestStatus status,
-      PaginationFetchRequest pagination) {
+      @NonNull PaginationFetchRequest pagination) {
     Pageable pageable = toPageable(pagination);
     var serviceRequestPage =
         springRepository.findAllRequestByProviderIdAndStatusAsView1(
@@ -78,25 +79,17 @@ public class ServiceRequestJpaImpl implements ServiceRequestRepository {
   }
 
   @Override
-  public ServiceRequestViews.ServiceRequestView1 loadByIdAsView1(@NonNull ServiceRequestId id)
-      throws ServiceRequestNotFoundException {
-    return springRepository
-        .findByIdAsView1(id.value())
-        .orElseThrow(ServiceRequestNotFoundException::new);
-  }
-
-  @Override
   public ServiceRequest load(@NonNull ServiceRequestId id) throws ServiceRequestNotFoundException {
-    return this.getById(id)
-        .map(jpaMapper::toDomain)
+    return this.getByIdWithFollowUp(id)
+        .map(jpaMapper::toReviewSummary)
         .orElseThrow(ServiceRequestNotFoundException::new);
   }
 
-  private Optional<ServiceRequestJpa> getById(ServiceRequestId id) {
-    return springRepository.findById(id.value());
+  private Optional<@NonNull ServiceRequestJpa> getByIdWithFollowUp(@NonNull ServiceRequestId id) {
+    return springRepository.findByIdWithFollowUp(id.value());
   }
 
-  private static Pageable toPageable(PaginationFetchRequest pagination) {
+  private static Pageable toPageable(@NonNull PaginationFetchRequest pagination) {
     return PageRequest.of(pagination.pageIndex(), pagination.limit());
   }
 }

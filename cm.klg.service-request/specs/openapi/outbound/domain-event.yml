@@ -17,6 +17,7 @@ components:
       - "SERVICE_REQUEST_ACCEPTED"
       - "SERVICE_REQUEST_REJECTED"
       - "SERVICE_REQUEST_CANCELLED"
+      - "SERVICE_REQUEST_FOLLOW_UP_REQUESTED"
     ServiceRequestStatus:
       type: "string"
       enum:
@@ -118,5 +119,33 @@ components:
           type: "string"
           format: "uuid"
         cancelledAt:
+          type: "string"
+          format: "date-time"
+    FollowUpStage:
+      type: "string"
+      enum:
+      - "AGREEMENT"
+      - "COMPLETION"
+    ServiceRequestFollowUpRequestedEventDTO:
+      type: "object"
+      required:
+      - "serviceRequestId"
+      - "clientId"
+      - "providerId"
+      - "stage"
+      - "requestedAt"
+      properties:
+        serviceRequestId:
+          type: "string"
+          format: "uuid"
+        clientId:
+          type: "string"
+          format: "uuid"
+        providerId:
+          type: "string"
+          format: "uuid"
+        stage:
+          $ref: "#/components/schemas/FollowUpStage"
+        requestedAt:
           type: "string"
           format: "date-time"

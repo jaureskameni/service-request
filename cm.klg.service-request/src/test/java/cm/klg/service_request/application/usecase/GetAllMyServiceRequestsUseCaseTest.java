@@ -22,18 +22,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class GetAllMyServiceRequestsUseCaseTest {
+class GetMyServiceRequestsUseCaseTest {
 
   @Mock private ServiceRequestRepository serviceRequestRepository;
   @Mock private ServiceRequestView1 serviceRequestView1;
 
-  @InjectMocks private GetAllMyServiceRequestsUseCase useCase;
+  @InjectMocks private GetMyServiceRequestsUseCase useCase;
 
   @Test
   void shouldLoadAllRequestsWhenStatusIsAbsent() {
     UserId userId = UserId.from(UUID.randomUUID());
     var command =
-        new GetAllMyServiceRequestsUseCase.Command(userId, null, new PaginationFetchRequest(20, 2));
+        new GetMyServiceRequestsUseCase.Command(userId, null, new PaginationFetchRequest(20, 2));
     when(serviceRequestRepository.loadAllMyRequestsAsView1(
             eq(userId),
             argThat(pagination -> pagination.limit() == 20 && pagination.pageIndex() == 2)))
@@ -54,7 +54,7 @@ class GetAllMyServiceRequestsUseCaseTest {
   void shouldLoadRequestsByStatusWhenStatusIsProvided() {
     UserId userId = UserId.from(UUID.randomUUID());
     var command =
-        new GetAllMyServiceRequestsUseCase.Command(
+        new GetMyServiceRequestsUseCase.Command(
             userId, ServiceRequestStatus.ACCEPTED, new PaginationFetchRequest(10, 0));
     when(serviceRequestRepository.loadAllMyRequestByStatusAsView1(
             eq(userId),
