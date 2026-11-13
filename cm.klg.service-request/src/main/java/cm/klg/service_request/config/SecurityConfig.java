@@ -79,7 +79,7 @@ public class SecurityConfig {
                     .requestMatchers(
                         HttpMethod.PUT,
                         "/reviews/{reviewId:%s}/moderation".formatted(REGEX_UUID_WITH_DELIMITER))
-                    .hasRole("review-moderate")
+                    .hasAuthority(Scopes.REVIEW_HIDE)
                     .requestMatchers(HttpMethod.GET, "/my/service-request")
                     .authenticated()
                     .requestMatchers(HttpMethod.GET, "/my/provider/service-requests")

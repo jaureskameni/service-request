@@ -600,7 +600,7 @@
               }
             ],
             "url": "{{baseUrl}}/reviews/{{reviewId}}/moderation",
-            "description": "Masque un avis. Le JWT doit avoir le rôle Keycloak review-moderate; motif de 1 à 2000 caractères.",
+            "description": "Masque un avis. Le JWT de l'administrateur doit avoir le scope Keycloak review:hide; motif de 1 à 2000 caractères.",
             "auth": {
               "type": "bearer",
               "bearer": [
